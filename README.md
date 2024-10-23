@@ -1,2 +1,2 @@
-# Computational-Physcs
+# Computational-Physics
 Albert Einstein group
