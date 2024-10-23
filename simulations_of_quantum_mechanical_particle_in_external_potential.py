@@ -24,11 +24,11 @@ Psi=np.arange(N**D).reshape(shape).astype('float64')
 
 
 def laplace(func):
-    lap = -2/A**2*func
+    lap = -2*D*func
     for j in range(D):
-        lap += 1/A**2*(np.roll(func, -1, axis=j)
-                       +np.roll(func, 1, axis=j))
-    return lap
+        lap += (np.roll(func, -1, axis=j)
+                +np.roll(func, 1, axis=j))
+    return lap/A**2
 
 
 print(laplace(Psi))
