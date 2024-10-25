@@ -34,7 +34,7 @@ for _ in range(D-1):
     shape += (N,)
     origin += (0,)
 
-Psi=np.arange(N**D).reshape(shape).astype('float64')
+Psi=np.arange(N**D).reshape(shape).astype('complex')
 
 V=np.empty_like(Psi)
 for n, _ in np.ndenumerate(Psi):
@@ -42,6 +42,7 @@ for n, _ in np.ndenumerate(Psi):
 
 
 def laplace(func):
+    """calculating the laplacian of ndarray"""
     lap = -2*D*func
     for j in range(D):
         lap += (np.roll(func, -1, axis=j)
@@ -49,13 +50,16 @@ def laplace(func):
     return lap/A**2
 
 
-def Hamilton(func):
-    return -1/(2*MU*EPSILON**2)*laplace(func)+MU/8*(EPSILON**2*V)
-  
+def hamilton(func):
+    """calculating the hamiltonian for double harmonic well"""
+    return -1/(2*MU*EPSILON**2)*laplace(func)+MU/8*(EPSILON**2*V-1)**2
+
 def time_evol(func):
-    for i in range(M):
-        func = func - Hamilton(func)*TAU-TAU**2*Hamilton(Hamilton(func))/2
+    """time evolution using second-order Fourier transform"""
+    for _ in range(M):
+        func = func - 1j*hamilton(func)*TAU-TAU**2*hamilton(hamilton(func))/2
     return func
 
-
+print(laplace(Psi))
+print(hamilton(Psi))
 print(time_evol(Psi))
