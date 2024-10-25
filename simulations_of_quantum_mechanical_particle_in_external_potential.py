@@ -32,3 +32,5 @@ def laplace(func):
 
 
 print(laplace(Psi))
+
+# test
