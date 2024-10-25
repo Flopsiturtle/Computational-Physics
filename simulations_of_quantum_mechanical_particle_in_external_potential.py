@@ -6,11 +6,11 @@ Created on Wed Oct 23 12:33:12 2024
 """
 import numpy as np
 #declaring variables
-H_BAR = 1
-MASS = 1
+H_BAR = .000001
+MASS = .00001
 D = 2
-N = 5
-A = 1
+N = 1000
+A = .00001
 OMEGA=1
 R=1
 T=1
@@ -34,11 +34,26 @@ for _ in range(D-1):
     shape += (N,)
     origin += (0,)
 
-Psi=np.arange(N**D).reshape(shape).astype('complex')
+#Psi=np.arange(N**D).reshape(shape).astype('complex')
+
+Psi=np.random.uniform(-1,1,shape)+1j*np.random.uniform(-1,1,shape)
+Phi=np.random.uniform(-1,1,shape)+1j*np.random.uniform(-1,1,shape)
+#shifting the origin to the center of the grid
+
 
 V=np.empty_like(Psi)
 for n, _ in np.ndenumerate(Psi):
     V[n]=np.dot(np.array(n)-int(N/2),np.array(n)-int(N/2))
+
+
+def potential():
+    """defines the potential"""
+    return MU/8*(EPSILON**2*V-1)**2
+
+
+def inner_product(func1, func2):
+    """calculates the inner product of two arrays"""
+    return np.sum(np.multiply(np.conjugate(func1),func2))
 
 
 def laplace(func):
@@ -52,7 +67,7 @@ def laplace(func):
 
 def hamilton(func):
     """calculating the hamiltonian for double harmonic well"""
-    return -1/(2*MU*EPSILON**2)*laplace(func)+MU/8*(EPSILON**2*V-1)**2
+    return -1/(2*MU*EPSILON**2)*laplace(func)+potential()
 
 def time_evol(func):
     """time evolution using second-order Fourier transform"""
@@ -60,6 +75,13 @@ def time_evol(func):
         func = func - 1j*hamilton(func)*TAU-TAU**2*hamilton(hamilton(func))/2
     return func
 
-print(laplace(Psi))
-print(hamilton(Psi))
-print(time_evol(Psi))
+def animate():
+    """animates time evolution"""
+    return 
+
+#print(Psi)
+print(inner_product(hamilton(Psi),Psi)-inner_product(Psi,hamilton(Psi)))
+print(np.average(hamilton(2*Psi+Phi)-2*hamilton(Psi)-hamilton(Phi)))
+#print(laplace(Psi))
+#print(hamilton(Psi))
+#print(time_evol(Psi))
