@@ -7,20 +7,18 @@ Created on Wed Oct 23 12:33:12 2024
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import scipy.constants as const
 #declaring variables
-H_BAR = .000001
-MASS = .00001
-D = 2
-N = 1000
-L=1
-A = L/N
-OMEGA=1
-R=1
-T=1
-M=100
-
-
-
+H_BAR = .0001 #const.hbar*10**5
+MASS = .0001 #const.electron_mass*10**5
+D = 1
+N = 100
+L = 1#N*const.physical_constants['atomic unit of length'][0]*10**5
+A = L/N#const.physical_constants['atomic unit of length'][0]*10**5
+OMEGA=1#/const.physical_constants['atomic unit of time'][0]*10**5
+R=L/20
+T=1#3*const.physical_constants['atomic unit of time'][0]*10**5
+M=1000
 
 
 
@@ -37,10 +35,10 @@ for _ in range(D-1):
     shape += (N,)
     origin += (0,)
 
-#Psi=np.arange(N**D).reshape(shape).astype('complex')
+Psi=np.arange(N**D).reshape(shape).astype('complex')/N**D
 
-Psi=np.random.uniform(-1,1,shape)+1j*np.random.uniform(-1,1,shape)
-Phi=np.random.uniform(-1,1,shape)+1j*np.random.uniform(-1,1,shape)
+#Psi=np.random.uniform(-1,1,shape)+1j*np.random.uniform(-1,1,shape)
+#Phi=np.random.uniform(-1,1,shape)+1j*np.random.uniform(-1,1,shape)
 #shifting the origin to the center of the grid
 
 
@@ -59,13 +57,16 @@ def inner_product(func1, func2):
     return np.sum(np.multiply(np.conjugate(func1),func2))
 
 
+Psi *= 1/np.sqrt(inner_product(Psi,Psi))
+
+
 def laplace(func):
     """calculating the laplacian of ndarray"""
     lap = -2*D*func
     for j in range(D):
         lap += (np.roll(func, -1, axis=j)
                 +np.roll(func, 1, axis=j))
-    return lap/A**2
+    return lap
 
 
 def hamilton(func):
@@ -73,30 +74,30 @@ def hamilton(func):
     return -1/(2*MU*EPSILON**2)*laplace(func)+potential()
 
 #make sure to save result in regular intervals to use for animation function
-def time_evol(func):
+def time_evol(func, n):
     """time evolution using second-order Fourier transform"""
-    for _ in range(M):
+    for _ in range(n):
         func = func - 1j*hamilton(func)*TAU-TAU**2*hamilton(hamilton(func))/2
     return func
 
 
 fig, ax = plt.subplots()
-line = ax.plot(np.linspace(-L/2, L/2, N), Psi)
-ax.set(xlim=[-L/2,L/2], ylim=[-10,10])
-ax.legend()
+line = ax.plot(np.linspace(-L/2, L/2, N), Psi.imag)[0]
+ax.set(xlim=[-L/2,L/2], ylim=[-10*10**5*10**5,10*10**5*10**5])
 
 def animate(frame):
     """animates time evolution"""
-    y=
-    return 
+    line.set_ydata(time_evol(Psi, n=frame).imag)
+    return line
 
-ani = animation.FuncAnimation(fig=fig, func=time_evol, frames=40, interval=30)
-plt.show()
+#ani = animation.FuncAnimation(fig=fig, func=animate, frames=50, interval=1000)
+#plt.show()
 
 
 #print(Psi)
-print(inner_product(hamilton(Psi),Psi)-inner_product(Psi,hamilton(Psi)))
-print(np.average(hamilton(2*Psi+Phi)-2*hamilton(Psi)-hamilton(Phi)))
+#(inner_product(hamilton(Psi),Psi)-inner_product(Psi,hamilton(Psi)))
+#print(np.average(hamilton(2*Psi+Phi)-2*hamilton(Psi)-hamilton(Phi)))
 #print(laplace(Psi))
 #print(hamilton(Psi))
-#print(time_evol(Psi))
+print(time_evol(Psi, 20))
+print(inner_product(time_evol(Psi, 20), time_evol(Psi, 20)))
