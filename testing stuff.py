@@ -11,7 +11,7 @@ print(np.zeros(len(shape_a)))
 print(aa[1,1])
 
 
-bb = np.array([[0,1,2],[5,6,7],[11,12,13]])
+bb = np.array([[[[0,1,2],[5,6,7],[11,12,13]]],[[[0,1,2],[5,6,7],[11,12,13]]],[[[0,1,2],[5,6,7],[11,12,13]]]])
 
 print(np.multiply(aa,bb))
 
@@ -27,3 +27,5 @@ n_vector = np.zeros(aa.shape)
 #print(n_vector)
 
 print(np.mgrid[:5,:5].transpose(1,2,0))
+
+print(bb@bb)

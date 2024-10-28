@@ -36,9 +36,13 @@ def hamiltonian_in_lattice(wave,a,mu,epsilon,n):    # phi has to be in lattice u
 
 
 
+
+
 # check for characteristics: - linear, - hermitian, - 
 
+
 def check_hermitian(hamilton):      # geht nur für 2D arrays durch np.matrix!!!
+    # when input is wave, just use inputs (wave,a,mu,epsilon,n) and do extra step of calculating hamiltonian_in_lattice
     ham_matrix = np.matrix(hamilton)
     ham_adj = ham_matrix.getH()
     ham_adj_matrix = np.matrix(ham_adj)
@@ -48,11 +52,18 @@ def check_hermitian(hamilton):      # geht nur für 2D arrays durch np.matrix!!!
         a = "non-hermitian"
     return a
 
-def check_linear(hamilton):
-    # hamilton(lambda*phi) == lambda*hamilton(phi)      # -> welche Zahl als Beispiel?
-    # hamilton(phi+phi´) == hamilton(phi) + hamilton(phi´)      # wie phi´ aus phi erzeugen?
 
-
+def check_linear(wave,a,mu,epsilon,n):
+                # hamilton(lambda*phi) == lambda*hamilton(phi)      # -> welche Zahl als Beispiel?: einfach mal 27.9
+                # hamilton(phi+phi´) == hamilton(phi) + hamilton(phi´)      # wie phi´ aus phi erzeugen?: wave@wave
+    wave2 = wave@wave
+    A = hamiltonian_in_lattice(27.9*(wave-wave2),a,mu,epsilon,n)
+    B = 27.9*(hamiltonian_in_lattice(wave,a,mu,epsilon,n)-hamiltonian_in_lattice(wave2,a,mu,epsilon,n))
+    if (A == B).all():
+        a = "linear"
+    else:
+        a = "non-linear"
+    return a
 
 # ----- tests -----
 
@@ -69,6 +80,7 @@ print(laplace_in_lattice(test_3D))
 print(check_hermitian(test_2D))
 print(check_hermitian(test_2D2))
 
+#print(check_linear(test_2D,......))        inputs fehlen für hermitian
 
 
 
