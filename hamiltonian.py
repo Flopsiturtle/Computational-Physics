@@ -20,18 +20,17 @@ def laplace_in_lattice(phi):    # input phi has to be in lattice units
 
 
 def potential_in_lattice(mu,epsilon,phi):
-    D = len(phi.shape)
-    n = np.zeros(D)
-#    for i in np.arange(D):                     # ??? whats with n vector?????
-#        ....
-    V = mu/8 * (epsilon**2*n@n-1)**2       # you could create array of all the n@n and than np.multiply with phi
-    return V            
+    V = np.zeros(phi.shape)
+    for index, value in np.ndenumerate(phi):
+        index_arr = np.array(index)
+        V[index] = mu/8 * (epsilon**2*(index_arr@index_arr)-1)**2       # this array serves as all the possible elements of V for all the n -> to multiply with all elements of phi: np.multiply(V,phi)    
+    return V        
 
 
 
 def hamiltonian_in_lattice(wave,a,mu,epsilon,n):    # phi has to be in lattice units, else phi=a**(D/2)*wave
     phi = wave_to_lattice(wave,a)
-    H = - 1/(2*mu*epsilon**2)*laplace_in_lattice(phi) + potential_in_lattice(mu,epsilon,n) * phi
+    H = - 1/(2*mu*epsilon**2)*laplace_in_lattice(phi) + potential_in_lattice(mu,epsilon,phi) * phi
     return H
 
 
@@ -41,12 +40,11 @@ def hamiltonian_in_lattice(wave,a,mu,epsilon,n):    # phi has to be in lattice u
 # check for characteristics: - linear, - hermitian, - 
 
 
-def check_hermitian(hamilton):      # geht nur für 2D arrays durch np.matrix!!!
-    # when input is wave, just use inputs (wave,a,mu,epsilon,n) and do extra step of calculating hamiltonian_in_lattice
-    ham_matrix = np.matrix(hamilton)
+def check_hermitian(hamiltonian):      # geht nur für 2D arrays durch np.matrix!!!
+    # when input is wave and not hamiltonian, just use inputs (wave,a,mu,epsilon,n) and do extra step of calculating hamiltonian_in_lattice
+    ham_matrix = np.matrix(hamiltonian)
     ham_adj = ham_matrix.getH()
-    ham_adj_matrix = np.matrix(ham_adj)
-    if (ham_matrix == ham_adj_matrix).all():
+    if (ham_matrix == ham_adj).all():
         a = "hermitian"
     else:
         a = "non-hermitian"
@@ -64,6 +62,9 @@ def check_linear(wave,a,mu,epsilon,n):
     else:
         a = "non-linear"
     return a
+
+
+
 
 # ----- tests -----
 
