@@ -2,6 +2,9 @@
 import numpy as np
 import cmath
 
+##### am Anfang die Konstante definieren!!!  -> nicht jedes mal in Funktion epsilon, etc!!!
+
+
 
 def wave_to_lattice(wave,a):   # transform given wavefunction to lattice units  \\\-> transformation can also be done implicitly in a later function 
     D = len(wave.shape)             
@@ -44,6 +47,7 @@ def check_hermitian(hamiltonian):      # geht nur für 2D arrays durch np.matrix
     # when input is wave and not hamiltonian, just use inputs (wave,a,mu,epsilon,n) and do extra step of calculating hamiltonian_in_lattice
     ham_matrix = np.matrix(hamiltonian)
     ham_adj = ham_matrix.getH()
+        ##### dont check hermitian of hamiltonian on phi but hamiltonian itself!
     if (ham_matrix == ham_adj).all():
         a = "hermitian"
     else:
@@ -62,6 +66,18 @@ def check_linear(wave,a,mu,epsilon,n):
     else:
         a = "non-linear"
     return a
+
+
+
+# integrators
+
+
+
+
+
+
+
+
 
 
 
