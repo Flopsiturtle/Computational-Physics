@@ -28,6 +28,7 @@ def potential_in_lattice(mu,epsilon,phi):
         index_arr = np.array(index)
         V[index] = mu/8 * (epsilon**2*(index_arr@index_arr)-1)**2       # this array serves as all the possible elements of V for all the n -> to multiply with all elements of phi: np.multiply(V,phi)    
     return V        
+                # move potential to lattice centrum to obtain all wanted values! -> index_arr-int(n/2)
 
 
 
