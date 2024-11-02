@@ -61,3 +61,6 @@ print(LinearOperator.adjoint(aa_scipy).A)
 
 n = np.zeros((bb.shape))
 print(n)
+
+
+print(np.array([0,1,2])-4)
