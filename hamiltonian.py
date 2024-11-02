@@ -1,7 +1,10 @@
 #Florian Telleis
 import numpy as np
 import cmath
+import math
 import matplotlib.pyplot as plt
+
+
 
 ##### am Anfang die Konstante definieren!!!  -> nicht jedes mal in Funktion epsilon, etc!!!
 
@@ -10,7 +13,6 @@ import matplotlib.pyplot as plt
 a = 1               # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
 mu = 1
 epsilon = 1
-
 
 
 
@@ -38,7 +40,8 @@ def potential_in_lattice(phi):
         V[index] = mu/8 * (epsilon**2*np.dot(index_arr-N/2,index_arr-N/2)-1)**2       # this array serves as all the possible elements of V for all the n -> to multiply with all elements of phi: np.multiply(V,phi)    
     return V        
                                 # move potential to lattice centrum to obtain all wanted values! -> index_arr-int(n/2)
-
+                            # i understood the lattice moving for the potential
+                            # BUT how does this influence in which way we input our given wavefunction??? is it already central????
 
 def hamiltonian_in_lattice(phi):    
     #phi = wave_to_lattice(wave) # phi already input
@@ -65,10 +68,10 @@ def check_hermitian(hamiltonian):      # geht nur für 2D arrays durch np.matrix
     ham_adj = ham_matrix.getH()
         ### dont check hermitian of hamiltonian on phi but hamiltonian itself!
     if (ham_matrix == ham_adj).all():
-        a = "hermitian"
+        result = "hermitian"
     else:
-        a = "non-hermitian"
-    return a
+        result = "non-hermitian"
+    return print(result)
 # wrong
 
 
@@ -79,10 +82,10 @@ def check_linear(wave):
     A = hamiltonian_in_lattice(27.9*(wave-wave2))
     B = 27.9*(hamiltonian_in_lattice(wave)-hamiltonian_in_lattice(wave2))
     if (A == B).all():
-        a = "linear"
+        result = "linear"
     else:
-        a = "non-linear"
-    return a
+        result = "non-linear"
+    return print(result)
 
 
 
@@ -92,8 +95,9 @@ def check_linear(wave):
 
 # integrators
 
-M = 10
-tau = 0.01
+M = 100
+tau = 0.001
+
 
 def so_integrator(phi0):
     a = phi0
@@ -102,12 +106,15 @@ def so_integrator(phi0):
         a = b
     return b
 
+    # should be correctly implemented
+        # BUT idea here: how do we show complex numbers in animation????
+
 
 # check unitarity
 
-def check_so_unitarity(phi0):      
+def check_so_unitarity(phi0,round_stop):      
     phitau = so_integrator(phi0)
-    if int(scal_prod(phi0,phi0).real) == int(scal_prod(phitau,phitau).real):
+    if round(scal_prod(phi0,phi0).real,round_stop) == round(scal_prod(phitau,phitau).real,round_stop):
         result = "evolution operator is unitary"
     else:
         result = "not unitary"
@@ -115,14 +122,22 @@ def check_so_unitarity(phi0):
 
 
 
+# check error
 
+# wrong
+def exp_array(array,k):
+    array = np.identity() + array
+    for i in np.arange(0,k+1):
+        array = (array**k)/math.factorial(k)    ### array**k is different than wanted definition 
+    return array
+# wrong
 
 
 
 # ----- tests -----
 
 
-test_2D = np.array([[[1,4],[3,5]]])
+test_2D = np.array([[[1.3,4.27],[3.6,5.9]]])
 test_2D2 = np.array([[[2,5+1j],[3,9+4j]]])
 test_3D = np.array([[[2,32],[2,1]],[[2,7],[2,3]]])
 
@@ -133,13 +148,19 @@ print(laplace_in_lattice(test_2D))
 
 print(so_integrator(test_2D))
 
-check_so_unitarity(test_2D)
+check_so_unitarity(test_2D,5)
 
 
 
-#print(scal_prod(test_2D2,test_2D2))
 
-#print(int(scal_prod(so_integrator(test_2D2),so_integrator(test_2D2)).real))
+print(test_2D**0)
+
+
+#print(exp_array(test_2D,5))
+
+#print(round(scal_prod(test_2D,test_2D).real,7))
+
+#print(round(scal_prod(so_integrator(test_2D),so_integrator(test_2D)).real,8))
 
 
 #print(check_hermitian(test_3D)) # geht nicht durch 3D
