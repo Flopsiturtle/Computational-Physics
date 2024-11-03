@@ -1,29 +1,42 @@
 #Florian Telleis
 import numpy as np
-import cmath
+# import cmath
 import math
 import matplotlib.pyplot as plt
 
 
-
-##### am Anfang die Konstante definieren!!!  -> nicht jedes mal in Funktion epsilon, etc!!!
+""" --- constans and parameters --- """
 
 # D = len(wave.shape)
 # N = (wave.shape)[0]
-a = 1               # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
-mu = 1
-epsilon = 1
+A = 0.3  # for tests good 0.13             # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
+
+
+R = 1  # length from zero-point to potential-valleys 
+M = 1   # mass of point particle
+W = 1   # ... in units of time^-1
+H_BAR =1#!!! actually: 6.62607015*10**(-34)    # J*s
+
+
+mu = (M*W*R**2)/H_BAR
+epsilon = A/R
 
 
 
-def wave_to_lattice(wave):   # transform given wavefunction to lattice units  \\\-> transformation can also be done implicitly in a later function 
+
+""" --- hamiltonian and CO. --- """
+
+
+def wave_to_lattice(wave):   # transformation can also be done implicitly in a later function 
+    """transform given wavefunction "wave" to lattice units (discrete)"""
     D = len(wave.shape)             
-    return a**(D/2)*wave        
+    return A**(D/2)*wave        
 
 # phi = wave_to_lattice(wave,a)
 
 
 def laplace_in_lattice(phi):    # input phi has to be in lattice units
+    """calculate the laplacian of a wavefunction "phi" """
     shape = phi.shape
     D = len(shape)      # assumption: quadratic arrays; for example 2D: NxN
     laplace = np.zeros(shape)
@@ -33,17 +46,19 @@ def laplace_in_lattice(phi):    # input phi has to be in lattice units
 
 
 def potential_in_lattice(phi):
+    """define the potential in lattice units with the same dimensions as input wavefunction "phi" """
     V = np.zeros(phi.shape)
     N = phi.shape[0]
     for index, value in np.ndenumerate(phi):
         index_arr = np.array(index)
-        V[index] = mu/8 * (epsilon**2*np.dot(index_arr-N/2,index_arr-N/2)-1)**2       # this array serves as all the possible elements of V for all the n -> to multiply with all elements of phi: np.multiply(V,phi)    
+        V[index] = mu/8 * (epsilon**2*np.dot(index_arr-int(N/2),index_arr-int(N/2))-1)**2       
     return V        
                                 # move potential to lattice centrum to obtain all wanted values! -> index_arr-int(n/2)
-                            # i understood the lattice moving for the potential
-                            # BUT how does this influence in which way we input our given wavefunction??? is it already central????
+                                # i understood the lattice moving for the potential
+                            ##### BUT how does this influence in which way we input our given wavefunction??? is it already central????
 
-def hamiltonian_in_lattice(phi):    
+def hamiltonian_in_lattice(phi):
+    """calculate the hamiltonian of a given wavefunction "phi" """    
     #phi = wave_to_lattice(wave) # phi already input
     H = - 1/(2*mu*epsilon**2)*laplace_in_lattice(phi) + potential_in_lattice(phi) * phi
     return H
@@ -52,36 +67,35 @@ def hamiltonian_in_lattice(phi):
 
 # scalar product
 def scal_prod(phi1,phi2):
+    """calculates the scalar product/inner product of two wavefunctions"""
     return np.sum(np.multiply(np.conjugate(phi1),phi2))
 
 
 
 
 
-# check for characteristics: - linear, - hermitian, - 
+"""check for characteristics: - linear, - hermitian, -""" 
 #!#!#!#!#! checks were done before upload of scipt with the info
 
-
 # wrong
-def check_hermitian(hamiltonian):      # geht nur für 2D arrays durch np.matrix!!!
+def check_hermitian(hamiltonian,error):      # geht nur für 2D arrays durch np.matrix!!!
     ham_matrix = np.matrix(hamiltonian)
     ham_adj = ham_matrix.getH()
-        ### dont check hermitian of hamiltonian on phi but hamiltonian itself!
-    if (ham_matrix == ham_adj).all():
+        ## dont check hermitian of hamiltonian on phi but hamiltonian itself!
+    if abs((ham_matrix - ham_adj)).all() <= error:
         result = "hermitian"
     else:
         result = "non-hermitian"
     return print(result)
 # wrong
 
-
-def check_linear(wave):
+def check_linear(wave,error):
                 # hamilton(lambda*phi) == lambda*hamilton(phi)      # -> welche Zahl als Beispiel?: einfach mal 27.9
                 # hamilton(phi+phi´) == hamilton(phi) + hamilton(phi´)      # wie phi´ aus phi erzeugen?: wave@wave
     wave2 = wave@wave
-    A = hamiltonian_in_lattice(27.9*(wave-wave2))
-    B = 27.9*(hamiltonian_in_lattice(wave)-hamiltonian_in_lattice(wave2))
-    if (A == B).all():
+    linear1 = hamiltonian_in_lattice(27.9*(wave-wave2))
+    linear2 = 27.9*(hamiltonian_in_lattice(wave)-hamiltonian_in_lattice(wave2))
+    if (abs(linear1 == linear2)).all() <= error:
         result = "linear"
     else:
         result = "non-linear"
@@ -92,37 +106,40 @@ def check_linear(wave):
 
 
 
+""" --- integrators --- """
 
-# integrators
-
-M = 100
-tau = 0.001
+M = 1000     # large value
+T = 1   # time
+tau = T/M   # time step
 
 
 def so_integrator(phi0):
-    a = phi0
+    """solves the time dependent schrödinger equation for a given wavefunction "phi0" with the second-order integrator"""
+    start = phi0
     for m in np.arange(1,M+1):
-        b = a - (0+1j)*tau*hamiltonian_in_lattice(a) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(a))
-        a = b
-    return b
+        iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
+        start = iteration
+    return iteration
+    # I think this is correctly implemented
+    ##### BUT had a question here: how do we show complex numbers in animation????
 
-    # should be correctly implemented
-        # BUT idea here: how do we show complex numbers in animation????
 
 
-# check unitarity
+""" --- check unitarity --- """
 
-def check_so_unitarity(phi0,round_stop):      
+def check_so_unitarity(phi0,error):   
+    """checks the unitarity of the second-order evolution operator via conservation of the norm of states"""   
     phitau = so_integrator(phi0)
-    if round(scal_prod(phi0,phi0).real,round_stop) == round(scal_prod(phitau,phitau).real,round_stop):
-        result = "evolution operator is unitary"
+    # if round(scal_prod(phi0,phi0).real,round_stop) == round(scal_prod(phitau,phitau).real,round_stop):
+    if abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau))) <= error:
+        result = "OK, evolution operator is unitary."
     else:
-        result = "not unitary"
+        result = "WARNING, evolution operator is not unitary."
     return print(result)
 
 
 
-# check error
+""" --- check error --- """
 
 # wrong
 def exp_array(array,k):
@@ -134,6 +151,11 @@ def exp_array(array,k):
 
 
 
+
+
+
+
+
 # ----- tests -----
 
 
@@ -142,18 +164,40 @@ test_2D2 = np.array([[[2,5+1j],[3,9+4j]]])
 test_3D = np.array([[[2,32],[2,1]],[[2,7],[2,3]]])
 
 
+size = 20
+test_2D3 = np.random.rand(size,size)+ 1j * np.random.rand(size,size)
+
+f = potential_in_lattice(test_2D3)
+#g = hamiltonian_in_lattice(test_2D3).real
+h = so_integrator(test_2D3).real
+
+plt.imshow(f, interpolation='none')
+plt.show()
+plt.imshow(test_2D3.real, interpolation='none')
+plt.show()
+plt.imshow(h, interpolation='none')
+plt.show()
 
 
-print(laplace_in_lattice(test_2D))
-
-print(so_integrator(test_2D))
-
-check_so_unitarity(test_2D,5)
 
 
 
+#print(laplace_in_lattice(test_2D3))
+#check_hermitian(test_2D3,1)
+#check_linear(test_2D3,0.01)
 
-print(test_2D**0)
+
+#print(so_integrator(test_2D3))
+#a=so_integrator(test_2D3)
+
+#check_so_unitarity(test_2D3,0.001)
+
+
+
+
+
+
+#print(test_2D3)
 
 
 #print(exp_array(test_2D,5))
@@ -180,3 +224,8 @@ print(test_2D**0)
 # axis 2 -> x
 # axis 1 -> y
 # axis 0 -> z
+
+
+
+
+#input()
