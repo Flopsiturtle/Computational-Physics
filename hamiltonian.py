@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 
 # D = len(wave.shape)
 # N = (wave.shape)[0]
-A = 0.3  # for tests good 0.13             # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
+A = 0.3  # for viewing good 0.13             # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
 
 
-R = 1  # length from zero-point to potential-valleys 
+R = 3  # length from zero-point to potential-valleys 
 M = 1   # mass of point particle
 W = 1   # ... in units of time^-1
 H_BAR =1#!!! actually: 6.62607015*10**(-34)    # J*s
@@ -108,8 +108,8 @@ def check_linear(wave,error):
 
 """ --- integrators --- """
 
-M = 1000     # large value
-T = 1   # time
+M = 2000     # large value
+T = 2   # time
 tau = T/M   # time step
 
 
@@ -130,7 +130,6 @@ def so_integrator(phi0):
 def check_so_unitarity(phi0,error):   
     """checks the unitarity of the second-order evolution operator via conservation of the norm of states"""   
     phitau = so_integrator(phi0)
-    # if round(scal_prod(phi0,phi0).real,round_stop) == round(scal_prod(phitau,phitau).real,round_stop):
     if abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau))) <= error:
         result = "OK, evolution operator is unitary."
     else:
@@ -164,18 +163,21 @@ test_2D2 = np.array([[[2,5+1j],[3,9+4j]]])
 test_3D = np.array([[[2,32],[2,1]],[[2,7],[2,3]]])
 
 
-size = 20
+size = 30
 test_2D3 = np.random.rand(size,size)+ 1j * np.random.rand(size,size)
 
 f = potential_in_lattice(test_2D3)
-#g = hamiltonian_in_lattice(test_2D3).real
-h = so_integrator(test_2D3).real
+g = hamiltonian_in_lattice(test_2D3).real
+h = abs(so_integrator(test_2D3))
 
 plt.imshow(f, interpolation='none')
+plt.title('potential: A={0}, R={1}, size={2}'.format(A,R,size))
 plt.show()
-plt.imshow(test_2D3.real, interpolation='none')
+plt.imshow(abs(test_2D3), interpolation='none')
+plt.title('abs-wavefunction: A={0}, R={1}, size={2}'.format(A,R,size))
 plt.show()
 plt.imshow(h, interpolation='none')
+plt.title('abs-so_integrator: A={0}, R={1}, size={2}, M={3}, T={4}'.format(A,R,size,M,T))
 plt.show()
 
 
