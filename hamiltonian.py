@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 A = 0.3  # for viewing good 0.13             # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
 
 
-R = 3  # length from zero-point to potential-valleys 
+R = 2  # length from zero-point to potential-valleys 
 M = 1   # mass of point particle
 W = 1   # ... in units of time^-1
 H_BAR =1#!!! actually: 6.62607015*10**(-34)    # J*s
@@ -108,8 +108,8 @@ def check_linear(wave,error):
 
 """ --- integrators --- """
 
-M = 2000     # large value
-T = 2   # time
+M = 3000     # large value
+T = 1   # time
 tau = T/M   # time step
 
 
@@ -121,7 +121,6 @@ def so_integrator(phi0):
         start = iteration
     return iteration
     # I think this is correctly implemented
-    ##### BUT had a question here: how do we show complex numbers in animation????
 
 
 
@@ -130,10 +129,10 @@ def so_integrator(phi0):
 def check_so_unitarity(phi0,error):   
     """checks the unitarity of the second-order evolution operator via conservation of the norm of states"""   
     phitau = so_integrator(phi0)
-    if abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau))) <= error:
-        result = "OK, evolution operator is unitary."
+    if abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau).real)) <= error:
+        result = "WARNING, evolution operator is unitary."
     else:
-        result = "WARNING, evolution operator is not unitary."
+        result = "OK, evolution operator is not unitary."
     return print(result)
 
 
@@ -163,11 +162,23 @@ test_2D2 = np.array([[[2,5+1j],[3,9+4j]]])
 test_3D = np.array([[[2,32],[2,1]],[[2,7],[2,3]]])
 
 
-size = 30
-test_2D3 = np.random.rand(size,size)+ 1j * np.random.rand(size,size)
+size = 20
+test_2D3 = np.random.rand(size,size) + 1j * np.random.rand(size,size)
+#test_2D3 = np.random.rand(size,size)*0+1 + 1j * np.random.rand(size,size)*0 +1j
+#test_1D = np.random.rand(1,size)+ 1j * np.random.rand(1,size)
+
+#print(test_1D)
+
+print(scal_prod(test_2D3,test_2D3).real)
+
+ff = so_integrator(test_2D3)
+check_so_unitarity(test_2D3,0.001)
+check_so_unitarity(ff,0.001)
+
+
 
 f = potential_in_lattice(test_2D3)
-g = hamiltonian_in_lattice(test_2D3).real
+g = abs(hamiltonian_in_lattice(test_2D3))
 h = abs(so_integrator(test_2D3))
 
 plt.imshow(f, interpolation='none')
@@ -181,6 +192,21 @@ plt.title('abs-so_integrator: A={0}, R={1}, size={2}, M={3}, T={4}'.format(A,R,s
 plt.show()
 
 
+#f = potential_in_lattice(test_1D)
+#g = hamiltonian_in_lattice(test_2D3).real
+#h = abs(so_integrator(test_2D3))
+
+#plt.imshow(f, interpolation='none')
+#plt.title('potential: A={0}, R={1}, size={2}'.format(A,R,size))
+#plt.show()
+#plt.imshow(abs(test_2D3), interpolation='none')
+#plt.title('abs-wavefunction: A={0}, R={1}, size={2}'.format(A,R,size))
+#plt.show()
+#plt.imshow(h, interpolation='none')
+#plt.title('abs-so_integrator: A={0}, R={1}, size={2}, M={3}, T={4}'.format(A,R,size,M,T))
+#plt.show()
+
+
 
 
 
@@ -192,7 +218,7 @@ plt.show()
 #print(so_integrator(test_2D3))
 #a=so_integrator(test_2D3)
 
-#check_so_unitarity(test_2D3,0.001)
+check_so_unitarity(test_2D3,0.001)
 
 
 
