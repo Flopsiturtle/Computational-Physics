@@ -3,7 +3,7 @@ import numpy as np
 # import cmath
 import math
 import matplotlib.pyplot as plt
-
+import time
 
 """ --- constans and parameters --- """
 
@@ -177,6 +177,12 @@ test_2D3 = np.random.rand(size,size) + 1j * np.random.rand(size,size)
 test_1D = np.random.rand(size,1)+ 1j * np.random.rand(size,1)
 #test_1D = np.random.rand(size,1)*0+1+ 1j * np.random.rand(size,1)*0 +1j
 
+
+gaussian_1D = 1
+
+
+
+
 #print(test_1D)
 
 #print(scal_prod(test_2D3,test_2D3).real)
@@ -193,13 +199,53 @@ test_1D = np.random.rand(size,1)+ 1j * np.random.rand(size,1)
 
 
 
+
+
+''' 1D '''
+
 fy = potential_in_lattice(test_1D)
 fx = np.arange(0,len(fy))
 g = abs(hamiltonian_in_lattice(test_1D))
 hy = abs(so_integrator(test_1D))
 hx = np.arange(0,len(hy))
 
+#### noch quadrieren fuer Wahrscheinlichkeit!!!
 
+
+
+
+
+
+''' animate so '''
+
+
+
+def animate_so_integrator(phi0):
+    """solves the time dependent schrödinger equation for a given wavefunction "phi0" with the second-order integrator"""
+    start = phi0
+    plt.plot(start,np.arange(0,len(start)))
+    for m in np.arange(1,M+1):
+        iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
+        start = iteration
+        plt.plot(iteration,np.arange(0,len(iteration)))
+        time.sleep(100)
+    return 
+
+#animate_so_integrator(test_1D)
+
+start = test_1D
+plt.plot(abs(start)**2,np.arange(0,len(start)))
+for m in np.arange(1,M+1):
+    iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
+    start = iteration
+    plt.plot(abs(iteration)**2,np.arange(0,len(iteration)))
+    time.sleep(100)
+
+
+
+
+
+''' plot der beiden '''
 
 
 
@@ -239,8 +285,10 @@ plt.show()
 
 
 
-''' 1D '''
 
+
+
+######### random
 
 #plt.plot(fx,fy)
 #plt.title('potential: A={0}, R={1}, size={2}'.format(A,R,size))
@@ -256,6 +304,8 @@ plt.show()
 
 
 check_so_unitarity(test_1D,0.001)
+
+
 
 
 
