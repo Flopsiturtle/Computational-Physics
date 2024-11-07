@@ -7,6 +7,7 @@ Created on Wed Oct 23 12:33:12 2024
 import numpy as np
 #declaring variables
 H_BAR = 1
+M = 1
 D = 2
 N = 5
 A = 1
