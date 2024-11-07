@@ -6,7 +6,6 @@ Checkliste:
 
 
 
-
 Latex-Protokoll:
 1.Code-Structure:
 Hamiltonian(Flo H.)
@@ -14,6 +13,19 @@ Checks(Mickey)
 Second order Integrator(Flo T.)
 Strang Splitting(Flo H./Mickey)
 SP-Tests(Flo H./Mickey)
+
+
+
+Flo T - To Do:
+.Animation für so-operator implementieren
+.check so-operatot überarbeiten+prüfen
+.Variablen ordentlich definieren
+.Plot so-operator mit richtiger Achseneinteilung
+.LaTex Datei anfangen
+
+
+
+
 
 
 
