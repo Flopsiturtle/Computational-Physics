@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 A = 0.3  # for viewing good 0.13             # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
 
 
-R = 2  # length from zero-point to potential-valleys 
+R = 36  # length from zero-point to potential-valleys 
 M = 1   # mass of point particle
 W = 1   # ... in units of time^-1
 H_BAR =1#!!! actually: 6.62607015*10**(-34)    # J*s
@@ -108,8 +108,8 @@ def check_linear(wave,error):
 
 """ --- integrators --- """
 
-M = 3000     # large value
-T = 1   # time
+M = 5000     # large value
+T = 7   # time
 tau = T/M   # time step
 
 
@@ -135,6 +135,11 @@ def check_so_unitarity(phi0,error):
         result = "OK, evolution operator is not unitary."
     return print(result)
 
+#############
+##### !!! dont do the function with error input BUT print out the difference between the two scal_prod and from that output we manually evaluate the result for multiple conditions !!! 
+#############
+
+
 
 
 """ --- check error --- """
@@ -157,42 +162,109 @@ def exp_array(array,k):
 # ----- tests -----
 
 
+
+
+
 test_2D = np.array([[[1.3,4.27],[3.6,5.9]]])
 test_2D2 = np.array([[[2,5+1j],[3,9+4j]]])
 test_3D = np.array([[[2,32],[2,1]],[[2,7],[2,3]]])
 
 
-size = 20
+size = 200
 test_2D3 = np.random.rand(size,size) + 1j * np.random.rand(size,size)
 #test_2D3 = np.random.rand(size,size)*0+1 + 1j * np.random.rand(size,size)*0 +1j
-#test_1D = np.random.rand(1,size)+ 1j * np.random.rand(1,size)
+
+test_1D = np.random.rand(size,1)+ 1j * np.random.rand(size,1)
+#test_1D = np.random.rand(size,1)*0+1+ 1j * np.random.rand(size,1)*0 +1j
 
 #print(test_1D)
 
-print(scal_prod(test_2D3,test_2D3).real)
+#print(scal_prod(test_2D3,test_2D3).real)
 
-ff = so_integrator(test_2D3)
-check_so_unitarity(test_2D3,0.001)
-check_so_unitarity(ff,0.001)
+#ff = so_integrator(test_2D3)
+#gg = so_integrator(ff)
+#check_so_unitarity(gg,0.0001)
 
 
 
-f = potential_in_lattice(test_2D3)
-g = abs(hamiltonian_in_lattice(test_2D3))
-h = abs(so_integrator(test_2D3))
+###################
+''' !!! WAVEFUNCTION INPUT: choose initial condition so that wavefunction travels from left to right and you see a reflecting and transmitting part in the animated time evolution !!! -> could be gaussian which has peak at left curve'''
+###################
 
-plt.imshow(f, interpolation='none')
-plt.title('potential: A={0}, R={1}, size={2}'.format(A,R,size))
+
+
+fy = potential_in_lattice(test_1D)
+fx = np.arange(0,len(fy))
+g = abs(hamiltonian_in_lattice(test_1D))
+hy = abs(so_integrator(test_1D))
+hx = np.arange(0,len(hy))
+
+
+
+
+
+x_values1=fx
+y_values1=fy
+
+x_values2=np.array([0,0])
+y_values2=np.array([0,0])
+
+x_values3=hx
+y_values3=hy
+
+
+fig=plt.figure()
+ax=fig.add_subplot(111, label="1")
+ax2=fig.add_subplot(111, label="2", frame_on=False)
+ax3=fig.add_subplot(111, label="3", frame_on=False)
+
+ax.plot(x_values1, y_values1, color="C0")
+ax.set_xlabel("x label 1", color="C0")
+ax.set_ylabel("y label 1", color="C0")
+ax.tick_params(axis='x', colors="C0")
+ax.tick_params(axis='y', colors="C0")
+
+ax2.plot(x_values3, y_values3, color="C1")
+ax2.xaxis.tick_top()
+ax2.yaxis.tick_right()
+ax2.set_xlabel('x label 3', color="C1") 
+ax2.set_ylabel('y label 3', color="C1")       
+ax2.xaxis.set_label_position('top') 
+ax2.yaxis.set_label_position('right') 
+ax2.tick_params(axis='x', colors="C1")
+ax2.tick_params(axis='y', colors="C1")
+
+
 plt.show()
-plt.imshow(abs(test_2D3), interpolation='none')
-plt.title('abs-wavefunction: A={0}, R={1}, size={2}'.format(A,R,size))
-plt.show()
-plt.imshow(h, interpolation='none')
-plt.title('abs-so_integrator: A={0}, R={1}, size={2}, M={3}, T={4}'.format(A,R,size,M,T))
-plt.show()
 
 
-#f = potential_in_lattice(test_1D)
+
+''' 1D '''
+
+
+#plt.plot(fx,fy)
+#plt.title('potential: A={0}, R={1}, size={2}'.format(A,R,size))
+#plt.show()
+
+#plt.plot(np.arange(len(abs(test_1D))),abs(test_1D))
+#plt.title('abs-wavefunction: A={0}, R={1}, size={2}'.format(A,R,size))
+#plt.show()
+
+#plt.plot(hx,hy)
+#plt.title('abs-so_integrator: A={0}, R={1}, size={2}, M={3}, T={4}'.format(A,R,size,M,T))
+#plt.show()
+
+
+check_so_unitarity(test_1D,0.001)
+
+
+
+
+
+'''2D'''
+
+
+#f = potential_in_lattice(test_2D3)
 #g = hamiltonian_in_lattice(test_2D3).real
 #h = abs(so_integrator(test_2D3))
 
@@ -218,7 +290,7 @@ plt.show()
 #print(so_integrator(test_2D3))
 #a=so_integrator(test_2D3)
 
-check_so_unitarity(test_2D3,0.001)
+#check_so_unitarity(test_2D3,0.001)
 
 
 
