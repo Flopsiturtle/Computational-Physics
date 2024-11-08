@@ -3,6 +3,8 @@ import numpy as np
 # import cmath
 import math
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
 import time
 
 """ --- constans and parameters --- """
@@ -174,8 +176,8 @@ size = 200
 test_2D3 = np.random.rand(size,size) + 1j * np.random.rand(size,size)
 #test_2D3 = np.random.rand(size,size)*0+1 + 1j * np.random.rand(size,size)*0 +1j
 
-test_1D = np.random.rand(size,1)+ 1j * np.random.rand(size,1)
-#test_1D = np.random.rand(size,1)*0+1+ 1j * np.random.rand(size,1)*0 +1j
+#test_1D = np.random.rand(size,1)+ 1j * np.random.rand(size,1)
+test_1D = np.random.rand(size,1)*0+1+ 1j * np.random.rand(size,1)*0 +1j
 
 
 gaussian_1D = 1
@@ -205,8 +207,8 @@ gaussian_1D = 1
 
 fy = potential_in_lattice(test_1D)
 fx = np.arange(0,len(fy))
-g = abs(hamiltonian_in_lattice(test_1D))
-hy = abs(so_integrator(test_1D))
+g = abs(hamiltonian_in_lattice(test_1D))**2
+hy = abs(so_integrator(test_1D))**2
 hx = np.arange(0,len(hy))
 
 #### noch quadrieren fuer Wahrscheinlichkeit!!!
@@ -220,26 +222,172 @@ hx = np.arange(0,len(hy))
 
 
 
-def animate_so_integrator(phi0):
-    """solves the time dependent schrödinger equation for a given wavefunction "phi0" with the second-order integrator"""
-    start = phi0
-    plt.plot(start,np.arange(0,len(start)))
-    for m in np.arange(1,M+1):
-        iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
-        start = iteration
-        plt.plot(iteration,np.arange(0,len(iteration)))
-        time.sleep(100)
-    return 
+#def animate_so_integrator(phi0):
+ #   """animates the time dependent schrödinger equation for a given wavefunction "phi0" with the second-order integrator"""
+  #  start = phi0
+   # plt.plot(start,np.arange(0,len(start)))
+    #for m in np.arange(1,M+1):
+     #   iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
+      #  start = iteration
+       # plt.plot(iteration,np.arange(0,len(iteration)))
+        #time.sleep(100)
+    #return 
 
 #animate_so_integrator(test_1D)
 
-start = test_1D
-plt.plot(abs(start)**2,np.arange(0,len(start)))
-for m in np.arange(1,M+1):
-    iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
-    start = iteration
-    plt.plot(abs(iteration)**2,np.arange(0,len(iteration)))
-    time.sleep(100)
+
+fig, ax = plt.subplots()
+ax = plt.axes(xlim =(0, 200), ylim =(0, 5))  
+
+
+
+
+
+
+def so_integrator_images(phi0):
+    start = phi0
+    ims = []
+    ims.append(start)
+    for m in np.arange(1,M+1):
+        iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
+        start = iteration
+        ims.append(iteration)
+    return ims
+
+
+
+images_1D = so_integrator_images(test_1D)
+
+
+
+x = hx
+y = images_1D
+ 
+# enable interactive mode
+plt.ion()
+ 
+# creating subplot and figure
+fig = plt.figure()
+#ax = fig.add_subplot(111)
+ax = plt.axes(xlim =(0, 200), ylim =(0, 10))  
+line1, = ax.plot(x, abs(y[0])**2)
+
+
+for i in np.arange(0,len(images_1D)):
+    line1.set_xdata(x)
+    line1.set_ydata(abs(y[i])**2)
+ 
+    # re-drawing the figure
+    fig.canvas.draw()
+     
+    # to flush the GUI events
+    fig.canvas.flush_events()
+    time.sleep(0.00000000001)
+
+
+
+
+''' slower but axis are changing automatiucally'''
+
+for i in np.arange(0,len(images_1D)):
+    ax.clear()
+    ax.plot(x,abs(y[i])**2)
+    # re-drawing the figure
+    fig.canvas.draw()
+     
+    # to flush the GUI events
+    fig.canvas.flush_events()
+    time.sleep(0.00000000001)
+
+
+
+
+
+
+#ani = animation.ArtistAnimation(fig, ims, interval=50, repeat_delay=1000)
+
+# To save the animation, use e.g.
+#
+# ani.save("movie.mp4")
+#
+# or
+#
+# writer = animation.FFMpegWriter(
+#     fps=15, metadata=dict(artist='Me'), bitrate=1800)
+# ani.save("movie.mp4", writer=writer)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def so_integrator_for_anim(start):
+    return  start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
+
+
+
+
+  
+# initializing a figure in  
+# which the graph will be plotted 
+fig, axis = plt.subplots()  
+   
+axis = plt.axes(xlim =(0, 200), ylim =(0, 5))  
+  
+# initializing a line variable 
+line, = axis.plot([], [], lw = 3)  
+   
+# data which the line will  
+# contain (x, y) 
+def init():  
+    line.set_data([], []) 
+    return line, 
+   
+def animate(): 
+    x = hx 
+
+    # plots
+    y = so_integrator_for_anim()
+
+    line.set_data(x, y) 
+      
+    return line, 
+   
+anim = animation.FuncAnimation(fig, animate, init_func = init, frames = 200, interval = 20, blit = True) 
+  
+   
+anim.save('continuousSineWave.gif', writer = 'ffmpeg', fps = 30) 
+
+
+
+
+
+
+
 
 
 
