@@ -17,13 +17,16 @@ SP-Tests(Flo H./Mickey)
 
 
 Flo T - To Do:
-.Animation für so-operator implementieren
-.check so-operatot überarbeiten+prüfen
+-----.Animation für so-operator implementieren
+.check so-operator überarbeiten+prüfen
+.LaTex Datei anfangen
 .Variablen ordentlich definieren
 .Plot so-operator mit richtiger Achseneinteilung
-.LaTex Datei anfangen
 
-
+Extras: 
+.Animation, Darstellung etc. so-operator über separate .py Datei über:
+                    np.savetxt('test1.txt', a, fmt='%d')
+                    b = np.loadtxt('test1.txt', dtype=int)
 
 
 
