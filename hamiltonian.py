@@ -110,7 +110,7 @@ def check_linear(wave,error):
 
 """ --- integrators --- """
 
-M = 5000     # large value
+M = 6000     # large value
 T = 7   # time
 tau = T/M   # time step
 
@@ -199,19 +199,7 @@ gaussian_1D = 1
 ''' !!! WAVEFUNCTION INPUT: choose initial condition so that wavefunction travels from left to right and you see a reflecting and transmitting part in the animated time evolution !!! -> could be gaussian which has peak at left curve'''
 ###################
 
-
-
-
-
 ''' 1D '''
-
-fy = potential_in_lattice(test_1D)
-fx = np.arange(0,len(fy))
-g = abs(hamiltonian_in_lattice(test_1D))**2
-hy = abs(so_integrator(test_1D))**2
-hx = np.arange(0,len(hy))
-
-#### noch quadrieren fuer Wahrscheinlichkeit!!!
 
 
 
@@ -219,30 +207,6 @@ hx = np.arange(0,len(hy))
 
 
 ''' animate so '''
-
-
-
-#def animate_so_integrator(phi0):
- #   """animates the time dependent schrödinger equation for a given wavefunction "phi0" with the second-order integrator"""
-  #  start = phi0
-   # plt.plot(start,np.arange(0,len(start)))
-    #for m in np.arange(1,M+1):
-     #   iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
-      #  start = iteration
-       # plt.plot(iteration,np.arange(0,len(iteration)))
-        #time.sleep(100)
-    #return 
-
-#animate_so_integrator(test_1D)
-
-
-fig, ax = plt.subplots()
-ax = plt.axes(xlim =(0, 200), ylim =(0, 5))  
-
-
-
-
-
 
 def so_integrator_images(phi0):
     start = phi0
@@ -255,139 +219,92 @@ def so_integrator_images(phi0):
     return ims
 
 
-
-images_1D = so_integrator_images(test_1D)
-
-
-
-x = hx
-y = images_1D
- 
-# enable interactive mode
-plt.ion()
- 
-# creating subplot and figure
 fig = plt.figure()
-#ax = fig.add_subplot(111)
-ax = plt.axes(xlim =(0, 200), ylim =(0, 10))  
-line1, = ax.plot(x, abs(y[0])**2)
+axis = plt.axes(xlim =(0, 200),ylim =(0, 20))  
+#fig, axis = plt.subplots() # if we only need variable axis
 
-
-for i in np.arange(0,len(images_1D)):
-    line1.set_xdata(x)
-    line1.set_ydata(abs(y[i])**2)
- 
-    # re-drawing the figure
-    fig.canvas.draw()
-     
-    # to flush the GUI events
-    fig.canvas.flush_events()
-    time.sleep(0.00000000001)
-
-
-
-
-''' slower but axis are changing automatiucally'''
-
-for i in np.arange(0,len(images_1D)):
-    ax.clear()
-    ax.plot(x,abs(y[i])**2)
-    # re-drawing the figure
-    fig.canvas.draw()
-     
-    # to flush the GUI events
-    fig.canvas.flush_events()
-    time.sleep(0.00000000001)
-
-
-
-
-
-
-#ani = animation.ArtistAnimation(fig, ims, interval=50, repeat_delay=1000)
-
-# To save the animation, use e.g.
-#
-# ani.save("movie.mp4")
-#
-# or
-#
-# writer = animation.FFMpegWriter(
-#     fps=15, metadata=dict(artist='Me'), bitrate=1800)
-# ani.save("movie.mp4", writer=writer)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def so_integrator_for_anim(start):
-    return  start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
-
-
-
-
-  
-# initializing a figure in  
-# which the graph will be plotted 
-fig, axis = plt.subplots()  
-   
-axis = plt.axes(xlim =(0, 200), ylim =(0, 5))  
-  
 # initializing a line variable 
-line, = axis.plot([], [], lw = 3)  
-   
+line, = axis.plot([], [])  
 # data which the line will  
 # contain (x, y) 
 def init():  
     line.set_data([], []) 
     return line, 
    
-def animate(): 
-    x = hx 
+FRAMES = 150
+FPS = 23
+images = so_integrator_images(test_1D)
 
-    # plots
-    y = so_integrator_for_anim()
-
+def animate_so_integrator(i): 
+    global FRAMES,images
+    i2 = i*int(len(images)/FRAMES)
+    y = abs(images[i2])**2
+    x = np.arange(0,len(y)) 
+    axis.set_xlim(min(x), max(x)) # for variable axis
+    axis.set_ylim(0, max(y)+1) # for variable axis
     line.set_data(x, y) 
-      
     return line, 
-   
-anim = animation.FuncAnimation(fig, animate, init_func = init, frames = 200, interval = 20, blit = True) 
+
+anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init, frames = FRAMES, interval = 1000/FPS, blit = False) 
   
    
-anim.save('continuousSineWave.gif', writer = 'ffmpeg', fps = 30) 
+anim.save('animation_so_integrator.gif', writer = 'pillow', fps = FPS) 
 
 
 
 
 
 
+############## animation via for loop
 
+fy = potential_in_lattice(test_1D)
+fx = np.arange(0,len(fy))
+g = abs(hamiltonian_in_lattice(test_1D))**2
+hy = abs(so_integrator(test_1D))**2
+hx = np.arange(0,len(hy))
+
+#x = hx
+#y = images_1D
+ 
+
+# enable interactive mode
+#plt.ion()
+ 
+# creating subplot and figure
+#fig = plt.figure()
+#ax = fig.add_subplot(111)
+#ax = plt.axes(xlim =(0, 200), ylim =(0, 10))  
+#line1, = ax.plot(x, abs(y[0])**2)
+
+
+#FRAMES = 100
+#FPS = 23
+
+#for i in np.arange(0,len(images_1D),int(len(images_1D)/FRAMES)):
+#    line1.set_xdata(x)
+#    line1.set_ydata(abs(y[i])**2)
+# 
+#    # re-drawing the figure
+#    fig.canvas.draw()
+#     
+#    # to flush the GUI events
+#    fig.canvas.flush_events()
+#    time.sleep(1/FPS)
+
+######### slower animation but axis are changing
+
+#FRAMES = 100
+#FPS = 23
+
+#for i in np.arange(0,len(images_1D),int(len(images_1D)/FRAMES)):
+#    ax.clear()
+#    ax.plot(x,abs(y[i])**2)
+#    # re-drawing the figure
+#    fig.canvas.draw()
+#     
+#    # to flush the GUI events
+#    fig.canvas.flush_events()
+#    time.sleep(1/FPS)
 
 
 
