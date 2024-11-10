@@ -11,10 +11,19 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 #declaring variables
 H_BAR = 1
-M = 1
+MASS = 1
 D = 2
 N = 5
 A = 1
+OMEGA=1
+R=L/4
+T=1
+M=1000
+
+mu=MASS*OMEGA*R**2/H_BAR
+epsilon = A/R
+tau=OMEGA*T/M
+
 
 shape = (N,)  # tuple of D N's to shape ndarrays correctly
 origin = (0,)  # tuple of D zeros to call position in grid later
@@ -34,7 +43,7 @@ def potential():
     V=np.empty_like(Psi)*0
     for n, _ in np.ndenumerate(Psi):
         index_arr = np.array(n)
-        V[n]=MU/8*(EPSILON**2*np.dot(index_arr-int(N/2),index_arr-int(N/2))-1)**2
+        V[n]=mu/8*(epsilon**2*np.dot(index_arr-int(N/2),index_arr-int(N/2))-1)**2
     return V
 
 
@@ -49,7 +58,7 @@ def laplace(func):
 
 def hamilton(func):
     """calculating the hamiltonian for double harmonic well"""
-    return -1/(2*MU*EPSILON**2)*laplace(func)+potential()*func
+    return -1/(2*mu*epsilon**2)*laplace(func)+potential()*func
 
 
 
