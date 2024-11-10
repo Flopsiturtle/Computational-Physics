@@ -1,44 +1,59 @@
 #Florian Telleis
 import numpy as np
+from scipy import stats 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
 
-""" --- constans and parameters --- """
 
-# D = len(wave.shape)
-# N = (wave.shape)[0]
-A = 0.3  # for viewing good 0.13             # assumption: input is a | can also be variant of L=N*a with N=(wave.shape)[0]  \\ [0] is arbitrary because quadratic matrix
+""" --- constants and parameters --- """
 
-
-R = 36  # length from zero-point to potential-valleys 
-M = 1   # mass of point particle
-W = 1   # ... in units of time^-1
-H_BAR =1#!!! actually: 6.62607015*10**(-34)    # J*s
-
-
+"""lattice"""
+# D = len(wave.shape) ######### is D given????
+N = 200  # number of points in each direction of D-dimensional lattice  # if wavefunction is given: N = (wave.shape)[0]    # \\ [0] is arbitrary because quadratic matrix
+A = 0.3  # spacing between lattice points   # assumption: A is input | can also be variant of L=N*a  
+"""potential/hamiltonian"""
+R = 18  # length from zero-point to potential-valleys 
+M = 0.1   # mass of point particle
+W = 5   # frequency
+H_BAR = 1#!!! actually: 6.62607015*10**(-34)    # J*s
 mu = (M*W*R**2)/H_BAR
 epsilon = A/R
+"""integrator"""
+M = 10000   # large value
+T = 10      # time
+tau = T/M   # time step
+"""animation"""
+FRAMES = 150    # number of frames in final animation
+FPS = 23        # number of frames per second in final animation
+
+
+
+
+''' --- wavefunction --- '''
+
+def gaussian_1D(mean,sigma): 
+    x_data = np.arange(0, N) 
+    y_data = stats.norm.pdf(x_data, mean, sigma) 
+    return y_data 
+
+def wave_to_lattice(wave):  
+    """transform given wavefunction "wave" to lattice units (discrete)"""
+    D = len(wave.shape)             
+    return A**(D/2)*wave  
+
+test_function = wave_to_lattice(gaussian_1D(25,10)) # choosing the wavefunction for the animation
 
 
 
 
 """ --- hamiltonian and CO. --- """
 
-
-def wave_to_lattice(wave):   # transformation can also be done implicitly in a later function 
-    """transform given wavefunction "wave" to lattice units (discrete)"""
-    D = len(wave.shape)             
-    return A**(D/2)*wave        
-
-# phi = wave_to_lattice(wave,a)
-
-
 def laplace_in_lattice(phi):    # input phi has to be in lattice units
     """calculate the laplacian of a wavefunction "phi" """
     shape = phi.shape
-    D = len(shape)      # assumption: quadratic arrays; for example 2D: NxN
+    D = len(shape)      
     laplace = np.zeros(shape)
     for i in np.arange(0,D):
         laplace = laplace + np.roll(phi,1,i) - 2*phi + np.roll(phi,-1,i)
@@ -48,24 +63,18 @@ def laplace_in_lattice(phi):    # input phi has to be in lattice units
 def potential_in_lattice(phi):
     """define the potential in lattice units with the same dimensions as input wavefunction "phi" """
     V = np.zeros(phi.shape)
-    N = phi.shape[0]
     for index, value in np.ndenumerate(phi):
         index_arr = np.array(index)
         V[index] = mu/8 * (epsilon**2*np.dot(index_arr-int(N/2),index_arr-int(N/2))-1)**2       
     return V        
-                                # move potential to lattice centrum to obtain all wanted values! -> index_arr-int(n/2)
-                                # i understood the lattice moving for the potential
-                            ##### BUT how does this influence in which way we input our given wavefunction??? is it already central????
+
 
 def hamiltonian_in_lattice(phi):
     """calculate the hamiltonian of a given wavefunction "phi" """    
-    #phi = wave_to_lattice(wave) # phi already input
     H = - 1/(2*mu*epsilon**2)*laplace_in_lattice(phi) + potential_in_lattice(phi) * phi
     return H
 
 
-
-# scalar product
 def scal_prod(phi1,phi2):
     """calculates the scalar product/inner product of two wavefunctions"""
     return np.sum(np.multiply(np.conjugate(phi1),phi2))
@@ -73,45 +82,17 @@ def scal_prod(phi1,phi2):
 
 
 
-
+### Mickey
 """check for characteristics: - linear, - hermitian, -""" 
-#!#!#!#!#! checks were done before upload of scipt with the info
-
-# wrong
-def check_hermitian(hamiltonian,error):      # geht nur für 2D arrays durch np.matrix!!!
-    ham_matrix = np.matrix(hamiltonian)
-    ham_adj = ham_matrix.getH()
-        ## dont check hermitian of hamiltonian on phi but hamiltonian itself!
-    if abs((ham_matrix - ham_adj)).all() <= error:
-        result = "hermitian"
-    else:
-        result = "non-hermitian"
-    return print(result)
-# wrong
-
-def check_linear(wave,error):
-                # hamilton(lambda*phi) == lambda*hamilton(phi)      # -> welche Zahl als Beispiel?: einfach mal 27.9
-                # hamilton(phi+phi´) == hamilton(phi) + hamilton(phi´)      # wie phi´ aus phi erzeugen?: wave@wave
-    wave2 = wave@wave
-    linear1 = hamiltonian_in_lattice(27.9*(wave-wave2))
-    linear2 = 27.9*(hamiltonian_in_lattice(wave)-hamiltonian_in_lattice(wave2))
-    if (abs(linear1 == linear2)).all() <= error:
-        result = "linear"
-    else:
-        result = "non-linear"
-    return print(result)
+### Mickey
 
 
 
 
 
 
-""" --- integrators --- """
 
-M = 6000     # large value
-T = 7   # time
-tau = T/M   # time step
-
+""" --- second order integrator --- """
 
 def so_integrator(phi0):
     """solves the time dependent schrödinger equation for a given wavefunction "phi0" with the second-order integrator"""
@@ -120,85 +101,29 @@ def so_integrator(phi0):
         iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
         start = iteration
     return iteration
-    # I think this is correctly implemented
 
 
 
 """ --- check unitarity --- """
 
-def check_so_unitarity(phi0,error):   
+def check_so_unitarity_explicitly(phi0):   
     """checks the unitarity of the second-order evolution operator via conservation of the norm of states"""   
     phitau = so_integrator(phi0)
-    if abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau).real)) <= error:
-        result = "WARNING, evolution operator is unitary."
-    else:
-        result = "OK, evolution operator is not unitary."
-    return print(result)
+    return print('The difference between the two norms is:', abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau).real)))
 
-#############
-##### !!! dont do the function with error input BUT print out the difference between the two scal_prod and from that output we manually evaluate the result for multiple conditions !!! 
-#############
+
 
 
 """ --- check error --- """
+######### ???????
 
 
 
 
-
-
-
-
-
-
-# ----- tests -----
-
-
-
-
-
-test_2D = np.array([[[1.3,4.27],[3.6,5.9]]])
-test_2D2 = np.array([[[2,5+1j],[3,9+4j]]])
-test_3D = np.array([[[2,32],[2,1]],[[2,7],[2,3]]])
-
-
-size = 200
-test_2D3 = np.random.rand(size,size) + 1j * np.random.rand(size,size)
-#test_2D3 = np.random.rand(size,size)*0+1 + 1j * np.random.rand(size,size)*0 +1j
-
-#test_1D = np.random.rand(size,1)+ 1j * np.random.rand(size,1)
-test_1D = np.random.rand(size,1)*0+1+ 1j * np.random.rand(size,1)*0 +1j
-
-
-gaussian_1D = 1
-
-
-
-
-#print(test_1D)
-
-#print(scal_prod(test_2D3,test_2D3).real)
-
-#ff = so_integrator(test_2D3)
-#gg = so_integrator(ff)
-#check_so_unitarity(gg,0.0001)
-
-
-
-###################
-''' !!! WAVEFUNCTION INPUT: choose initial condition so that wavefunction travels from left to right and you see a reflecting and transmitting part in the animated time evolution !!! -> could be gaussian which has peak at left curve'''
-###################
-
-''' 1D '''
-
-
-
-
-
-
-''' animate so '''
+""" --- create list of time evolution --- """ 
 
 def so_integrator_images(phi0):
+    """ creates a list of the calculated wavefunctions for all timesteps of the second-order time evolution """
     start = phi0
     ims = []
     ims.append(start)
@@ -208,116 +133,65 @@ def so_integrator_images(phi0):
         ims.append(iteration)
     return ims
 
+images = so_integrator_images(test_function)    # creates the list of arrays for our test function
 
-fig = plt.figure()
-axis = plt.axes(xlim =(0, 200),ylim =(0, 20))  
-#fig, axis = plt.subplots() # if we only need variable axis
 
-# initializing a line variable 
+
+#############
+""" now simpler calculating of so_unitarity"""
+def check_so_unitarity_images(phi0):   
+    """checks the unitarity of the second-order evolution operator via conservation of the norm of states"""   
+    last = len(images)-1
+    phitau = images[last]
+    return print('The difference between the two norms is:', abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau).real)))
+##############
+
+
+
+""" --- animate the second order time evolution --- """
+#fig = plt.figure()
+#axis = plt.axes(xlim =(0, 200),ylim =(0, 20))  # if dont want variable axis
+fig, axis = plt.subplots() 
+
 line, = axis.plot([], [])  
-# data which the line will  
-# contain (x, y) 
+
 def init():  
     line.set_data([], []) 
     return line, 
    
-FRAMES = 150
-FPS = 23
-images = so_integrator_images(test_1D)
-
 def animate_so_integrator(i): 
+    """function that gets called for animation"""
+    """takes a number of arrays from calculated "images" corresponding to FRAMES and sets a line data"""
     global FRAMES,images
-    i2 = i*int(len(images)/FRAMES)
+    i2 = i*int(len(images)/FRAMES) # dont use all the frames from the time evolution
     y = abs(images[i2])**2
     x = np.arange(0,len(y)) 
     axis.set_xlim(min(x), max(x)) # for variable axis
-    axis.set_ylim(0, max(y)+1) # for variable axis
+    axis.set_ylim(0, max(y)*1.1) # for variable axis
     line.set_data(x, y) 
     return line, 
 
 anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init, frames = FRAMES, interval = 1000/FPS, blit = False) 
-  
-   
-anim.save('animation_so_integrator.gif', writer = 'pillow', fps = FPS) 
+
+#anim.save('animation_so_integrator.gif', writer = 'pillow', fps = FPS) 
 
 
 
 
+''' plot of the last frame of the animation with potential '''
 
+###########?????? how do we show the potential in regards to abs(wave)**2 ??????
 
-############## animation via for loop
+last = len(images)-1
+y_values1 = abs(images[last])**2
+x_values1 = np.arange(0,len(y_values1))
 
-fy = potential_in_lattice(test_1D)
-fx = np.arange(0,len(fy))
-g = abs(hamiltonian_in_lattice(test_1D))**2
-hy = abs(so_integrator(test_1D))**2
-hx = np.arange(0,len(hy))
-
-#x = hx
-#y = images_1D
- 
-
-# enable interactive mode
-#plt.ion()
- 
-# creating subplot and figure
-#fig = plt.figure()
-#ax = fig.add_subplot(111)
-#ax = plt.axes(xlim =(0, 200), ylim =(0, 10))  
-#line1, = ax.plot(x, abs(y[0])**2)
-
-
-#FRAMES = 100
-#FPS = 23
-
-#for i in np.arange(0,len(images_1D),int(len(images_1D)/FRAMES)):
-#    line1.set_xdata(x)
-#    line1.set_ydata(abs(y[i])**2)
-# 
-#    # re-drawing the figure
-#    fig.canvas.draw()
-#     
-#    # to flush the GUI events
-#    fig.canvas.flush_events()
-#    time.sleep(1/FPS)
-
-######### slower animation but axis are changing
-
-#FRAMES = 100
-#FPS = 23
-
-#for i in np.arange(0,len(images_1D),int(len(images_1D)/FRAMES)):
-#    ax.clear()
-#    ax.plot(x,abs(y[i])**2)
-#    # re-drawing the figure
-#    fig.canvas.draw()
-#     
-#    # to flush the GUI events
-#    fig.canvas.flush_events()
-#    time.sleep(1/FPS)
-
-
-
-
-
-''' plot der beiden '''
-
-
-
-x_values1=fx
-y_values1=fy
-
-x_values2=np.array([0,0])
-y_values2=np.array([0,0])
-
-x_values3=hx
-y_values3=hy
-
+y_values3 = potential_in_lattice(test_function)
+x_values3 = np.arange(0,len(y_values3))
 
 fig=plt.figure()
 ax=fig.add_subplot(111, label="1")
 ax2=fig.add_subplot(111, label="2", frame_on=False)
-ax3=fig.add_subplot(111, label="3", frame_on=False)
 
 ax.plot(x_values1, y_values1, color="C0")
 ax.set_xlabel("x label 1", color="C0")
@@ -336,29 +210,13 @@ ax2.tick_params(axis='x', colors="C1")
 ax2.tick_params(axis='y', colors="C1")
 
 
+
 plt.show()
 
 
 
 
 
-
-######### random
-
-#plt.plot(fx,fy)
-#plt.title('potential: A={0}, R={1}, size={2}'.format(A,R,size))
-#plt.show()
-
-#plt.plot(np.arange(len(abs(test_1D))),abs(test_1D))
-#plt.title('abs-wavefunction: A={0}, R={1}, size={2}'.format(A,R,size))
-#plt.show()
-
-#plt.plot(hx,hy)
-#plt.title('abs-so_integrator: A={0}, R={1}, size={2}, M={3}, T={4}'.format(A,R,size,M,T))
-#plt.show()
-
-
-check_so_unitarity(test_1D,0.001)
 
 
 
@@ -367,70 +225,16 @@ check_so_unitarity(test_1D,0.001)
 
 
 '''2D'''
-
-
-#f = potential_in_lattice(test_2D3)
-#g = hamiltonian_in_lattice(test_2D3).real
-#h = abs(so_integrator(test_2D3))
+#f = potential_in_lattice(test_function)
+#g = hamiltonian_in_lattice(test_function).real
+#h = abs(so_integrator(test_function))
 
 #plt.imshow(f, interpolation='none')
 #plt.title('potential: A={0}, R={1}, size={2}'.format(A,R,size))
 #plt.show()
-#plt.imshow(abs(test_2D3), interpolation='none')
+#plt.imshow(abs(test_function), interpolation='none')
 #plt.title('abs-wavefunction: A={0}, R={1}, size={2}'.format(A,R,size))
 #plt.show()
 #plt.imshow(h, interpolation='none')
 #plt.title('abs-so_integrator: A={0}, R={1}, size={2}, M={3}, T={4}'.format(A,R,size,M,T))
 #plt.show()
-
-
-
-
-
-#print(laplace_in_lattice(test_2D3))
-#check_hermitian(test_2D3,1)
-#check_linear(test_2D3,0.01)
-
-
-#print(so_integrator(test_2D3))
-#a=so_integrator(test_2D3)
-
-#check_so_unitarity(test_2D3,0.001)
-
-
-
-
-
-
-#print(test_2D3)
-
-
-#print(exp_array(test_2D,5))
-
-#print(round(scal_prod(test_2D,test_2D).real,7))
-
-#print(round(scal_prod(so_integrator(test_2D),so_integrator(test_2D)).real,8))
-
-
-#print(check_hermitian(test_3D)) # geht nicht durch 3D
-
-#print(check_hermitian(test_2D))
-#print(check_hermitian(test_2D2))
-
-#print(check_linear(test_2D,......))        inputs fehlen für hermitian
-
-
-#print(np.arange(1,10+1))
-
-
-#print(test)
-#print(np.roll(test,1,0))
-
-# axis 2 -> x
-# axis 1 -> y
-# axis 0 -> z
-
-
-
-
-#input()
