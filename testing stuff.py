@@ -64,3 +64,53 @@ print(n)
 
 
 print(np.array([0,1,2])-4)
+
+
+size = 200 # is equal to N right?
+
+gaussian_1D = 1
+
+#test_1D = np.random.rand(size,1)+ 1j * np.random.rand(size,1)
+test_1D = np.random.rand(size,1)*0+1+ 1j * np.random.rand(size,1)*0 +1j
+
+print((test_1D.shape)[0])
+
+print(len(test_1D))
+
+N = 200  # number of points in each direction of D-dimensional lattice  # if wavefunction is given: N = (wave.shape)[0]    # \\ [0] is arbitrary because quadratic matrix
+A = 0.3  # spacing between lattice points   # assumption: A is input | can also be variant of L=N*a  
+"""potential/hamiltonian"""
+R = 36  # length from zero-point to potential-valleys 
+M = 1   # mass of point particle
+W = 1   # frequency
+H_BAR = 1#!!! actually: 6.62607015*10**(-34)    # J*s
+mu = (M*W*R**2)/H_BAR
+epsilon = A/R
+
+import scipy as sp 
+from scipy import stats 
+import matplotlib.pyplot as plt  
+
+
+def gaussian_1D(sig): 
+    phi = np.ones(N)
+    for n, _ in np.ndenumerate(phi):
+        x = (np.array(n) - mu) * A
+        phi[n] = 1.0 / (np.sqrt(2.0 * np.pi) * sig) * np.exp(-np.dot(x, x) / sig / 2) + 0j
+    return phi
+    
+#print(gaussian_1D(1))
+
+x_data = np.arange(-100, 100, 200/N) 
+  
+## y-axis as the gaussian 
+y_data = stats.norm.pdf(x_data, 1, 0.5) 
+  
+print(y_data)
+print(len(y_data))
+
+
+## plot data 
+plt.plot(x_data, y_data)
+plt.show()
+
