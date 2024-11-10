@@ -1,22 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Nov  1 00:14:09 2024
 
-@author: Mickey
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 24 16:24:05 2024
-
-@author: Mickey
-""" 
 
 import numpy as np
 
 """Constants and Definitions"""
 
-N = 3
+N = 100
 epsilon = 1
 mu = 1
 initial = np.random.rand(N,N)
@@ -78,7 +66,7 @@ def test_linearity(Hamilton_operator,psi_in,iterations, error):
         else:
             print('Hamiltonian is not linear!')
             
-def test_hermiticity(Hamilton_operator, psi_in, iterations, error):
+def test_hermiticity(Hamilton_operator, psi_in, iterations):
     """Tests the hermiticity of the given Hamilton operator. 
     An arbitrary wave function psi_in must be given to define the dimensions. 
     Iterations defines the number of tests to be executed with random wavefunctions. 
@@ -90,27 +78,23 @@ def test_hermiticity(Hamilton_operator, psi_in, iterations, error):
         psi2 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         LHS = np.sum(np.multiply(np.conjugate(psi1), Hamiltonian(psi2)))
         RHS = np.sum(np.multiply(np.conjugate(Hamiltonian(psi1)), psi2))
-        if (np.abs(LHS - RHS) < error): 
-            print('Hamiltonian is hermitian!')
-        else: 
-            print('Hamiltonian is not hermitian')
+        print(np.sum(np.abs(LHS - RHS)))
+         
         
         
-def test_positivity(Hamilton_operator, potential_operator, psi_in, iterations, error):
+def test_positivity(Hamilton_operator, potential_operator, psi_in, iterations):
     """Tests the positivity of the given Hamilton operator and Potential. 
     An arbitrary wave function psi_in must be given to define the dimensions. 
     Iterations defines the number of tests to be executed with random wavefunctions. 
     Returns statement regarding the positivity."""
     shape = np.shape(psi_in)
-    psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-    if np.sum(np.multiply(np.conjugate(psi1), Potential(psi1))).real < 0:
-        print('Potential is not positive!')
-    if np.sum(np.multiply(np.conjugate(psi1), Hamiltonian(psi1))).real < 0:
-        print('Hamiltonian is not positive!')
-    else:
-        print('Hamiltonian and Potential are positive!')
+    for i in range(iterations):
+        psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
+        print("Potential:"  ,np.sum(np.multiply(np.conjugate(psi1), Potential(psi1))).real)
+        print("Hamiltonian:" , np.sum(np.multiply(np.conjugate(psi1), Hamiltonian(psi1))).real)
+       
         
-def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations, error):
+def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
     shape = np.shape(psi_in)
     D = len(shape)
     plane_wave = np.zeros(shape, dtype=complex)
@@ -123,11 +107,18 @@ def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations, error):
         for i in range(len(k)):
             eigenvalue += (np.sin(np.pi/N * k[i]))**2
         RHS = 2/(mu*epsilon**2)*eigenvalue * plane_wave
-        if np.all(np.abs(LHS - RHS ) < error):
-            print("Eigenvalue equation satisfied!")
-        else:
-            print("Eigenvalue equation not satisfied!") 
-    
+        print(np.sum(np.abs(LHS - RHS )))
+
+test_eigenvectors(Kinetic_Hamiltonian, initial, 1) 
+test_positivity(Hamiltonian, Potential, initial, 1)
+test_hermiticity(Hamiltonian, initial, 1)
+
+            
+
+            
+     
+
+
 
             
 
