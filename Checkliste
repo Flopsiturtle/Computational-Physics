@@ -18,8 +18,9 @@ SP-Tests(Flo H./Mickey)
 
 Flo T - To Do:
 -----.Animation für so-operator implementieren
-.check so-operator überarbeiten+prüfen
-.LaTex Datei anfangen
+-----.check so-operator überarbeiten+prüfen
+-----.LaTex Datei anfangen
+.Animation letzte Sachen überprüfen
 .Variablen ordentlich definieren
 .Plot so-operator mit richtiger Achseneinteilung
 
