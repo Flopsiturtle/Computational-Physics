@@ -10,7 +10,7 @@ import matplotlib.animation as animation
 """ --- constants and parameters --- """
 
 """lattice"""
-# D = len(wave.shape) ######### is D given????
+# D = len(wave.shape) 
 N = 200  # number of points in each direction of D-dimensional lattice  # if wavefunction is given: N = (wave.shape)[0]    # \\ [0] is arbitrary because quadratic matrix
 A = 0.3  # spacing between lattice points   # assumption: A is input | can also be variant of L=N*a  
 """potential/hamiltonian"""
@@ -25,8 +25,9 @@ M = 10000   # large value
 T = 10      # time
 tau = T/M   # time step
 """animation"""
-FRAMES = 150    # number of frames in final animation
-FPS = 23        # number of frames per second in final animation
+FRAMES = 200    # number of frames in final animation
+FPS = int(FRAMES/T)     # number of frames per second if given time T is real time in seconds
+#FPS = 23    # if FPS should be indipendent of T
 
 
 
@@ -97,7 +98,7 @@ def scal_prod(phi1,phi2):
 def so_integrator(phi0):
     """solves the time dependent schrödinger equation for a given wavefunction "phi0" with the second-order integrator"""
     start = phi0
-    for m in np.arange(1,M+1):
+    for m in np.arange(0,M):
         iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
         start = iteration
     return iteration
@@ -127,13 +128,14 @@ def so_integrator_images(phi0):
     start = phi0
     ims = []
     ims.append(start)
-    for m in np.arange(1,M+1):
+    for m in np.arange(0,M):
         iteration = start - 1j*tau*hamiltonian_in_lattice(start) - 1/2*tau**2*hamiltonian_in_lattice(hamiltonian_in_lattice(start))
         start = iteration
         ims.append(iteration)
     return ims
 
 images = so_integrator_images(test_function)    # creates the list of arrays for our test function
+last = len(images)-1
 
 
 
@@ -141,7 +143,6 @@ images = so_integrator_images(test_function)    # creates the list of arrays for
 """ now simpler calculating of so_unitarity"""
 def check_so_unitarity_images(phi0):   
     """checks the unitarity of the second-order evolution operator via conservation of the norm of states"""   
-    last = len(images)-1
     phitau = images[last]
     return print('The difference between the two norms is:', abs((scal_prod(phi0,phi0).real)-(scal_prod(phitau,phitau).real)))
 ##############
@@ -149,9 +150,9 @@ def check_so_unitarity_images(phi0):
 
 
 """ --- animate the second order time evolution --- """
-#fig = plt.figure()
-#axis = plt.axes(xlim =(0, 200),ylim =(0, 20))  # if dont want variable axis
-fig, axis = plt.subplots() 
+fig = plt.figure()
+axis = plt.axes(xlim=(0,N-1),ylim =(0, 0.002))  # for constant axis
+#fig, axis = plt.subplots()     # for variable axis
 
 line, = axis.plot([], [])  
 
@@ -162,18 +163,17 @@ def init():
 def animate_so_integrator(i): 
     """function that gets called for animation"""
     """takes a number of arrays from calculated "images" corresponding to FRAMES and sets a line data"""
-    global FRAMES,images
-    i2 = i*int(len(images)/FRAMES) # dont use all the frames from the time evolution
+    global FRAMES,images,last
+    i2 = int(i*last/(FRAMES-1)) # dont use all the frames from the time evolution
     y = abs(images[i2])**2
     x = np.arange(0,len(y)) 
-    axis.set_xlim(min(x), max(x)) # for variable axis
-    axis.set_ylim(0, max(y)*1.1) # for variable axis
+    #axis.set_ylim(0, max(y)*1.1) # for variable axis
     line.set_data(x, y) 
     return line, 
 
-anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init, frames = FRAMES, interval = 1000/FPS, blit = False) 
+anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init, frames = FRAMES, interval = 1000/FPS, blit = True) 
 
-#anim.save('animation_so_integrator.gif', writer = 'pillow', fps = FPS) 
+anim.save('animation_so_integrator_3-blitTrue.gif', writer = 'pillow', fps = FPS) 
 
 
 
@@ -182,7 +182,7 @@ anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init, fra
 
 ###########?????? how do we show the potential in regards to abs(wave)**2 ??????
 
-last = len(images)-1
+
 y_values1 = abs(images[last])**2
 x_values1 = np.arange(0,len(y_values1))
 
@@ -212,11 +212,6 @@ ax2.tick_params(axis='y', colors="C1")
 
 
 plt.show()
-
-
-
-
-
 
 
 
