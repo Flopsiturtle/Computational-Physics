@@ -101,16 +101,23 @@ def gaussian_1D(sig):
     
 #print(gaussian_1D(1))
 
-x_data = np.arange(-100, 100, 200/N) 
+#x_data = np.arange(-100, 100, 200/N) 
   
 ## y-axis as the gaussian 
-y_data = stats.norm.pdf(x_data, 1, 0.5) 
+#y_data = stats.norm.pdf(x_data, 1, 0.5) 
   
-print(y_data)
-print(len(y_data))
+#print(y_data)
+#print(len(y_data))
 
 
 ## plot data 
-plt.plot(x_data, y_data)
-plt.show()
+#plt.plot(x_data, y_data)
+#plt.show()
+M=10
 
+print(np.arange(1,M+1))
+
+for m in np.arange(0,M):
+    print(1)
+for m in np.arange(1,M+1):
+    print(2)
