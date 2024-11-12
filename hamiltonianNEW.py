@@ -140,7 +140,7 @@ last = len(images)-1
 
 
 #############
-""" now simpler calculating of so_unitarity"""
+""" now simpler calculation of so_unitarity"""
 def check_so_unitarity_images(phi0):   
     """checks the unitarity of the second-order evolution operator via conservation of the norm of states"""   
     phitau = images[last]
@@ -173,7 +173,7 @@ def animate_so_integrator(i):
 
 anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init, frames = FRAMES, interval = 1000/FPS, blit = True) 
 
-anim.save('animation_so_integrator_3-blitTrue.gif', writer = 'pillow', fps = FPS) 
+#anim.save('animation_so_integrator.gif', writer = 'pillow', fps = FPS) 
 
 
 
