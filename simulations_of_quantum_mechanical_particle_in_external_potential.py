@@ -338,7 +338,7 @@ def animate_difference(i):
 fig = plt.figure()
 axis = plt.axes(xlim=(0,N-1),ylim =(0, 0.002))  # for constant axis
 #fig, axis = plt.subplots()     # for variable axis
-
+ 
 line, = axis.plot([], [])  
 
 def init():  
