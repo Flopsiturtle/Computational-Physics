@@ -22,7 +22,7 @@ H_BAR = 1#!!! actually: 6.62607015*10**(-34)    # J*s
 mu = (M*W*R**2)/H_BAR
 epsilon = A/R
 D=1
-M = 1000  # large value
+M = 10000  # large value
 T = 10      # time
 tau = T/M   # time step
 
@@ -282,11 +282,18 @@ anim2 = animation.FuncAnimation(fig, animate_strang_integrator, init_func = init
 
 
 
-plt.plot()
+""" difference in last M for our tau"""
+""" question is: do we run the code three times for different tau???"""
+
+fig = plt.figure()
+axis = plt.axes(xlim=(0,N-1),ylim =(0, 0.002))  # for constant axis
+axis.plot(np.arange(0,200),np.abs(abs(images_so[M])**2-abs(images_strang[M])**2))
+axis.set_ylim(0, max(np.abs(abs(images_so[M])**2-abs(images_strang[M])**2))*1.1) 
+#plt.plot(np.arange(0,200),np.abs(abs(images_so[M])**2-abs(images_strang[M])**2))
 
 
 
-#plt.show()
+plt.show()
 
 
 
