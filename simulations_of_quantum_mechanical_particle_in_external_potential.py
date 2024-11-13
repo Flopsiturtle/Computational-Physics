@@ -60,6 +60,10 @@ def laplace(func):
         lap += (np.roll(func, -1, axis=j)
                 +np.roll(func, 1, axis=j))
     return lap
+def kinetic_hamilton(func):
+    """calculating the free_hamiltonian"""
+    return -1/(2*mu*epsilon**2)*laplace(func)
+
 
 
 def hamilton(func):
@@ -89,13 +93,27 @@ def test_hermiticity(Hamiltonian, psi_in, iterations):
         RHS = np.sum(np.multiply(np.conjugate(Hamiltonian(psi1)), psi2))
         print(np.abs(LHS - RHS))
 
+def test_positivity(Hamiltonian, psi_in, iterations):
+    shape = np.shape(psi_in)
+    for i in range(iterations):
+        psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
+        print("Potential:"  ,np.sign(np.sum(np.multiply(np.conjugate(psi1), potential(psi1))).real))
+        print("Hamiltonian:" , np.sign(np.sum(np.multiply(np.conjugate(psi1), Hamiltonian(psi1))).real))
 
-
-
-
-
-
-
+def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
+    shape = np.shape(psi_in)
+    D = len(shape)
+    plane_wave = np.zeros(shape, dtype=complex)
+    for i in range(iterations):
+        k = np.random.randint(-N,N, size= D)
+        eigenvalue = 0
+        for index, value in np.ndenumerate(psi_in):
+            plane_wave[index] = np.exp(2*np.pi * 1j * np.dot(np.array(index),k)/N)
+        LHS = Kinetic_Hamiltonian(plane_wave)
+        for i in range(len(k)):
+            eigenvalue += (np.sin(np.pi/N * k[i]))**2
+        RHS = 2/(mu*epsilon**2)*eigenvalue * plane_wave
+        print(np.max(np.abs(LHS - RHS )))
 
 
 
@@ -178,6 +196,19 @@ def test_Strang_linearity(psi_in, iterations):
         RHS = alpha[i]*Strang_Splitting(psi1, 1) + beta[i]*Strang_Splitting(psi2,1)
         error = np.sum(np.abs(LHS - RHS))
         print(error)
+       
+def test_energy_conserv(psi_in, iterations):
+    shape = np.shape(psi_in)
+    phi = np.random.rand(*shape) + 1j * np.random.rand(*shape)
+    phi = phi/np.sqrt(np.dot(np.conjugate(phi),phi))
+    energy0 = np.dot(np.conjugate(phi), hamilton(phi))
+    for i in range(iterations):
+        wave = Strang_Splitting(phi, 1)
+        energy0 = np.dot(np.conjugate(phi),hamilton(phi))
+        energy1 = np.dot(np.conjugate(wave),hamilton(wave))
+        error = np.abs(energy1 - energy0)
+        print(error)
+        phi = wave        
       
 
 
@@ -230,14 +261,15 @@ def animate_strang_integrator(i):
     return line2, 
 
 
-
-
-
 Psi=gaussian_1D(25,10)*10
 V = potential(Psi)
+iterations = 10
 
 
-test_linearity(hamilton, Psi, 10) 
+#test_eigenvectors(kinetic_hamilton, Psi, iterations)
+test_energy_conserv(Psi, iterations)
+
+
 
 images_so = images(Psi, so_integrator)    # creates the list of arrays for our test function
 images_strang = images(Psi, Strang_Splitting)
@@ -249,7 +281,12 @@ anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init1, fr
 anim2 = animation.FuncAnimation(fig, animate_strang_integrator, init_func = init2, frames = FRAMES, interval = 1000/FPS, blit = False) 
 
 
-plt.show()
+
+plt.plot()
+
+
+
+#plt.show()
 
 
 
