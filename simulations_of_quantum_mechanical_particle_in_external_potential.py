@@ -31,17 +31,17 @@ for _ in range(D-1):
     shape += (N,)
     origin += (0,)
 
-Psi=np.arange(N**D).reshape(shape).astype('float64')
 
-# Create the potential
-V=np.empty_like(Psi)
-for n, _ in np.ndenumerate(Psi):
-    V[n]=np.dot(np.array(n)-int(N/2),np.array(n)-int(N/2))
+def gaussian_1D(mean,sigma): 
+    x_data = np.arange(0, N) 
+    y_data = stats.norm.pdf(x_data, mean, sigma) 
+    return y_data 
 
-def potential():
+
+def potential(func):
     """defines the potential"""
-    V=np.empty_like(Psi)*0
-    for n, _ in np.ndenumerate(Psi):
+    V = np.zeros(func.shape)
+    for n, _ in np.ndenumerate(func):
         index_arr = np.array(n)
         V[n]=mu/8*(epsilon**2*np.dot(index_arr-int(N/2),index_arr-int(N/2))-1)**2
     return V
@@ -58,7 +58,9 @@ def laplace(func):
 
 def hamilton(func):
     """calculating the hamiltonian for double harmonic well"""
-    return -1/(2*mu*epsilon**2)*laplace(func)+potential()*func
+    return -1/(2*mu*epsilon**2)*laplace(func)+V*func
 
 
+Psi=gaussian_1D(25,10)
+V = potential(Psi)
 
