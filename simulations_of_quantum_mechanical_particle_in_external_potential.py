@@ -216,7 +216,7 @@ def images(func, integ):
 
 
 
-fig, (ax1, ax2,ax3) = plt.subplots(1,3, figsize=(16, 9))
+fig, (ax1, ax2,ax3) = plt.subplots(1,3, figsize=(12, 6))
 
 line1, = ax1.plot([], [])  
 line2, = ax2.plot([], [],'green')
@@ -229,7 +229,7 @@ ax2.set_ylim(0,0.4)
 ax3.set_xlim(0,N-1)
 ax3.set_ylim(0,0.002)
 
-fig.suptitle('mu={0}, epsilon={1}, N={2}, M={3}, T={4}, tau={5}'.format(mu,epsilon,N,M,T,tau), fontsize=15)
+fig.suptitle('mu={0}, epsilon={1}, N={2}, M={3}, T={4}, tau={5}'.format(mu,epsilon,N,M,T,tau), fontsize=12)
 ax1.set_title("Second-order integrator")
 ax2.set_title("Strang-splitting integrator")
 ax3.set_title("Difference between both integrators")
@@ -338,7 +338,7 @@ def animate_difference(i):
 fig = plt.figure()
 axis = plt.axes(xlim=(0,N-1),ylim =(0, 0.002))  # for constant axis
 #fig, axis = plt.subplots()     # for variable axis
- 
+
 line, = axis.plot([], [])  
 
 def init():  
