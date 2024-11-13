@@ -88,6 +88,7 @@ def laplace(func):
     return lap
 
 
+
 def hamilton(func):
     """calculating the hamiltonian for double harmonic well"""
     return -1/(2*MU*EPSILON**2)*laplace(func)+potential()*func
