@@ -159,37 +159,37 @@ def Strang_Splitting(psi_in,M):
 
 
 
-def test_unitarity(psi_in, iterations):
+def test_unitarity(integrator, psi_in, iterations):
     shape = np.shape(psi_in)
     phi = np.random.rand(*shape) + 1j * np.random.rand(*shape)
     phi = phi/np.sqrt(np.dot(np.conjugate(phi),phi))
     for i in range(iterations):
-        wave = Strang_Splitting(phi,1)
+        wave = integrator(phi,1)
         norm = np.sqrt(np.dot(np.conjugate(wave), wave))
         print(np.abs(1-norm))
         phi = wave
 
 
-def test_Strang_linearity(psi_in, iterations):
+def test_linearity_integrator(integrator, psi_in, iterations):
     shape = np.shape(psi_in)
     alpha = np.random.rand(iterations) + 1j * np.random.rand(iterations)
     beta = np.random.rand(iterations) + 1j * np.random.rand(iterations)
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         psi2 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-        LHS = Strang_Splitting((alpha[i]*psi1 + beta[i]*psi2), 1)
-        RHS = alpha[i]*Strang_Splitting(psi1, 1) + beta[i]*Strang_Splitting(psi2,1)
+        LHS = integrator((alpha[i]*psi1 + beta[i]*psi2), 1)
+        RHS = alpha[i]*integrator(psi1, 1) + beta[i]*integrator(psi2,1)
         error = np.sum(np.abs(LHS - RHS))
         print(error)
        
     
-def test_energy_conserv(psi_in, iterations):
+def test_energy_conserv(integrator, psi_in, iterations):
     shape = np.shape(psi_in)
     phi = np.random.rand(*shape) + 1j * np.random.rand(*shape)
     phi = phi/np.sqrt(np.dot(np.conjugate(phi),phi))
     energy0 = np.dot(np.conjugate(phi), hamilton(phi))
     for i in range(iterations):
-        wave = Strang_Splitting(phi, 1)
+        wave = integrator(phi, 1)
         energy0 = np.dot(np.conjugate(phi),hamilton(phi))
         energy1 = np.dot(np.conjugate(wave),hamilton(wave))
         error = np.abs(energy1 - energy0)
