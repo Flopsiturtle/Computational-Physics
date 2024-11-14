@@ -72,7 +72,6 @@ def hamilton(func):
 
 def test_linearity(Hamiltonian,psi_in,iterations):
     shape = np.shape(psi_in)
-    truth_values = np.array([])
     alpha = np.random.rand(iterations) + 1j * np.random.rand(iterations)
     beta = np.random.rand(iterations) + 1j * np.random.rand(iterations)
     for i in range(iterations):
