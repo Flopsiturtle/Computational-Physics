@@ -55,7 +55,7 @@ def laplace(func):
 
 
 def kinetic_hamilton(func):
-    """calculating the free_hamiltonian"""
+    """calculating the free hamiltonian"""
     return -1/(2*mu*epsilon**2)*laplace(func)
 
 
