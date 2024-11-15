@@ -1,0 +1,32 @@
+\section{Workflow}
+	- started with implementation of the laplace function and hamiltonian with potential first not defined \\
+	- all the functions are kept generic for D dimensions \\
+	//// we have in code D defined and also take D = len(psi.shape) //// i would use second variant! \\
+	- particular importance for laplacian, where started with different for loops to try to achieve the wanted symmetric derivative for each element; but for periodic boundary conditions and generic dimensions: far easier and more importantly faster computation to stay at one point of lattice and move the whole lattice around this point, achieved with np.roll function \\ 
+	\\
+	- defined potential as in lecture -> noticed that centre of potential has to be in lattice center: N/2 \\ 
+	\\
+	- we than started to implement the in lecture given tests starting hermiticity, where in our function we first returned a print() of "is hermitian" / "is not hermitian" depending on the difference (error) between the left hand side and right hand side of equation (36) from lecture notes, which was lower / higher the error given in input function \\
+	- because this pre defined error dependence was chosen after printing the differences a few times beforehand, this version included a bias of strictly defining what a small error and therefore hermiticity was \\
+	--> changed the hermiticity test and all following tests to print() the raw numbers of examined quantities (e.g. differences) and not pre-defined yes/no, in order to actively check with running programm for the result of said tests \\
+	\\
+	- then test linearity and positivity, where .....  		\\
+	////in tests: why *shape \\ \\
+	- before testing eigenvectors and using for strang-splitting integrator, implemented second order integrator \\
+	- first runs were plotted in 2D (see appendix!!!) to check if our code works in more than 1D and while doing this we found our first set of parameters (...?)\\
+	- the first version of so integrator didnt take M as input though (we did this later for animation, see below) but just used the given M from the start to iterate the time evolution \\
+	\\
+	- we also implemented the unitary test for so-integrator to have a comparison in the errors for the actually wanted test of unitary for the strang splitting integrator; we changed the test later to take the integrator as an input, to simplify the number of tests in our code \\
+	\\
+	\\
+	\\
+	- than came test eigenvectors, where we also with pen and paper calculated eigenvalues (???) which matched with the given ones (58/59 ???) in the lecture notes \\ 
+	\\
+	- with this work we also implemented strang splitting integrator .......???????? \\ 
+	\\
+	- and after that more tests of the integrators: linearity (same as above in general but for integrator not hamiltonian), energy conservation
+	//// linearity integrator: error = np.max not np.sum !!! \\
+	//// we also could write linearity test for hermitian and integrators in one linearity test (because the same i think)\\
+	\\
+	- animation:
+	- physical interpretation tasks implementation
