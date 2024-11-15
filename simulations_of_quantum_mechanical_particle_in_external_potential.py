@@ -21,7 +21,7 @@ epsilon = A/R
 D=1
 M = 10000  # large value
 T = 10      # time
-tau = T/M   # time step
+tau = T/M#*W !!!   # time step
 
 FRAMES = 200    # number of frames in final animation
 FPS = int(FRAMES/T)     # number of frames per second if given time T is real time in seconds
