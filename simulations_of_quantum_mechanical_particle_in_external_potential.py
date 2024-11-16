@@ -46,7 +46,7 @@ def potential(func):
 
 def laplace(func):
     """calculating the laplacian of ndarray"""
-    shape = np.shape(psi_in)
+    shape = np.shape(func)
     D = len(shape)
     lap = -2*D*func
     for j in range(D):
