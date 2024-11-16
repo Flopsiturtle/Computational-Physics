@@ -10,9 +10,10 @@
 	- because this pre defined error dependence was chosen after printing the differences a few times beforehand, this version included a bias of strictly defining what a small error and therefore hermiticity was \\
 	--> changed the hermiticity test and all following tests to print() the raw numbers of examined quantities (e.g. differences) and not pre-defined yes/no, in order to actively check with running programm for the result of said tests \\
 	\\p
-	- then test linearity and positivity, where we first used a explicitly defined alpha,beta and two wavefunctions (which were all real) to validate our aoproach, and then used randomly generated alpha,beta and wavefunctions (which also had an imaginary part) with the same shape as our wavefunction to assure the result is correct for different parameters \\
-	- there we also changed to output the error and not a pre-defined statement dependend on the error, and after all that we implemented the argument iterations in the test-functions to set the number of runs of the test \\
-	- the positivity test 
+	- then test linearity, equation (35) from lecture notes, where we first used a explicitly defined alpha,beta and two wavefunctions (which were all real) to validate our aoproach, and then used randomly generated alpha,beta and wavefunctions (which also had an imaginary part) with the same shape as our wavefunction to assure the result is correct for different variables \\
+	- there we also changed the function to output the error and not a pre-defined statement dependend on the error, as discussed above and following done for all tests, and at the end we implemented the argument "iterations" in the test-functions to set the number of runs of the test which all will be printed \\
+	- the positivity test was done in similar way for equation (38) where we first returned the raw numbers of potential and hamiltonian scalar product (?) and than changed this to only output the sign of these numbers for better visibility
+	//// in positivity test: Potential should be without scalar product or not
 	////in tests: why *shape \\ 
 	\\
 	- before testing eigenvectors and using for strang-splitting integrator, implemented second order integrator \\
