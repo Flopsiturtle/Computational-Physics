@@ -25,6 +25,7 @@
 	\\
 	\\
 	- than came test eigenvectors, where we also with pen and paper calculated eigenvalues (???) which matched with the given results from equation (58/59 ???) in the lecture notes \\ 
+	- test: .........????????
 	\\
 	- with this work we also implemented the strang splitting integrator .........???????? \\ 
 	\\
@@ -36,4 +37,4 @@
 	\\
 	- animation:
 	///////// change animation: if m==int(i*M/(FRAMES-1)): ims.append(iteration) 	-->> in animation: i2 = i
-	- physical interpretation tasks implementation
+	- physical interpretation tasks implementation .........????????
