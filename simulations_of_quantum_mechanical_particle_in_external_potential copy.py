@@ -35,8 +35,8 @@ FPS = int(FRAMES/T)     # number of frames per second if given time T is real ti
 
 
 def gaussian_1D(mean,sigma): 
-    x_data = np.arange(0, N) 
-    y_data = stats.norm.pdf(x_data, mean, sigma) 
+    x_data = np.arange(-int(N/2), int(N/2)) 
+    y_data = stats.norm.pdf(x_data, mean, sigma)*np.exp(-5j*x_data) 
     return y_data 
 
 
@@ -203,8 +203,8 @@ def test_energy_conserv(psi_in, iterations):
       
 
 
-
-def images(func, integr):
+######### old
+def images2(func, integr):
     """ creates a list of the calculated wavefunctions for all timesteps """
     start = func
     ims = []
@@ -218,8 +218,19 @@ def images(func, integr):
         if m in i2:
             ims.append(iteration)
     return ims
+######### old
 
-
+def images(func, integr):
+    """ creates a list of the calculated wavefunctions for all timesteps """
+    start = func
+    ims = []
+    ims.append(start)
+    M_step = int(M/(FRAMES-1))       # dont save all the frames from the time evolution, just the ones we use                           
+    for i in np.arange(1,FRAMES):
+        iteration = integr(start,M_step)
+        start = iteration
+        ims.append(iteration)
+    return ims
 
 
 
@@ -258,7 +269,7 @@ def animate_all(i):
 
 """ --- run the code --- """
 
-Psi=gaussian_1D(25,10) * 10     ###### anstatt * 10 lieber normieren!!!
+Psi=gaussian_1D(-int(N/4),int(N/20)) * 10     ###### anstatt * 10 lieber normieren!!!
 V = potential(Psi)
 
 
@@ -273,7 +284,7 @@ images_strang = images(Psi, Strang_Splitting)
 
 anim = animation.FuncAnimation(fig, animate_all, frames = FRAMES, interval = 1000/FPS, blit = True) 
 
-#anim.save('animation_project.gif', writer = 'pillow', fps = FPS) 
+#anim.save('animation_project_new.gif', writer = 'pillow', fps = FPS) 
 
 
 

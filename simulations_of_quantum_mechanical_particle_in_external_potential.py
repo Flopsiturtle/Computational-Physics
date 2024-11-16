@@ -36,8 +36,8 @@ FPS = int(FRAMES/T)     # number of frames per second if given time T is real ti
 
 
 def gaussian_1D(mean,sigma): 
-    x_data = np.arange(0, N) 
-    y_data = stats.norm.pdf(x_data, mean, sigma) 
+    x_data = np.arange(-int(N/2), int(N/2)) 
+    y_data = stats.norm.pdf(x_data, mean, sigma)*np.exp(-5j*x_data) 
     return y_data 
 
 
@@ -256,7 +256,7 @@ def animate_all(i):
 
 """ --- run the code --- """
 
-Psi=gaussian_1D(25,10) * 10     ###### anstatt * 10 lieber normieren!!!
+Psi=gaussian_1D(-50,10) * 10      ###### anstatt * 10 lieber normieren!!!
 V = potential(Psi)
 
 
@@ -271,7 +271,7 @@ images_strang = images(Psi, Strang_Splitting)
 
 anim = animation.FuncAnimation(fig, animate_all, frames = FRAMES, interval = 1000/FPS, blit = True) 
 
-#anim.save('animation_project.gif', writer = 'pillow', fps = FPS) 
+#anim.save('animation_project_old.gif', writer = 'pillow', fps = FPS) 
 
 
 import psutil

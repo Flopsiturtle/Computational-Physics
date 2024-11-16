@@ -113,11 +113,8 @@ def gaussian_1D(sig):
 ## plot data 
 #plt.plot(x_data, y_data)
 #plt.show()
-M=10
+M=10000
+FRAMES = 200
 
-print(np.arange(1,M+1))
 
-for m in np.arange(0,M):
-    print(1)
-for m in np.arange(1,M+1):
-    print(2)
+print(M/FRAMES)
