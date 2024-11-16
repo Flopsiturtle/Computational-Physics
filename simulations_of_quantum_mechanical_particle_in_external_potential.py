@@ -179,7 +179,7 @@ def test_linearity_integrator(integrator, psi_in, iterations):
         psi2 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         LHS = integrator((alpha[i]*psi1 + beta[i]*psi2), 1)
         RHS = alpha[i]*integrator(psi1, 1) + beta[i]*integrator(psi2,1)
-        error = np.sum(np.abs(LHS - RHS))
+        error = np.max(np.abs(LHS - RHS))
         print(error)
        
     
