@@ -18,7 +18,6 @@ H_BAR = 1#!!! actually: 6.62607015*10**(-34)    # J*s
 mu = (M*W*R**2)/H_BAR
 epsilon = A/R
 
-D=1
 M = 10000  # large value
 T = 10      # time
 tau = T/M#*W !!!   # time step
