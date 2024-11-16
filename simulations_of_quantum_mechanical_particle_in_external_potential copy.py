@@ -6,7 +6,6 @@ from scipy import stats
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-
 import timeit
 
 start = timeit.default_timer()
@@ -205,15 +204,19 @@ def test_energy_conserv(psi_in, iterations):
 
 
 
-def images(func, integ):
+def images(func, integr):
     """ creates a list of the calculated wavefunctions for all timesteps """
     start = func
     ims = []
     ims.append(start)
-    for m in np.arange(0,M):
-        iteration = integ(start,1)
+    i2 =[]
+    for i in np.arange(0,FRAMES):           
+        i2.append(int(i*M/(FRAMES-1)))     # dont use all the frames from the time evolution
+    for m in np.arange(1,M+1):
+        iteration = integr(start,1)
         start = iteration
-        ims.append(iteration)
+        if m in i2:
+            ims.append(iteration)
     return ims
 
 
@@ -244,11 +247,10 @@ def animate(y,line):
     x = np.arange(0,len(y)) 
     line.set_data(x,y)
 
-def animate_all(i):
-    i2 = int(i*M/(FRAMES-1))    # dont use all the frames from the time evolution
-    animate(abs(images_so[i2])**2 , line1)      # second-order
-    animate(abs(images_strang[i2])**2 , line2)      # strang-splitting
-    animate(abs(abs(images_strang[i2])**2-abs(images_so[i2])**2) , line3)   # difference between both
+def animate_all(i):  
+    animate(abs(images_so[i])**2 , line1)      # second-order
+    animate(abs(images_strang[i])**2 , line2)      # strang-splitting
+    animate(abs(abs(images_strang[i])**2-abs(images_so[i])**2) , line3)   # difference between both
     return line1, line2, line3,
 
 
@@ -274,6 +276,7 @@ anim = animation.FuncAnimation(fig, animate_all, frames = FRAMES, interval = 100
 #anim.save('animation_project.gif', writer = 'pillow', fps = FPS) 
 
 
+
 import psutil
 process = psutil.Process()
 print(process.memory_info().rss)  # in bytes 
@@ -289,8 +292,27 @@ plt.show()
 
 
 
+### M=10.000
+#old:
+189108224
+Time:  14.780895300000338
+
+#new:
+120127488
+Time:  14.47185669999999
 
 
+### M=50.000
+#old:
+475910144   # in bytes 
+Time:  69.58242770000015
+
+#new:
+119500800   # in bytes 
+Time:  72.2879552999998
+
+
+####### besides: M 50.000 difference integrators way smaller
 
 
 
