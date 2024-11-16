@@ -35,4 +35,5 @@
 	\\
 	\\
 	- animation:
+	///////// change animation: if m==int(i*M/(FRAMES-1)): ims.append(iteration) 	-->> in animation: i2 = i
 	- physical interpretation tasks implementation
