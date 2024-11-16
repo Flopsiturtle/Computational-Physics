@@ -43,6 +43,7 @@ def initialize(gauss = False, random = False):
     if random:
         Psi = np.random.uniform(-1,1,shape)+1j*np.random.uniform(-1,1,shape)
         return()
+    
     """
     if gauss:
         for n, _ in np.ndenumerate(Psi):
@@ -205,3 +206,22 @@ plt.plot(t, Norm, E)
 #print(hamilton(Psi))
 #print(time_evol(Psi, 20))
 #print(inner_product(time_evol(Psi, 20), time_evol(Psi, 20)))
+
+
+"""
+def dependence(func):
+    global M
+    taus = []
+    E_so = []
+    E_st = []
+    norms = []
+    diff = []
+    for m in range(100):
+        M = 10*m
+        taus.append(tau)
+        E_so.append(inner_product(so_integrator(func, 10), hamilton(so_integrator(func, 10)))/inner_product(so_integrator(func, 10), so_integrator(func, 10)))
+        E_st.append(inner_product(Strang_Splitting(func, 10), hamilton(Strang_Splitting(func, 10)))/inner_product(Strang_Splitting(func, 10), Strang_Splitting(func, 10)))
+        norms.append(inner_product(so_integrator(func, 10), so_integrator(func, 10)))
+        diff.append(np.average(np.abs(so_integrator(func,10)-Strang_Splitting(func,10))))
+    print(taus)
+    return taus, E_so, E_st, norms, diff"""
