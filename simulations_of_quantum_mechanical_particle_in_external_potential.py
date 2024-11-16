@@ -30,8 +30,8 @@ FPS = int(FRAMES/T)     # number of frames per second if given time T is real ti
 
 
 def gaussian_1D(mean,sigma): 
-    x_data = np.arange(0, N) 
-    y_data = stats.norm.pdf(x_data, mean, sigma) 
+    x_data = np.arange(-int(N/2), int(N/2)) 
+    y_data = stats.norm.pdf(x_data, mean, sigma)*np.exp(-5j*x_data) 
     return y_data 
 
 
@@ -200,18 +200,17 @@ def test_energy_conserv(integrator, psi_in, iterations):
 
 
 
-def images(func, integ):
+def images(func, integr):
     """ creates a list of the calculated wavefunctions for all timesteps """
     start = func
     ims = []
     ims.append(start)
-    for m in np.arange(0,M):
-        iteration = integ(start,1)
+    M_step = int(M/(FRAMES-1))       # dont save all the frames from the time evolution, just the ones we use                           
+    for i in np.arange(1,FRAMES):
+        iteration = integr(start,M_step)
         start = iteration
         ims.append(iteration)
     return ims
-
-
 
 
 
@@ -239,11 +238,10 @@ def animate(y,line):
     x = np.arange(0,len(y)) 
     line.set_data(x,y)
 
-def animate_all(i):
-    i2 = int(i*M/(FRAMES-1))    # dont use all the frames from the time evolution
-    animate(abs(images_so[i2])**2 , line1)      # second-order
-    animate(abs(images_strang[i2])**2 , line2)      # strang-splitting
-    animate(abs(abs(images_strang[i2])**2-abs(images_so[i2])**2) , line3)   # difference between both
+def animate_all(i):  
+    animate(abs(images_so[i])**2 , line1)      # second-order
+    animate(abs(images_strang[i])**2 , line2)      # strang-splitting
+    animate(abs(abs(images_strang[i])**2-abs(images_so[i])**2) , line3)   # difference between both
     return line1, line2, line3,
 
 
@@ -251,7 +249,7 @@ def animate_all(i):
 
 """ --- run the code --- """
 
-Psi=gaussian_1D(25,10) * 10     ###### anstatt * 10 lieber normieren!!!
+Psi=gaussian_1D(-int(N/4),int(N/20)) * 10     ###### anstatt * 10 lieber normieren!!!
 V = potential(Psi)
 
 
@@ -266,7 +264,7 @@ images_strang = images(Psi, Strang_Splitting)
 
 anim = animation.FuncAnimation(fig, animate_all, frames = FRAMES, interval = 1000/FPS, blit = True) 
 
-#anim.save('animation_project.gif', writer = 'pillow', fps = FPS) 
+#anim.save('animation_project.gif', writer = 'pillow', fps = FPS)     # to save the animation
 
 
 plt.show()
