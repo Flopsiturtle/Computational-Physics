@@ -281,7 +281,6 @@ def rel():
     axs[0,1].legend(fontsize=18)
     axs[1,0].legend(fontsize=18)
     axs[1,1].legend(fontsize=18)
-    plt.show()
     return Ms, E_so, E_st, norm_so, avg_diff
 
 """ --- run the code --- """
@@ -295,29 +294,40 @@ Ms, E_so, E_st, norm_so, avg_diff=rel()
 
 fig, (ax1, ax2,ax3) = plt.subplots(1,3, figsize=(12, 6))
 
-line1, = ax1.plot([], [], label=r'$|\varepsilon\hat{\Psi}_{so}|^2\cdot\frac{\mu}{8}$')  
-line2, = ax2.plot([], [], label=r'$|\varepsilon\hat{\Psi}_{st}|^2\cdot\frac{\mu}{8}$')
-line3, = ax3.plot([], [], label=r'$|\hat{\Psi}_so-\hat{\Psi}_st|^2$')  
-line4, = ax1.plot(n*epsilon,V/(H_BAR*W), label=r'$\frac{V}{\hbar\omega}$')
-line5, = ax2.plot(n*epsilon,V/(H_BAR*W), label=r'$\frac{V}{\hbar\omega}$')
+line1, = ax1.plot([], [], label=r'$|\hat{\Psi}_{so}|^2\cdot\frac{1}{\varepsilon}$')  
+line2, = ax2.plot([], [], label=r'$|\hat{\Psi}_{st}|^2\cdot\frac{1}{\varepsilon}$')
+line3, = ax3.plot([], [], label=r'$|\hat{\Psi}_{so}-\hat{\Psi}_{st}|^2$')  
+
+ax12 = ax1.twinx()
+ax12.plot(n*epsilon,V/(H_BAR*W),color="C1", label=r'$\frac{V}{\hbar\omega}$')
+ax22 = ax2.twinx()
+ax22.plot(n*epsilon,V/(H_BAR*W),color="C1", label=r'$\frac{V}{\hbar\omega}$')
 
 
 
 
-ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60], 
+ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.3], 
         xlabel=r'$\frac{x}{r}$', title='Second-order integrator')
-ax2.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60], 
+ax1.tick_params(axis='y', labelcolor="C0")
+ax12.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60])
+ax12.tick_params(axis='y', labelcolor="C1")
+ax2.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.3], 
         xlabel=r'$\frac{x}{r}$', title='Strang-splitting integrator')
+ax2.tick_params(axis='y', labelcolor="C0")
+ax22.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60])
+ax22.tick_params(axis='y', labelcolor="C1")
 ax3.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,10**(-5)], 
         xlabel=r'$\frac{x}{r}$', title='Difference between both integrators')
-ax3.set_xlim(-int(N/2)*epsilon,int(N/2)*epsilon)
 
 
 fig.suptitle(r'$\mu$={0}, $\varepsilon$={1}, N={2}, M={3}, T={4}, $\tau$={5}'.format(mu,round(epsilon, 5),N,M,T,tau), fontsize=12)
 
-ax1.legend()
-ax2.legend()
+ax1.legend(loc=2)
+ax12.legend(loc=1)
+ax2.legend(loc=2)
+ax22.legend(loc=1)
 ax3.legend()
+
 
 def animate(y,line):
     line.set_data(n*epsilon,y)
