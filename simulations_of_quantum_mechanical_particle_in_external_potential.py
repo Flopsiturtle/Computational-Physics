@@ -306,12 +306,12 @@ ax22.plot(n*epsilon,V/(H_BAR*W),color="C1", label=r'$\frac{V}{\hbar\omega}$')
 
 
 
-ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.3], 
+ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,4], 
         xlabel=r'$\frac{x}{r}$', title='Second-order integrator')
 ax1.tick_params(axis='y', labelcolor="C0")
 ax12.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60])
 ax12.tick_params(axis='y', labelcolor="C1")
-ax2.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.3], 
+ax2.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,4], 
         xlabel=r'$\frac{x}{r}$', title='Strang-splitting integrator')
 ax2.tick_params(axis='y', labelcolor="C0")
 ax22.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60])
@@ -326,15 +326,15 @@ ax1.legend(loc=2)
 ax12.legend(loc=1)
 ax2.legend(loc=2)
 ax22.legend(loc=1)
-ax3.legend()
+ax3.legend(loc=2)
 
 
 def animate(y,line):
     line.set_data(n*epsilon,y)
 
 def animate_all(i):  
-    animate(abs(images_so[i])**2/epsilon*mu/8 , line1)      # second-order
-    animate(abs(images_strang[i])**2/epsilon*mu/8 , line2)      # strang-splitting
+    animate(abs(images_so[i])**2/epsilon , line1)      # second-order
+    animate(abs(images_strang[i])**2/epsilon , line2)      # strang-splitting
     animate(abs(images_strang[i]-images_so[i])**2 , line3)   # difference between both
     return line1, line2, line3,
 
@@ -370,7 +370,6 @@ anim = animation.FuncAnimation(fig, animate_all, frames = FRAMES, interval = 100
 
 
 plt.show()
-
 
 
 
