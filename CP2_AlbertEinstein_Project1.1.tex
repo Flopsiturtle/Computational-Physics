@@ -113,7 +113,7 @@
 
 
 
-	\section{Workflow}
+\section{Workflow}
     
 	In this section, we will briefly discuss our workflow for the implementation and evolution of our code.
 	\\
@@ -130,7 +130,7 @@
 	We also implemented the unitary test for the second-order integrator to have specific values to compare to for the strang-splitting integrator, which contrary to the second-order integrator has to be unitary. The unitary test was then changed to take the kind of integrator as an input, to minimize the number of defined test functions in our code. This was done, as seen before, with multiple tests e.g. linearity.
 	\\
 	\\
-	Afterwards, we calculated the eigenvalues with pen and paper, see equation \ref{equ:calc-eigenvalues} in the appendix \ref{sec:appendix}, which matched with the given results in equation (58/59) from the lecture notes. \\
+	Afterwards, we calculated the eigenvalues with pen and paper, see equation \ref{equ:calc-eigenvectors} in the appendix \ref{sec:appendix}, which matched with the given results in equation (58/59) from the lecture notes. \\
 	With this work, we also implemented the tests of eigenfunctions/-values ...........Mickey............ and thus thereafter the strang splitting integrator ...........Mickey............ \\
 	We also wanted to take a look at energy conservation for testing the behaviour in the continuum. These tests were already discussed in the previous chapter.
 	\\
@@ -193,16 +193,19 @@ When looking at higher values of M we can see the predicted linear plot for the 
 	\end{center} 
 	\end{figure}
 	
+	\newpage
 	
-	Calculation of eigenvalues with pen and paper. 
- 	\begin{equation}	\label{equ:calc-eigenvectors}
-  	\end{euqation}
+	 
+ 	\begin{equation}	
+  	\mathrm{Calculation~of~eigenvalues~with~pen~and~paper.}
+  	\label{equ:calc-eigenvectors}
+  	\end{equation} 
 	\begin{align*}
     \hat{H}_a\hat{\psi}_k(n)&=-\frac{1}{2\mu\varepsilon^2}\sum\limits_j^D\left(exp\left(\frac{2\pi i}{N}(\Vec{n}-e_j)\cdot\Vec{k} \right) -2exp\left(\frac{2\pi i}{N}\Vec{n}\cdot\Vec{k} \right) +exp\left(\frac{2\pi i}{N}(\Vec{n}+e_j)\cdot\Vec{k} \right) \right)\\
     &=-\frac{1}{2\mu\varepsilon^2}\sum\limits_j^D\left(exp\left(-\frac{2\pi i}{N}\Vec{k}_j \right) -2 +exp\left(\frac{2\pi i}{N}\Vec{k}_j \right) \right)\hat{\psi}_k(n)\\
     &=\frac{1}{\mu\varepsilon^2}\sum\limits_j^D\left(1-cos\left(\frac{2\pi}{N}k_j\right)\right)\hat{\psi}_k(n)=\frac{2}{\mu\varepsilon^2}\sum\limits_j^Dsin^2\left(\frac{\pi}{n}k_j \right)\hat{\psi}_k(n)
 	\end{align*}
-	
+	\vspace{1cm}
 	
 	\begin{figure} [h] 
 	\begin{center}
