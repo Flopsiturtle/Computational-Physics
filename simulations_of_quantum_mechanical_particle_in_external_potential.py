@@ -278,7 +278,6 @@ def rel():
     axs[0,1].legend(fontsize=18)
     axs[1,0].legend(fontsize=18)
     axs[1,1].legend(fontsize=18)
-    plt.show()
     return Ms, E_so, E_st, norm_so, avg_diff
 
 """ --- run the code --- """
@@ -292,8 +291,8 @@ Ms, E_so, E_st, norm_so, avg_diff=rel()
 
 fig, (ax1, ax2,ax3) = plt.subplots(1,3, figsize=(12, 6))
 
-line1, = ax1.plot([], [], label=r'$|\hat{\Psi}_{so}|^2\cdot$')  
-line2, = ax2.plot([], [], label=r'$|\hat{\Psi}_{st}|^2\cdot$')
+line1, = ax1.plot([], [], label=r'$|\hat{\Psi}_{so}|^2\cdot\frac{1}{\varepsilon}$')  
+line2, = ax2.plot([], [], label=r'$|\hat{\Psi}_{st}|^2\cdot\frac{1}{\varepsilon}$')
 line3, = ax3.plot([], [], label=r'$|\hat{\Psi}_{so}-\hat{\Psi}_{st}|^2$')  
 
 ax12 = ax1.twinx()
@@ -304,12 +303,12 @@ ax22.plot(n*epsilon,V/(H_BAR*W),color="C1", label=r'$\frac{V}{\hbar\omega}$')
 
 
 
-ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.07], 
+ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.3], 
         xlabel=r'$\frac{x}{r}$', title='Second-order integrator')
 ax1.tick_params(axis='y', labelcolor="C0")
 ax12.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60])
 ax12.tick_params(axis='y', labelcolor="C1")
-ax2.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.07], 
+ax2.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,0.3], 
         xlabel=r'$\frac{x}{r}$', title='Strang-splitting integrator')
 ax2.tick_params(axis='y', labelcolor="C0")
 ax22.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60])
