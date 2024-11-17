@@ -11,16 +11,17 @@ N = 200 # number of points in each direction of D-dimensional lattice  # if wave
 A = 0.3  # spacing between lattice points   # assumption: A is input | can also be variant of L=N*a  
 
 R = 18  # length from zero-point to potential-valleys 
-M = 0.1   # mass of point particle
-W = 5   # frequency
+Mass = 0.475   # mass of point particle
+W = 1   # frequency
 H_BAR = 1#!!! actually: 6.62607015*10**(-34)    # J*s
 
-mu = (M*W*R**2)/H_BAR
+mu = (Mass*W*R**2)/H_BAR
 epsilon = A/R
 
-M = 10000  # large value
-T = 10      # time
-tau = T/M#*W !!!   # time step
+
+T = 10     # time
+M = 1000*T  # large value
+tau = W*T/M  # time step
 
 FRAMES = 200    # number of frames in final animation
 FPS = int(FRAMES/T)     # number of frames per second if given time T is real time in seconds
@@ -32,7 +33,17 @@ FPS = int(FRAMES/T)     # number of frames per second if given time T is real ti
 def gaussian_1D(mean,sigma): 
     x_data = np.arange(-int(N/2), int(N/2)) 
     y_data = stats.norm.pdf(x_data, mean, sigma)*np.exp(-5j*x_data) 
-    return y_data 
+    return x_data, y_data 
+
+
+def inner_product(func1, func2):
+    """calculates the inner product of two arrays"""
+    return np.dot(np.conjugate(func1),func2)
+
+
+def normalize(func):
+    """normalizes input function"""
+    return func*1/np.sqrt(inner_product(func,func))
 
 
 def potential(func):
@@ -69,39 +80,50 @@ def test_linearity(Hamiltonian,psi_in,iterations):
     shape = np.shape(psi_in)
     alpha = np.random.rand(iterations) + 1j * np.random.rand(iterations)
     beta = np.random.rand(iterations) + 1j * np.random.rand(iterations)
+    err = []
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         psi2 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         LHS = Hamiltonian(alpha[i]*psi1 + beta[i]*psi2)
         RHS = alpha[i]*Hamiltonian(psi1) + beta[i]*Hamiltonian(psi2)
         error = np.max(np.abs(LHS - RHS))
-        print(error)
+        err.append(error)
+    return err
 
 
 def test_hermiticity(Hamiltonian, psi_in, iterations):
     shape = np.shape(psi_in)
+    err = []
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         psi2 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-        LHS = np.sum(np.multiply(np.conjugate(psi1), Hamiltonian(psi2)))
-        RHS = np.sum(np.multiply(np.conjugate(Hamiltonian(psi1)), psi2))
-        print(np.abs(LHS - RHS))
+        LHS = inner_product(psi1, Hamiltonian(psi2))
+        RHS = inner_product(Hamiltonian(psi1), psi2)
+        error = np.abs(LHS - RHS)
+        err.append(error)
+    return err
 
 
 def test_positivity(Hamiltonian, psi_in, iterations):
     shape = np.shape(psi_in)
+    count = 0
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-        print("Potential:"  ,np.sign(np.sum(np.multiply(np.conjugate(psi1), potential(psi1))).real))
-        print("Hamiltonian:" , np.sign(np.sum(np.multiply(np.conjugate(psi1), Hamiltonian(psi1))).real))
+        print("Potential:"  ,np.sign(inner_product(psi1, np.multiply(potential(psi1),psi1)).real))
+        print("Hamiltonian:" , np.sign(inner_product(psi1, Hamiltonian(psi1)).real))
+        if inner_product(psi1, Hamiltonian(psi1))<0:
+            count +=1
+    print("the hamiltonian has been negative " + str(count) + "times")
+    return(count)
 
 
 def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
     shape = np.shape(psi_in)
     D = len(shape)
     plane_wave = np.zeros(shape, dtype=complex)
+    err = []
     for i in range(iterations):
-        k = np.random.randint(-N,N, size= D)
+        k = np.random.randint(-N,N, size= D)  #really -N to N? not -N/2 to N/2?
         eigenvalue = 0
         for index, value in np.ndenumerate(psi_in):
             plane_wave[index] = np.exp(2*np.pi * 1j * np.dot(np.array(index),k)/N)
@@ -109,7 +131,9 @@ def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
         for i in range(len(k)):
             eigenvalue += (np.sin(np.pi/N * k[i]))**2
         RHS = 2/(mu*epsilon**2)*eigenvalue * plane_wave
-        print(np.max(np.abs(LHS - RHS )))
+        error = np.max(np.abs(LHS - RHS ))
+        err.append(error)
+    return err
 
 
 
@@ -163,40 +187,45 @@ def Strang_Splitting(psi_in,M):
 def test_unitarity(integrator, psi_in, iterations):
     shape = np.shape(psi_in)
     phi = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-    phi = phi/np.sqrt(np.dot(np.conjugate(phi),phi))
+    phi = normalize(phi)
+    err = []
     for i in range(iterations):
-        wave = integrator(phi,1)
-        norm = np.sqrt(np.dot(np.conjugate(wave), wave))
-        print(np.abs(1-norm))
-        phi = wave
-
+        wave = integrator(phi,1)   #shouldn't we run it to M? the wave might not change much after 1 iteration.
+        norm = np.sqrt(inner_product(wave,wave))
+        error = np.abs(1-norm)
+        err.append(error)
+        phi = wave    #we are not teseting more functions, but are just runnign the integrator more often?
+    return err
 
 def test_linearity_integrator(integrator, psi_in, iterations):
     shape = np.shape(psi_in)
     alpha = np.random.rand(iterations) + 1j * np.random.rand(iterations)
     beta = np.random.rand(iterations) + 1j * np.random.rand(iterations)
+    err = []
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         psi2 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         LHS = integrator((alpha[i]*psi1 + beta[i]*psi2), 1)
         RHS = alpha[i]*integrator(psi1, 1) + beta[i]*integrator(psi2,1)
         error = np.max(np.abs(LHS - RHS))
-        print(error)
+        err.append(error)
+    return err
        
     
-def test_energy_conserv(integrator, psi_in, iterations):
+def test_energy_conserv(integrator, psi_in, iterations): 
     shape = np.shape(psi_in)
     phi = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-    phi = phi/np.sqrt(np.dot(np.conjugate(phi),phi))
-    energy0 = np.dot(np.conjugate(phi), hamilton(phi))
+    phi = normalize(phi)
+    energy0 = inner_product(phi, hamilton(phi))
+    err = []
     for i in range(iterations):
-        wave = integrator(phi, 1)
+        wave = integrator(phi, 1) # once again letting it only run one step might give bad results, also maybe we have to normalize here again? otherwise we run the rist of the lack of normalization screwing up the results for the energy
         energy0 = np.dot(np.conjugate(phi),hamilton(phi))
         energy1 = np.dot(np.conjugate(wave),hamilton(wave))
         error = np.abs(energy1 - energy0)
-        print(error)
+        err.append(error)
         phi = wave        
-      
+    return err
 
 
 
@@ -213,50 +242,111 @@ def images(func, integr):
     return ims
 
 
+def rel():
+    global M, tau
+    M_save = M
+    tau_save = tau
+    Ms = []
+    E_so = []
+    E_st = []
+    norm_so = []
+    avg_diff = []
+    for m in range(100)[1:]:
+        M = 10*m
+        tau = W*1/M # using T=1
+        so = so_integrator(Psi, M)
+        st = Strang_Splitting(Psi, M)
+        Ms.append(M)
+        E_so.append(inner_product(so, hamilton(so)))
+        E_st.append(inner_product(st, hamilton(st)))
+        norm_so.append(inner_product(so, so))
+        avg_diff.append(np.average(np.abs(so-st)))
+        print(M)
+    M = M_save
+    tau = tau_save
+    
+    figure, axs = plt.subplots(2,2)
+    axs[0,0].set(xlabel=r'log(M)')
+    axs[0,1].set(xlabel=r'log(M)')
+    axs[1,0].set(xlabel=r'log(M)')
+    axs[1,1].set(xlabel=r'log(M)')
+    axs[0,0].plot(np.log(Ms), np.log(np.array(E_so)/np.array(norm_so)), label=r'$\frac{\langle\hat{\Psi}_{so}|\hat{H}|\hat{\Psi}_{so}\rangle}{\langle\hat{\Psi}_{so}\hat{\Psi}_{so}\rangle}$')
+    axs[0,1].plot(np.log(Ms), np.log(E_st), label=r'$\langle\hat{\Psi}_{st}|\hat{H}|\hat{\Psi}_{st}\rangle$')
+    axs[1,0].plot(np.log(Ms), np.log(norm_so), label=r'$\langle\hat{\Psi}_{so}\hat{\Psi}_{so}\rangle$')
+    axs[1,1].plot(np.log(Ms), np.log(avg_diff), label="avg($|\hat{\Psi}_{so}-\hat{\Psi}_{st}|$)")
+    axs[0,0].legend(fontsize=18)
+    axs[0,1].legend(fontsize=18)
+    axs[1,0].legend(fontsize=18)
+    axs[1,1].legend(fontsize=18)
+    plt.show()
+    return Ms, E_so, E_st, norm_so, avg_diff
 
+""" --- run the code --- """
+
+n, Psi=gaussian_1D(-int(N/4),int(N/16))
+V = potential(Psi)
+Psi = normalize(Psi)
+
+
+Ms, E_so, E_st, norm_so, avg_diff=rel()
 
 fig, (ax1, ax2,ax3) = plt.subplots(1,3, figsize=(12, 6))
 
-line1, = ax1.plot([], [])  
-line2, = ax2.plot([], [],'green')
-line3, = ax3.plot([], [],'orange')  
+line1, = ax1.plot([], [], label=r'$|\varepsilon\hat{\Psi}_{so}|^2\cdot\frac{\mu}{8}$')  
+line2, = ax2.plot([], [], label=r'$|\varepsilon\hat{\Psi}_{st}|^2\cdot\frac{\mu}{8}$')
+line3, = ax3.plot([], [], label=r'$|\hat{\Psi}_so-\hat{\Psi}_st|^2$')  
+line4, = ax1.plot(n*epsilon,V/(H_BAR*W), label=r'$\frac{V}{\hbar\omega}$')
+line5, = ax2.plot(n*epsilon,V/(H_BAR*W), label=r'$\frac{V}{\hbar\omega}$')
 
-ax1.set_xlim(0,N-1)
-ax1.set_ylim(0,0.4)
-ax2.set_xlim(0,N-1)
-ax2.set_ylim(0,0.4)
-ax3.set_xlim(0,N-1)
-ax3.set_ylim(0,0.002)
 
-fig.suptitle('mu={0}, epsilon={1}, N={2}, M={3}, T={4}, tau={5}'.format(mu,epsilon,N,M,T,tau), fontsize=12)
-ax1.set_title("Second-order integrator")
-ax2.set_title("Strang-splitting integrator")
-ax3.set_title("Difference between both integrators")
 
+
+ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60], 
+        xlabel=r'$\frac{x}{r}$', title='Second-order integrator')
+ax2.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,60], 
+        xlabel=r'$\frac{x}{r}$', title='Strang-splitting integrator')
+ax3.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,10**(-5)], 
+        xlabel=r'$\frac{x}{r}$', title='Difference between both integrators')
+ax3.set_xlim(-int(N/2)*epsilon,int(N/2)*epsilon)
+
+
+fig.suptitle(r'$\mu$={0}, $\varepsilon$={1}, N={2}, M={3}, T={4}, $\tau$={5}'.format(mu,round(epsilon, 5),N,M,T,tau), fontsize=12)
+
+ax1.legend()
+ax2.legend()
+ax3.legend()
 
 def animate(y,line):
-    x = np.arange(0,len(y)) 
-    line.set_data(x,y)
+    #x = np.arange(0,len(y)) 
+    line.set_data(n*epsilon,y)
 
 def animate_all(i):  
-    animate(abs(images_so[i])**2 , line1)      # second-order
-    animate(abs(images_strang[i])**2 , line2)      # strang-splitting
-    animate(abs(abs(images_strang[i])**2-abs(images_so[i])**2) , line3)   # difference between both
+    animate(abs(images_so[i])**2/epsilon*mu/8 , line1)      # second-order
+    animate(abs(images_strang[i])**2/epsilon*mu/8 , line2)      # strang-splitting
+    animate(abs(images_strang[i]-images_so[i])**2 , line3)   # difference between both
     return line1, line2, line3,
 
 
 
 
-""" --- run the code --- """
 
-Psi=gaussian_1D(-int(N/4),int(N/20)) * 10     ###### anstatt * 10 lieber normieren!!!
+
+n, Psi=gaussian_1D(-int(N/4),int(N/20))     
 V = potential(Psi)
-
+Psi = normalize(Psi)
 
 iterations = 10
 ##### all the tests - with naming of them in the print()
-
-
+print("testing linearity of hamiltonian: average error" + str(test_linearity(hamilton,Psi,iterations)))
+test_hermiticity(hamilton, Psi, iterations)
+test_positivity(hamilton, Psi, iterations)
+test_eigenvectors(kinetic_hamilton, Psi, iterations)
+test_unitarity(so_integrator, Psi, iterations)
+test_unitarity(Strang_Splitting, Psi, iterations)
+test_linearity_integrator(so_integrator, Psi, iterations)
+test_linearity_integrator(Strang_Splitting, Psi, iterations)
+test_energy_conserv(so_integrator, Psi, iterations)
+test_energy_conserv(Strang_Splitting, Psi, iterations)
 
 
 images_so = images(Psi, so_integrator) 
@@ -281,116 +371,3 @@ plt.show()
 
 
 
-
-"""
-def init1():  
-    line1.set_data([], []) 
-    return line1, 
-
-def init2():  
-    line2.set_data([], []) 
-    return line2, 
-   
-def init3():  
-    line3.set_data([], []) 
-    return line3,    
-   
-def animate_so_integrator(i): 
-    function that gets called for animation"""
-"""takes a number of arrays from calculated "images" corresponding to FRAMES and sets a line data
-    global FRAMES,images_so,M
-    i2 = int(i*M/(FRAMES-1)) # dont use all the frames from the time evolution
-    y = abs(images_so[i2])**2
-    x = np.arange(0,len(y)) 
-    #ax1.set_ylim(0, max(y)*1.1) # for variable axis
-    line1.set_data(x, y) 
-    return line1, 
-
-def animate_strang_integrator(i): 
-    function that gets called for animation"""
-"""takes a number of arrays from calculated "images" corresponding to FRAMES and sets a line data
-    global FRAMES,images_strang,M
-    i2 = int(i*M/(FRAMES-1)) # dont use all the frames from the time evolution
-    y = abs(images_strang[i2])**2
-    x = np.arange(0,len(y)) 
-    #ax2.set_ylim(0, max(y)*1.1) # for variable axis
-    line2.set_data(x, y) 
-    return line2, 
-
-def animate_difference(i): 
-    function that gets called for animation"""
-"""takes a number of arrays from calculated "images" corresponding to FRAMES and sets a line data
-    global FRAMES,images_so,images_strang,M
-    i2 = int(i*M/(FRAMES-1)) # dont use all the frames from the time evolution
-    y = abs( abs(images_strang[i2])**2 - abs(images_so[i2])**2 )
-    x = np.arange(0,len(y)) 
-    #ax3.set_ylim(0, max(y)*1.1) # for variable axis
-    line3.set_data(x, y) 
-    return line3,"""
-
-
-
-
-
-"""
-fig = plt.figure()
-axis = plt.axes(xlim=(0,N-1),ylim =(0, 0.002))  # for constant axis
-#fig, axis = plt.subplots()     # for variable axis
-
-line, = axis.plot([], [])  
-
-def init():  
-    line.set_data([], []) 
-    return line, 
-   
-def animate_so_integrator(i): 
-    """"function that gets called for animation""""
-    """"takes a number of arrays from calculated ""images" "corresponding to FRAMES and sets a line data""""
-    global FRAMES,images_so,M
-    i2 = int(i*M/(FRAMES-1)) # dont use all the frames from the time evolution
-    y = abs(images_so[i2])**2
-    x = np.arange(0,len(y)) 
-    #axis.set_ylim(0, max(y)*1.1) # for variable axis
-    line.set_data(x, y) 
-    return line, 
-
-def animate_strang_integrator(i): 
-    """"function that gets called for animation""""
-    """"takes a number of arrays from calculated ""images"" corresponding to FRAMES and sets a line data""""
-    global FRAMES,images_strang,M
-    i2 = int(i*M/(FRAMES-1)) # dont use all the frames from the time evolution
-    y = abs(images_strang[i2])**2
-    x = np.arange(0,len(y)) 
-    #axis.set_ylim(0, max(y)*1.1) # for variable axis
-    line.set_data(x, y) 
-    return line, 
-
-
-
-
-
-Psi=gaussian_1D(25,10)
-V = potential(Psi)
-
-
-images_so = images(Psi, so_integrator)    # creates the list of arrays for our test function
-images_strang = images(Psi, Strang_Splitting)
-
-
-
-#anim = animation.FuncAnimation(fig, animate_so_integrator, init_func = init, frames = FRAMES, interval = 1000/FPS, blit = True) 
-#plt.show()
-anim = animation.FuncAnimation(fig, animate_strang_integrator, init_func = init, frames = FRAMES, interval = 1000/FPS, blit = True) 
-
-
-
-plt.show()
-
-
-
-
-
-
-
-
-"""
