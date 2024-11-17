@@ -260,9 +260,9 @@ def rel():
         so = so_integrator(Psi, M)
         st = Strang_Splitting(Psi, M)
         Ms.append(M)
-        E_so.append(inner_product(so, hamilton(so)))
-        E_st.append(inner_product(st, hamilton(st)))
-        norm_so.append(inner_product(so, so))
+        E_so.append(inner_product(so, hamilton(so)).real)
+        E_st.append(inner_product(st, hamilton(st)).real)
+        norm_so.append(inner_product(so, so).real)
         avg_diff.append(np.average(np.abs(so-st)))
         print(str(M) + " out of 990")
     M = M_save
