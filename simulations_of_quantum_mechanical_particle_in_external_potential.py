@@ -338,9 +338,6 @@ def animate_all(i):
 
 
 
-n, Psi=gaussian_1D(-int(N/4),int(N/20))     
-V = potential(Psi)
-Psi = normalize(Psi)
 
 iterations = 10
 ##### all the tests - with naming of them in the print()
