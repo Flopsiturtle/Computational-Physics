@@ -7,8 +7,11 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
+
+
+L = 60
 N = 200 # number of points in each direction of D-dimensional lattice  # if wavefunction is given: N = (wave.shape)[0]    # \\ [0] is arbitrary because quadratic matrix
-A = 0.3  # spacing between lattice points   # assumption: A is input | can also be variant of L=N*a  
+A = L/N  # spacing between lattice points   # assumption: A is input | can also be variant of L=N*a  
 
 R = 18  # length from zero-point to potential-valleys 
 Mass = 0.475   # mass of point particle
@@ -123,7 +126,7 @@ def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
     plane_wave = np.zeros(shape, dtype=complex)
     err = []
     for i in range(iterations):
-        k = np.random.randint(-N,N, size= D)  #really -N to N? not -N/2 to N/2?
+        k = np.random.randint(-N,N, size= D)
         eigenvalue = 0
         for index, value in np.ndenumerate(psi_in):
             plane_wave[index] = np.exp(2*np.pi * 1j * np.dot(np.array(index),k)/N)
@@ -190,11 +193,11 @@ def test_unitarity(integrator, psi_in, iterations):
     phi = normalize(phi)
     err = []
     for i in range(iterations):
-        wave = integrator(phi,1)   #shouldn't we run it to M? the wave might not change much after 1 iteration.
+        wave = integrator(phi,iterations)   
         norm = np.sqrt(inner_product(wave,wave))
         error = np.abs(1-norm)
         err.append(error)
-        phi = wave    #we are not teseting more functions, but are just runnign the integrator more often?
+        phi = wave
     return err
 
 def test_linearity_integrator(integrator, psi_in, iterations):
@@ -219,9 +222,9 @@ def test_energy_conserv(integrator, psi_in, iterations):
     energy0 = inner_product(phi, hamilton(phi))
     err = []
     for i in range(iterations):
-        wave = integrator(phi, 1) # once again letting it only run one step might give bad results, also maybe we have to normalize here again? otherwise we run the rist of the lack of normalization screwing up the results for the energy
-        energy0 = np.dot(np.conjugate(phi),hamilton(phi))
-        energy1 = np.dot(np.conjugate(wave),hamilton(wave))
+        wave = integrator(phi, iterations) 
+        energy0 = inner_product(phi, hamilton(phi))
+        energy1 = inner_product(wave, hamilton(wave))
         error = np.abs(energy1 - energy0)
         err.append(error)
         phi = wave        
@@ -317,7 +320,6 @@ ax2.legend()
 ax3.legend()
 
 def animate(y,line):
-    #x = np.arange(0,len(y)) 
     line.set_data(n*epsilon,y)
 
 def animate_all(i):  
