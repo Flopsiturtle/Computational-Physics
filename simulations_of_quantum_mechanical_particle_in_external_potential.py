@@ -16,14 +16,14 @@ A = L/N  # spacing between lattice points   # assumption: A is input | can also 
 R = 18  # length from zero-point to potential-valleys 
 Mass = 0.475   # mass of point particle
 W = 1   # frequency
-H_BAR = 1#!!! actually: 6.62607015*10**(-34)    # J*s
+H_BAR = 1 #actually: 6.62607015*10**(-34)    # J*s
 
 mu = (Mass*W*R**2)/H_BAR
 epsilon = A/R
 
 
 T = 10     # time
-M = 1000*T  # large value
+M = 1000*T  # large value dimensionless, *T is just for convenience
 tau = W*T/M  # time step
 
 FRAMES = 200    # number of frames in final animation
