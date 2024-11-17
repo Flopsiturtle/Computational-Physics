@@ -99,7 +99,11 @@
 
 
 
-
+\begin{align*}
+    \hat{H}_a\hat{\psi}_k(n)&=-\frac{1}{2\mu\varepsilon^2}\sum\limits_j^D\left(exp\left(\frac{2\pi i}{N}(\Vec{n}-e_j)\cdot\Vec{k} \right) -2exp\left(\frac{2\pi i}{N}\Vec{n}\cdot\Vec{k} \right) +exp\left(\frac{2\pi i}{N}(\Vec{n}+e_j)\cdot\Vec{k} \right) \right)\\
+    &=-\frac{1}{2\mu\varepsilon^2}\sum\limits_j^D\left(exp\left(-\frac{2\pi i}{N}\Vec{k}_j \right) -2 +exp\left(\frac{2\pi i}{N}\Vec{k}_j \right) \right)\hat{\psi}_k(n)\\
+    &=\frac{1}{\mu\varepsilon^2}\sum\limits_j^D\left(1-cos\left(\frac{2\pi}{N}k_j\right)\right)\hat{\psi}_k(n)=\frac{2}{\mu\varepsilon^2}\sum\limits_j^Dsin^2\left(\frac{\pi}{n}k_j \right)\hat{\psi}_k(n)
+\end{align*}
 
 
 
