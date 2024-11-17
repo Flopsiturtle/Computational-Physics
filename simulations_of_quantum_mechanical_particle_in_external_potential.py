@@ -112,11 +112,11 @@ def test_positivity(Hamiltonian, psi_in, iterations):
     count = 0
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-        print("Potential:"  ,np.sign(inner_product(psi1, np.multiply(potential(psi1),psi1)).real))
-        print("Hamiltonian:" , np.sign(inner_product(psi1, Hamiltonian(psi1)).real))
+        #print("Potential:"  ,np.sign(inner_product(psi1, np.multiply(potential(psi1),psi1)).real))
+        #print("Hamiltonian:" , np.sign(inner_product(psi1, Hamiltonian(psi1)).real))
         if inner_product(psi1, Hamiltonian(psi1))<0:
             count +=1
-    print("the hamiltonian has been negative " + str(count) + "times")
+    print("the hamiltonian has been negative " + str(count) + " out of " + str(iterations) + " times")
     return(count)
 
 
@@ -223,8 +223,8 @@ def test_energy_conserv(integrator, psi_in, iterations):
     err = []
     for i in range(iterations):
         wave = integrator(phi, iterations) 
-        energy0 = inner_product(phi, hamilton(phi))
-        energy1 = inner_product(wave, hamilton(wave))
+        energy0 = inner_product(phi, hamilton(phi))/inner_product(phi, phi)
+        energy1 = inner_product(wave, hamilton(wave))/inner_product(wave, wave)
         error = np.abs(energy1 - energy0)
         err.append(error)
         phi = wave        
@@ -264,7 +264,7 @@ def rel():
         E_st.append(inner_product(st, hamilton(st)))
         norm_so.append(inner_product(so, so))
         avg_diff.append(np.average(np.abs(so-st)))
-        print(M)
+        print(str(M) + " out of 990")
     M = M_save
     tau = tau_save
     
@@ -273,10 +273,10 @@ def rel():
     axs[0,1].set(xlabel=r'log(M)')
     axs[1,0].set(xlabel=r'log(M)')
     axs[1,1].set(xlabel=r'log(M)')
-    axs[0,0].plot(np.log(Ms), np.log(np.array(E_so)/np.array(norm_so)), label=r'$\frac{\langle\hat{\Psi}_{so}|\hat{H}|\hat{\Psi}_{so}\rangle}{\langle\hat{\Psi}_{so}\hat{\Psi}_{so}\rangle}$')
-    axs[0,1].plot(np.log(Ms), np.log(E_st), label=r'$\langle\hat{\Psi}_{st}|\hat{H}|\hat{\Psi}_{st}\rangle$')
-    axs[1,0].plot(np.log(Ms), np.log(norm_so), label=r'$\langle\hat{\Psi}_{so}\hat{\Psi}_{so}\rangle$')
-    axs[1,1].plot(np.log(Ms), np.log(avg_diff), label="avg($|\hat{\Psi}_{so}-\hat{\Psi}_{st}|$)")
+    axs[0,0].plot(np.log(Ms), np.log(np.array(E_so)/np.array(norm_so)), label=r'$log\left(\frac{\langle\hat{\Psi}_{so}|\hat{H}|\hat{\Psi}_{so}\rangle}{\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle}\right)$')  #,   
+    axs[0,1].plot(np.log(Ms), np.log(E_st), label=r'$log(\langle\hat{\Psi}_{st}|\hat{H}|\hat{\Psi}_{st}\rangle)$')
+    axs[1,0].plot(np.log(Ms), np.log(norm_so), label=r'$log(\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle)$')
+    axs[1,1].plot(np.log(Ms), np.log(avg_diff), label="log(avg($|\hat{\Psi}_{so}-\hat{\Psi}_{st}|$))")
     axs[0,0].legend(fontsize=18)
     axs[0,1].legend(fontsize=18)
     axs[1,0].legend(fontsize=18)
@@ -302,8 +302,6 @@ ax12 = ax1.twinx()
 ax12.plot(n*epsilon,V/(H_BAR*W),color="C1", label=r'$\frac{V}{\hbar\omega}$')
 ax22 = ax2.twinx()
 ax22.plot(n*epsilon,V/(H_BAR*W),color="C1", label=r'$\frac{V}{\hbar\omega}$')
-
-
 
 
 ax1.set(xlim=[-int(N/2)*epsilon,int(N/2)*epsilon], ylim=[0,4], 
@@ -340,25 +338,24 @@ def animate_all(i):
 
 
 
-
-
-
 n, Psi=gaussian_1D(-int(N/4),int(N/20))     
 V = potential(Psi)
 Psi = normalize(Psi)
 
 iterations = 10
 ##### all the tests - with naming of them in the print()
-print("testing linearity of hamiltonian: average error" + str(test_linearity(hamilton,Psi,iterations)))
-test_hermiticity(hamilton, Psi, iterations)
+print("testing linearity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_linearity(hamilton,Psi,iterations)))))
+print("testing hermicity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_hermiticity(hamilton, Psi, iterations)))))
+print("testing positivity of the hamiltonian.")
 test_positivity(hamilton, Psi, iterations)
-test_eigenvectors(kinetic_hamilton, Psi, iterations)
-test_unitarity(so_integrator, Psi, iterations)
-test_unitarity(Strang_Splitting, Psi, iterations)
-test_linearity_integrator(so_integrator, Psi, iterations)
-test_linearity_integrator(Strang_Splitting, Psi, iterations)
-test_energy_conserv(so_integrator, Psi, iterations)
-test_energy_conserv(Strang_Splitting, Psi, iterations)
+print("testing eigenvectors of the kinetic hamiltonian. Maximum error: " + str(np.max(np.abs(test_eigenvectors(kinetic_hamilton, Psi, iterations)))))
+print("testing unitarity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(so_integrator, Psi, iterations)))))
+print("testing unitarity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(Strang_Splitting, Psi, iterations)))))
+print("testing linearity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(so_integrator, Psi, iterations)))))
+print("testing linearity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(Strang_Splitting, Psi, iterations)))))
+print("testing energy conservation of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(so_integrator, Psi, iterations)))))
+print("testing energy conservation of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(Strang_Splitting, Psi, iterations)))))
+
 
 
 images_so = images(Psi, so_integrator) 
@@ -370,15 +367,3 @@ anim = animation.FuncAnimation(fig, animate_all, frames = FRAMES, interval = 100
 
 
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
