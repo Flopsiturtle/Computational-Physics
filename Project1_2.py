@@ -99,8 +99,7 @@ def power_method(Qfunc, v, tol=1e-6, max_iter=100000):
         lambda_old = lambda_new
 
 
-def Hinv():
-    
+
 
 
 #----------------------------------------------------------------
