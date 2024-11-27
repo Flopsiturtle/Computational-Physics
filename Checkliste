@@ -1,0 +1,81 @@
+Checkliste:
+
+1. code that implements Hamiltonian as a function acting on wavefunctions. 
+      - number of dimensions generic
+      - potential should be easily changed. 
+      - Particular importance to speed of code
+
+2. code that tests basic properties of Hamiltonian 
+      - Run code -> make sure Hamiltonian is correctly implemented 
+      - discuss the results
+
+3. code that implements second-order and Strang-Splitting integrators for Schrödinger equation
+
+4. code that tests unitarity of Strang-Splitting integrator. 
+  4.1 code that checks the two integrators yield same result in limit of vanishing time step 
+  4.2 code that checks errors scale as expected from theory
+- Run codes, make sure integrators correctly implemented
+- discuss the results
+
+5. code that produces animation of time evolution of wavefunction in one dimension for some initial condition
+      - choose lattice spacing + time step very small; the volume very large
+      - provide evidence animation is a good approximation of the continuum and infinite-volume regime
+
+6. Present structure of code, workflow, results and interpretations in coherent report
+
+
+-------------
+Mickey: Test outputs im print deklarieren welcher Test ausgeführt wurde -> Tests im Programm implementieren
+gaussian Psi normieren
+Achseneinteilung richtig stellen
+Programm für verschiedene tau, A laufen lassen bezüglich Aufgaben
+Potential in Graphen (wie bezüglich Wellenfkt?)
+
+Optional:
+Weg finden in der images Liste nur bestimmte Frames zu speichern
+Energie plotten
+------------
+
+
+
+Latex-Protokoll:
+1.Code-Structure:
+Hamiltonian(Flo H.)
+Checks(Mickey)
+Second order Integrator(Flo T.)
+Strang Splitting(Flo H./Mickey)
+SP-Tests(Flo H./Mickey)
+
+
+
+Flo T - To Do:
+------.Animation für so-operator implementieren
+------.check so-operator überarbeiten+prüfen
+------.LaTex Datei anfangen
+------.Animation letzte Sachen überprüfen
+.Variablen ordentlich definieren
+.Plot so-operator mit richtiger Achseneinteilung
+
+Extras: 
+.Animation, Darstellung etc. so-operator über separate .py Datei über:
+                    np.savetxt('test1.txt', a, fmt='%d')
+                    b = np.loadtxt('test1.txt', dtype=int)
+
+
+
+
+
+Mickey:
+Strang-Splitter und tests fertig
+Hamiltonian Tests fertig
+
+
+
+
+
+
+
+
+
+
+
