@@ -77,38 +77,34 @@ def rel():
     global M, tau
     M_save = M
     tau_save = tau
-    Ms = []
+    Ms = np.linspace(10, 1000, 100).astype(int)
     E_so = []
     E_st = []
     norm_so = []
     avg_diff = []
-    for m in range(10)[1:]: # change back to range 100
-        M = 10*m
+    for m in Ms: # change back to range 100
+        M = m
         tau = 1/M # using T=1, W=1
         so = integrators.so_integrator(Psi, M)
         st = integrators.Strang_Splitting(Psi, M)
-        Ms.append(M)
         E_so.append(variables.inner_product(so, hamiltonian.hamilton(so)).real)
         E_st.append(variables.inner_product(st, hamiltonian.hamilton(st)).real)
         norm_so.append(variables.inner_product(so, so).real)
         avg_diff.append(np.average(np.abs(so-st)))
-        print(str(M) + " out of 990")
+        print(str(M) + " out of " + str(Ms[-1]))
     M = M_save
     tau = tau_save
     
     figure, axs = plt.subplots(2,2)
-    axs[0,0].set(xlabel=r'log(M)')
-    axs[0,1].set(xlabel=r'log(M)')
-    axs[1,0].set(xlabel=r'log(M)')
-    axs[1,1].set(xlabel=r'log(M)')
-    axs[0,0].plot(np.log(Ms), np.log(np.array(E_so)/np.array(norm_so)), label=r'$log\left(\frac{\langle\hat{\Psi}_{so}|\hat{H}|\hat{\Psi}_{so}\rangle}{\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle}\right)$')  #,   
-    axs[0,1].plot(np.log(Ms), np.log(E_st), label=r'$log(\langle\hat{\Psi}_{st}|\hat{H}|\hat{\Psi}_{st}\rangle)$')
-    axs[1,0].plot(np.log(Ms), np.log(norm_so), label=r'$log(\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle)$')
-    axs[1,1].plot(np.log(Ms), np.log(avg_diff), label="log(avg($|\hat{\Psi}_{so}-\hat{\Psi}_{st}|$))")
-    axs[0,0].legend(fontsize=18)
-    axs[0,1].legend(fontsize=18)
-    axs[1,0].legend(fontsize=18)
-    axs[1,1].legend(fontsize=18)
+    axs[0,0].plot(Ms, np.array(E_so)/np.array(norm_so), label=r'$\frac{\langle\hat{\Psi}_{so}|\hat{H}|\hat{\Psi}_{so}\rangle}{\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle}$')  #,   
+    axs[0,1].plot(Ms, E_st, label=r'$\langle\hat{\Psi}_{st}|\hat{H}|\hat{\Psi}_{st}\rangle$')
+    axs[1,0].plot(Ms, norm_so, label=r'$\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle$')
+    axs[1,1].plot(Ms, avg_diff, label="avg($|\hat{\Psi}_{so}-\hat{\Psi}_{st}|$)")
+    for ax in axs.flat:
+        ax.set_xscale('log')
+        ax.set_yscale('log')
+        ax.legend(fontsize=28)
+    
     return Ms, E_so, E_st, norm_so, avg_diff
 
 Ms, E_so, E_st, norm_so, avg_diff = rel()  
