@@ -71,17 +71,21 @@ def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
 
 
 
-''' use wavefunction '''
-
-n, Psi=variables.gaussian_1D(-int(N/4),int(N/16))
-Psi = variables.normalize(Psi)
-
+''' do the tests for different dimensions and values of N '''
 iterations = 10
-#print("testing linearity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_linearity(hamiltonian.hamilton,Psi,iterations)))))
-#print("testing hermicity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_hermiticity(hamiltonian.hamilton, Psi, iterations)))))
-#print("testing positivity of the hamiltonian.")
-#test_positivity(hamiltonian.hamilton, Psi, iterations)
-#print("testing eigenvectors of the kinetic hamiltonian. Maximum error: " + str(np.max(np.abs(test_eigenvectors(hamiltonian.kinetic_hamilton, Psi, iterations)))))
+grids = np.array([5, 10, 15])
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    for j in dimensions:
+        psi = np.zeros(j)
+        print('Dimension: ' + str(j))
+        print("testing linearity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_linearity(hamiltonian.hamilton,psi,iterations)))))
+        print("testing hermicity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_hermiticity(hamiltonian.hamilton, psi, iterations)))))
+        print("testing positivity of the hamiltonian.")
+        test_positivity(hamiltonian.hamilton, psi, iterations)
+        print("testing eigenvectors of the kinetic hamiltonian. Maximum error: " + str(np.max(np.abs(test_eigenvectors(hamiltonian.kinetic_hamilton, psi, iterations)))))
+
 
 
 #Feedback:

@@ -16,8 +16,9 @@ def gaussian_1D(mean,sigma):
 
 def inner_product(func1, func2):
     """calculates the inner product of two arrays"""
-    return np.dot(np.conjugate(func1),func2)
+    return np.sum(np.multiply(np.conjugate(func1),func2))
 
 def normalize(func):
     """normalizes input function"""
     return func*1/np.sqrt(inner_product(func,func))
+
