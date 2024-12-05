@@ -5,7 +5,7 @@ from variables import *
 import hamiltonian
 
 
-
+### changed integrators to take tau as input, to work with modularity for testing the integrators!
 def so_integrator(func,M,tau):
     """solves the time dependent schrödinger equation for a given wavefunction with the second-order integrator"""
     start = func
