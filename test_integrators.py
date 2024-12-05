@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.fftpack import fft, ifft
 import matplotlib.pyplot as plt
+import pandas as pd
+
 
 import hamiltonian
 import integrators
@@ -56,21 +58,31 @@ def test_energy_conserv(integrator, psi_in, iterations):
 
 
 
-''' use wavefunction '''
-
-n, Psi = variables.gaussian_1D(-int(N/4),int(N/16))
-Psi = variables.normalize(Psi)
-
+''' do the tests for different dimensions and values of N '''
 iterations = 10
-#print("testing unitarity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.so_integrator, Psi, iterations)))))
-#print("testing unitarity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.Strang_Splitting, Psi, iterations)))))
-#print("testing linearity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.so_integrator, Psi, iterations)))))
-#print("testing linearity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.Strang_Splitting, Psi, iterations)))))
-#print("testing energy conservation of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.so_integrator, Psi, iterations)))))
-#print("testing energy conservation of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.Strang_Splitting, Psi, iterations)))))
+grids = np.array([5, 10,15])
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    for j in dimensions:
+        psi = np.zeros(j)
+        print('"lattice" size: ' + str(j))
+        print("testing unitarity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.so_integrator, psi, iterations)))))
+        print("testing unitarity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.Strang_Splitting, psi, iterations)))))
+        print("testing linearity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.so_integrator, psi, iterations)))))
+        print("testing linearity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.Strang_Splitting, psi, iterations)))))
+        print("testing energy conservation of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.so_integrator, psi, iterations)))))
+        print("testing energy conservation of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.Strang_Splitting, psi, iterations)))))
 
-#Feedback:
-#!!!! tests for multiple Dimensions but N does not have to be high (N=10,20,...)
+# here also tested for 4 dimensions but for N=10 and beyond the computation time was way too long
+
+
+
+
+
+''' ... '''
+
+
 
 
 def rel():
@@ -106,6 +118,9 @@ def rel():
         ax.legend(fontsize=28)
     
     return Ms, E_so, E_st, norm_so, avg_diff
+
+n, Psi = variables.gaussian_1D(-int(N/4),int(N/16))
+Psi = variables.normalize(Psi)
 
 Ms, E_so, E_st, norm_so, avg_diff = rel()  
 
