@@ -19,7 +19,7 @@ def test_unitarity(integrator, psi_in, iterations):
     phi = variables.normalize(phi)
     err = []
     for i in range(iterations):
-        wave = integrator(phi,iterations)   
+        wave = integrator(phi,iterations,tau)   
         norm = np.sqrt(variables.inner_product(wave,wave))
         error = np.abs(1-norm)
         err.append(error)
@@ -34,8 +34,8 @@ def test_linearity_integrator(integrator, psi_in, iterations):
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         psi2 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
-        LHS = integrator((alpha[i]*psi1 + beta[i]*psi2), 1)
-        RHS = alpha[i]*integrator(psi1, 1) + beta[i]*integrator(psi2,1)
+        LHS = integrator((alpha[i]*psi1 + beta[i]*psi2), 1,tau)
+        RHS = alpha[i]*integrator(psi1, 1,tau) + beta[i]*integrator(psi2,1,tau)
         error = np.max(np.abs(LHS - RHS))
         err.append(error)
     return err
@@ -48,7 +48,7 @@ def test_energy_conserv(integrator, psi_in, iterations):
     energy0 = variables.inner_product(phi, hamiltonian.hamilton(phi))
     err = []
     for i in range(iterations):
-        wave = integrator(phi, iterations) 
+        wave = integrator(phi, iterations,tau) 
         energy0 = variables.inner_product(phi, hamiltonian.hamilton(phi))/variables.inner_product(phi, phi)
         energy1 = variables.inner_product(wave, hamiltonian.hamilton(wave))/variables.inner_product(wave, wave)
         error = np.abs(energy1 - energy0)
@@ -78,12 +78,7 @@ for i in range(len(grids)):
 
 
 
-
-
 ''' ... '''
-
-
-
 
 def rel():
     global M, tau
@@ -97,8 +92,8 @@ def rel():
     for m in Ms: # change back to range 100
         M = m
         tau = 1/M # using T=1, W=1
-        so = integrators.so_integrator(Psi, M)
-        st = integrators.Strang_Splitting(Psi, M)
+        so = integrators.so_integrator(Psi, M,tau)
+        st = integrators.Strang_Splitting(Psi, M,tau)
         E_so.append(variables.inner_product(so, hamiltonian.hamilton(so)).real)
         E_st.append(variables.inner_product(st, hamiltonian.hamilton(st)).real)
         norm_so.append(variables.inner_product(so, so).real)
