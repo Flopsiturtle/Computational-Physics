@@ -44,10 +44,10 @@ def test_positivity(Hamiltonian, psi_in, iterations):
     for i in range(iterations):
         psi1 = np.random.rand(*shape) + 1j * np.random.rand(*shape)
         #print("Potential:"  ,np.sign(variables.inner_product(psi1, np.multiply(hamiltonian.potential(psi1),psi1)).real))
-        #print("Hamiltonian:" , np.sign(variables.inner_product(psi1, hamiltonian.hamilton(psi1)).real))
+        #print("Hamiltonian:" , np.sign(variables.inner_product(psi1, hamiltonian.hamilton(psi1)).real))        # commented for visibility -> using counts
         if variables.inner_product(psi1, Hamiltonian(psi1))<0:
             count +=1
-    #print("the hamiltonian has been negative " + str(count) + " out of " + str(iterations) + " times")
+    #print("the hamiltonian has been negative " + str(count) + " out of " + str(iterations) + " times")     # commented for tabular
     return(count)
 
 
@@ -72,7 +72,7 @@ def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
 
 
 
-''' do the tests for different dimensions and values of N '''
+''' --- do the tests for different dimensions and values of N --- '''
 iterations = 10
 grids = np.array([5, 10, 15])
 
