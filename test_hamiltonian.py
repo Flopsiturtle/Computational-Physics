@@ -47,7 +47,7 @@ def test_positivity(Hamiltonian, psi_in, iterations):
         #print("Hamiltonian:" , np.sign(variables.inner_product(psi1, hamiltonian.hamilton(psi1)).real))
         if variables.inner_product(psi1, Hamiltonian(psi1))<0:
             count +=1
-    print("the hamiltonian has been negative " + str(count) + " out of " + str(iterations) + " times")
+    #print("the hamiltonian has been negative " + str(count) + " out of " + str(iterations) + " times")
     return(count)
 
 
@@ -101,14 +101,18 @@ for i in range(len(grids)):
     tab.loc[len(tab)] = lst
 print(tab.to_string(index=False))
 
-print("Testing positivity of the hamiltonian.")
+print("Testing positivity of the hamiltonian. Number of times hamiltonian was negative:")
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
 for i in range(len(grids)):
     N = grids[i]
     dimensions = np.array([N,(N,N),(N,N,N),(N,N,N,N)], dtype=object)
+    lst = [N]
     for j in dimensions:
         psi = np.zeros(j)
-        print('"lattice" size: ' + str(j))
-        test_positivity(hamiltonian.hamilton, psi, iterations)
+        lst.append(str(test_positivity(hamiltonian.hamilton, psi, iterations)))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+        
 
 print('Testing eigenvectors of the kinetic hamiltonian. Maximum error: ')
 tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
