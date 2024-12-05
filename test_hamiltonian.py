@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 import variables
 from variables import *   
@@ -74,12 +75,67 @@ def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
 ''' do the tests for different dimensions and values of N '''
 iterations = 10
 grids = np.array([5, 10, 15])
+
+
+print('Testing linearity of the hamiltonian. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
 for i in range(len(grids)):
     N = grids[i]
-    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    dimensions = np.array([N,(N,N),(N,N,N),(N,N,N,N)], dtype=object)
+    lst = [N]
     for j in dimensions:
         psi = np.zeros(j)
-        print('Dimension: ' + str(j))
+        lst.append(str(np.max(np.abs(test_linearity(hamiltonian.hamilton,psi,iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+print('Testing hermiticity of the hamiltonian. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N),(N,N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str(np.max(np.abs(test_hermiticity(hamiltonian.hamilton, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+print("Testing positivity of the hamiltonian.")
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N),(N,N,N,N)], dtype=object)
+    for j in dimensions:
+        psi = np.zeros(j)
+        print('"lattice" size: ' + str(j))
+        test_positivity(hamiltonian.hamilton, psi, iterations)
+
+print('Testing eigenvectors of the kinetic hamiltonian. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N),(N,N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str(np.max(np.abs(test_eigenvectors(hamiltonian.kinetic_hamilton, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+
+
+
+exit()
+
+""" testing displayed without tabulars"""
+iterations = 20
+grids = np.array([5, 10, 15])
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N),(N,N,N,N)], dtype=object)
+    for j in dimensions:
+        psi = np.zeros(j)
+        print('"lattice" size: ' + str(j))
         print("testing linearity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_linearity(hamiltonian.hamilton,psi,iterations)))))
         print("testing hermicity of the hamiltonian. Maximum error: " + str(np.max(np.abs(test_hermiticity(hamiltonian.hamilton, psi, iterations)))))
         print("testing positivity of the hamiltonian.")
@@ -88,5 +144,3 @@ for i in range(len(grids)):
 
 
 
-#Feedback:
-#!!!! tests for multiple Dimensions but N does not have to be high (N=10,20,...)
