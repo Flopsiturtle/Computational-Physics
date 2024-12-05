@@ -72,12 +72,13 @@ def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
 
 
 
-''' --- do the tests for different dimensions and values of N --- '''
+
+''' --- do the tests for different dimensions and values of N, and visualize in a tabular --- '''
 iterations = 10
-grids = np.array([5, 10, 15])
+grids = np.array([5, 10, 15, 20])
 
 
-print('Testing linearity of the hamiltonian. Maximum error: ')
+print('Testing linearity of the hamiltonian ' + str(iterations) + ' times. Maximum error: ')
 tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
 for i in range(len(grids)):
     N = grids[i]
@@ -89,7 +90,9 @@ for i in range(len(grids)):
     tab.loc[len(tab)] = lst
 print(tab.to_string(index=False))
 
-print('Testing hermiticity of the hamiltonian. Maximum error: ')
+print(' ')
+
+print('Testing hermiticity of the hamiltonian ' + str(iterations) + ' times. Maximum error: ')
 tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
 for i in range(len(grids)):
     N = grids[i]
@@ -101,7 +104,9 @@ for i in range(len(grids)):
     tab.loc[len(tab)] = lst
 print(tab.to_string(index=False))
 
-print("Testing positivity of the hamiltonian. Number of times hamiltonian was negative:")
+print(' ')
+
+print('Testing positivity of the hamiltonian ' + str(iterations) + ' times. Number of times hamiltonian was negative:')
 tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
 for i in range(len(grids)):
     N = grids[i]
@@ -113,8 +118,9 @@ for i in range(len(grids)):
     tab.loc[len(tab)] = lst
 print(tab.to_string(index=False))
         
+print(' ')
 
-print('Testing eigenvectors of the kinetic hamiltonian. Maximum error: ')
+print('Testing eigenvectors of the kinetic hamiltonian ' + str(iterations) + ' times. Maximum error: ')
 tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': [], '4D': []})
 for i in range(len(grids)):
     N = grids[i]

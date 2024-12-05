@@ -58,28 +58,100 @@ def test_energy_conserv(integrator, psi_in, iterations):
 
 
 
-''' do the tests for different dimensions and values of N '''
+
+''' --- do the tests for different dimensions and values of N, and visualize in a tabular --- '''
 iterations = 10
-grids = np.array([5, 10,15])
+grids = np.array([5, 10, 15,20])
+
+
+print('Testing unitarity of the Second-Order integrator ' + str(iterations) + ' times. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': []})
 for i in range(len(grids)):
-    NN = grids[i]
-    dimensions = np.array([NN,(NN,NN),(NN,NN,NN)], dtype=object)
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    lst = [N]
     for j in dimensions:
         psi = np.zeros(j)
-        print('"lattice" size: ' + str(j))
-        print("testing unitarity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.so_integrator, psi, iterations)))))
-        print("testing unitarity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.Strang_Splitting, psi, iterations)))))
-        print("testing linearity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.so_integrator, psi, iterations)))))
-        print("testing linearity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.Strang_Splitting, psi, iterations)))))
-        print("testing energy conservation of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.so_integrator, psi, iterations)))))
-        print("testing energy conservation of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.Strang_Splitting, psi, iterations)))))
+        lst.append(str(np.max(np.abs(test_unitarity(integrators.so_integrator, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
 
-# here also tested for 4 dimensions but for N=10 and beyond the computation time was way too long
+print(' ')
+
+print('Testing unitarity of the Strang-Splitting integrator ' + str(iterations) + ' times. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str(np.max(np.abs(test_unitarity(integrators.Strang_Splitting, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+print(' ')
+
+print('Testing linearity of the Second-Order integrator ' + str(iterations) + ' times. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str(np.max(np.abs(test_linearity_integrator(integrators.so_integrator, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+print(' ')
+
+print('Testing linearity of the Strang-Splitting integrator ' + str(iterations) + ' times. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str(np.max(np.abs(test_linearity_integrator(integrators.Strang_Splitting, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+print(' ')
+
+print('Testing energy conservation of the Second-Order integrator ' + str(iterations) + ' times. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str(np.max(np.abs(test_energy_conserv(integrators.so_integrator, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+print(' ')
+
+print('Testing energy conservation of the Strang-Splitting integrator ' + str(iterations) + ' times. Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str(np.max(np.abs(test_energy_conserv(integrators.Strang_Splitting, psi, iterations)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+# we also tested all these for 4 dimensions but for N=10 and beyond the computation time was just way too long
 
 
 
-''' ... '''
 
+''' --- testing dependences on M and tau --- '''
 
 def rel():
     global M, tau
@@ -121,3 +193,24 @@ Psi = variables.normalize(Psi)
 Ms, E_so, E_st, norm_so, avg_diff = rel()  
 
 plt.show()
+
+
+
+
+exit()
+
+""" testing from above displayed without tabulars"""
+iterations = 10
+grids = np.array([5, 10,15])
+for i in range(len(grids)):
+    NN = grids[i]
+    dimensions = np.array([NN,(NN,NN),(NN,NN,NN)], dtype=object)
+    for j in dimensions:
+        psi = np.zeros(j)
+        print('"lattice" size: ' + str(j))
+        print("testing unitarity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.so_integrator, psi, iterations)))))
+        print("testing unitarity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_unitarity(integrators.Strang_Splitting, psi, iterations)))))
+        print("testing linearity of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.so_integrator, psi, iterations)))))
+        print("testing linearity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.Strang_Splitting, psi, iterations)))))
+        print("testing energy conservation of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.so_integrator, psi, iterations)))))
+        print("testing energy conservation of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.Strang_Splitting, psi, iterations)))))
