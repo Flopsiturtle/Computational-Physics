@@ -20,7 +20,7 @@ def images(func, integr):
     ims.append(start)
     M_step = int(M/(FRAMES-1))       # dont save all the frames from the time evolution, just the ones we use                           
     for i in np.arange(1,FRAMES):
-        iteration = integr(start,M_step)
+        iteration = integr(start,M_step,tau)
         start = iteration
         ims.append(iteration)
     return ims
