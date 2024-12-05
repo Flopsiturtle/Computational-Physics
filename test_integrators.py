@@ -62,8 +62,8 @@ def test_energy_conserv(integrator, psi_in, iterations):
 iterations = 10
 grids = np.array([5, 10,15])
 for i in range(len(grids)):
-    N = grids[i]
-    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    NN = grids[i]
+    dimensions = np.array([NN,(NN,NN),(NN,NN,NN)], dtype=object)
     for j in dimensions:
         psi = np.zeros(j)
         print('"lattice" size: ' + str(j))
@@ -79,6 +79,7 @@ for i in range(len(grids)):
 
 
 ''' ... '''
+
 
 def rel():
     global M, tau
