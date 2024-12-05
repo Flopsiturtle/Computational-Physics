@@ -6,7 +6,7 @@ import hamiltonian
 
 
 
-def so_integrator(func,M):
+def so_integrator(func,M,tau):
     """solves the time dependent schrödinger equation for a given wavefunction with the second-order integrator"""
     start = func
     for m in np.arange(0,M):
@@ -40,7 +40,7 @@ def Exponential_kinetic(psi_in, time_step):
 
 
 
-def Strang_Splitting(psi_in,M):
+def Strang_Splitting(psi_in,M,tau):
     for i in range(M):
         psi_out = Exponential_potential(psi_in, tau)
         psi_out = fft(psi_out)
