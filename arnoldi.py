@@ -1,24 +1,13 @@
 import numpy as np
-
-
-
-
-
-
-
-
-
-N = 1000
-b = np.diag(1/np.sqrt(np.arange(1,N)), k=1)
-matrix1 = np.einsum('ji,jk', np.conjugate(b), b)
-
+import Eigenmethods
+from variables import *
 
 def norm(vector):
     return np.sqrt(np.vdot(vector,vector))
 
-def matrix_multi(m, vector, iterations):
+def matrix_multi(vector, iterations):
     for i in range(iterations):
-        w = np.einsum('ij, j', m,vector)
+        w = Eigenmethods.Hinv(vector, 0.01, 200)[0]
         vector = w
     return vector
 
@@ -33,36 +22,36 @@ def gram_schmidt(array):
         space.append(a)
     return space
         
-def krylov_space(m, vector, eigenvalues):
+def krylov_space(vector, eigenvalues):
     space = []
     for i in range(eigenvalues):
-        space.append(matrix_multi(m, vector, i))
+        space.append(matrix_multi(vector, i))
     return space 
 
-def matrix_once(m, array):
+def matrix_once(array):
     space = []
     for i in range(len(array)):
-        space.append(matrix_multi(m, array[i], 1))
+        space.append(matrix_multi(array[i], 1))
     return space 
 
-def eigenvalues(array, m):
+def eigenvalues(array):
     space = []
     for i in range(len(array)):
         w = array[i]
-        eigen = np.vdot(w, matrix_multi(m, w, 1))
+        eigen = np.vdot(w, matrix_multi(w, 1))
         space.append(eigen)
     return space
 
-def arnoldi(m, number_eigen, max_iter):
+def arnoldi(number_eigen, max_iter):
     v = np.ones(N)
-    vectors = krylov_space(m, v, number_eigen)
+    vectors = krylov_space(v, number_eigen)
     for count, i in enumerate(range(max_iter)):
         errors = []
-        vectors = matrix_once(m, vectors)
+        vectors = matrix_once(vectors)
         orth_vectors = gram_schmidt(vectors)
-        eigen = eigenvalues(orth_vectors, m)
+        eigen = eigenvalues(orth_vectors)
         for i in range(len(vectors)):
-            LHS = matrix_multi(m, orth_vectors[i], 1)
+            LHS = matrix_multi(orth_vectors[i], 1)
             RHS = eigen[i]*orth_vectors[i]
             error = norm(LHS - RHS)
             errors.append(error)
@@ -70,13 +59,10 @@ def arnoldi(m, number_eigen, max_iter):
             print('nice')
             break
         else:
-            #print(eigen)
             vectors = orth_vectors
             print(np.max(errors))
             continue
-    
-arnoldi(matrix1, 5, 100)    	
-
+arnoldi(5, 100)    	
 
 
 
