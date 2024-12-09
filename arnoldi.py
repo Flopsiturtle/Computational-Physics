@@ -56,13 +56,18 @@ def arnoldi(number_eigen, max_iter):
             error = norm(LHS - RHS)
             errors.append(error)
         if np.all(np.array(errors) <  0.00001):
+            print(1/np.array(eigen))
             print('nice')
             break
         else:
             vectors = orth_vectors
-            print(np.max(errors))
+            #print(np.max(errors))
             continue
-arnoldi(5, 100)    	
+arnoldi(5, 100)   
+arnoldi(10, 100)   
+arnoldi(15, 100)   
+
+
 
 
 
