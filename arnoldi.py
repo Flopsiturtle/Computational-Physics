@@ -1,5 +1,5 @@
 import numpy as np
-import Eigenmethods
+import eigenmethods
 from variables import *
 
 #!!!!!!!
@@ -11,7 +11,7 @@ def norm(vector):
 
 def matrix_multi(vector, iterations):
     for i in range(iterations):
-        w = Eigenmethods.Hinv(vector, 0.01, 200)[0]
+        w = eigenmethods.Hinv(vector, 0.01, 200)[0]
         vector = w
     return vector
 
