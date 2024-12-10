@@ -14,7 +14,7 @@
 
 ### some kind of test for checking if chosen error and maxiters is good?    # e.g. test different errors and outcomes   
 
-### also if program is run multiple times, is convergence the same? what error if not
+### also if program is run multiple times, is convergence the same? what error if not --> well depends on chosen error of course...
 
 
 
