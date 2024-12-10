@@ -96,17 +96,18 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
 
 
 """ --- test the code --- """
-v = np.ones(200)     
-#print(arnoldi(v,5,0.0001,100,0.0001,100))   
+v = np.ones(20)     
+print(arnoldi(v,5,0.0001,100,0.0001,100))   
 
 
 # tests for arbitrary v
 #### 1D test
 
-v = np.ones(200)   
+v = np.ones(10)   
+
 error = 0.00001
 max_integers = 200
-print(Hinv(v,error,max_integers))
+#print(Hinv(v,error,max_integers))
 
 
 #### 1D test for complex with our gaussian
@@ -115,8 +116,8 @@ v = variables.normalize(v)
 #print(Hinv(v,error,max_integers))
 
 
-# 2D test    ######## fixed conjugate, works now in multidimensional
+# 2D test    ######## fixed conjugate, works now in multidimensional!!!
 v = np.ones((20,20))   
 error = 0.00001
 max_integers = 200
-print(Hinv(v,error,max_integers))
+#print(Hinv(v,error,max_integers))
