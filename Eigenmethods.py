@@ -87,17 +87,16 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
         if np.all(np.array(errors)) <  error_arnoldi:
             return 1/np.array(eigen),orth_vectors
             #print('Found eigenvalues')
-        else:                       # same as mine: do we have to do extra step for <maxiters or output "None" enough?
+        else:           # same as mine: do we have to do extra step for <maxiters or output "None" enough?           
             vectors = orth_vectors
             #print(np.max(errors))
-            continue
 
 
 
 
 """ --- test the code --- """
-v = np.ones(20)     
-print(arnoldi(v,5,0.0001,100,0.0001,100))   
+v = np.ones(200)      # works only for high N!! # but also not N much larger than 200 !!
+#print(arnoldi(v,5,0.0001,100,0.0001,100))   
 
 
 # tests for arbitrary v
