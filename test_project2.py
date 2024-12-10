@@ -1,6 +1,5 @@
 
 
-
 #Flo T ### test if inverse is correct
 
 ###### Tests:
@@ -11,3 +10,9 @@
 
 #Mickey/Flo H ## test with matrices we know eigenvalues/vectors -->> hamiltonians from different systems
 ### .....
+
+
+### some kind of test for checking if chosen error and maxiters is good?    # e.g. test different errors and outcomes
+
+
+
