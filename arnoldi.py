@@ -2,6 +2,10 @@ import numpy as np
 import Eigenmethods
 from variables import *
 
+#!!!!!!!
+######### i took arnoldi from here to eigenmethods and changed it for modularity!!!!!!!!
+#!!!!!!!
+
 def norm(vector):
     return np.sqrt(np.vdot(vector,vector))
 
