@@ -1,7 +1,6 @@
 import numpy as np
 
 import variables
-from variables import *
 import hamiltonian
 
 
@@ -11,8 +10,9 @@ import hamiltonian
 # now: implement hamiltonian in function itself
 
 def Hinv(v,tolerance,maxiters):
-    D = len(v.shape)
-    x0 = np.zeros((N,)*D)   # D-dimensional --- can be changed to x0 = np.zeros(N) if only works in 1D
+    size = (v.shape)[0]
+    D = len(v.shape)    
+    x0 = np.zeros((size,)*D)   # D-dimensional --- can be changed to x0 = np.zeros(N) if only works in 1D
     r0 = v - hamiltonian.hamilton(x0)
     if np.max(r0) <= tolerance:    
         return x0
@@ -22,7 +22,7 @@ def Hinv(v,tolerance,maxiters):
         x = x0 + alpha0*p0
         r = r0 - alpha0*hamiltonian.hamilton(p0)
         if np.max(r) <= tolerance: 
-            return x,i
+            return x    # return x,i if you want iterations in output
         beta = (np.vdot(r,r)) / (np.vdot(r0,r0))
         p0 = r + beta*p0
         x0 = x
@@ -37,7 +37,7 @@ def norm(vector):
 
 def matrix_multi(vector, iterations, error_Hinv, maxiters_Hinv):
     for i in range(iterations):
-        w = Hinv(vector, error_Hinv, maxiters_Hinv)[0]
+        w = Hinv(vector, error_Hinv, maxiters_Hinv)
         vector = w
     return vector
 
@@ -72,8 +72,7 @@ def eigenvalues(array, error_Hinv, maxiters_Hinv):
         space.append(eigen)
     return space
 
-def arnoldi(number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiters_Hinv):
-    v = np.ones(N)
+def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiters_Hinv):
     vectors = krylov_space(v, number_eigen, error_Hinv, maxiters_Hinv)
     for count, i in enumerate(range(maxiter_arnoldi)):
         errors = []
@@ -97,24 +96,27 @@ def arnoldi(number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiters_H
 
 
 """ --- test the code --- """
-
-#print(arnoldi(5,0.0001,100,0.0001,100))   
+v = np.ones(200)     
+#print(arnoldi(v,5,0.0001,100,0.0001,100))   
 
 
 # tests for arbitrary v
 #### 1D test
-v = np.ones(N)     
+
+v = np.ones(200)   
 error = 0.00001
 max_integers = 200
-#print(Hinv(v,error,max_integers))
+print(Hinv(v,error,max_integers))
 
 
 #### 1D test for complex with our gaussian
-n, v=variables.gaussian_1D(-int(N/4),int(N/16))
+#n, v=variables.gaussian_1D(-int(N/4),int(N/16))
 v = variables.normalize(v)
 #print(Hinv(v,error,max_integers))
 
 
-# 2D test    ######## method doesnt work in 2D i think? but also does not need to work in 2D
-#v = np.ones((N,N))
-#print(Hinv(v,0.001,10))
+# 2D test    ######## fixed conjugate, works now in multidimensional
+v = np.ones((20,20))   
+error = 0.00001
+max_integers = 200
+print(Hinv(v,error,max_integers))
