@@ -151,7 +151,12 @@ print(tab.to_string(index=False))
 
 
 
+
+
 ''' --- testing dependences on M and tau --- '''
+
+####### feedback from him: maybe run rel() in other function because so much time so wen can run these tests seperately
+
 
 def rel():
     global M, tau
