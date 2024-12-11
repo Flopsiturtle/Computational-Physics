@@ -4,16 +4,26 @@ import eigenmethods
 import hamiltonian
 
 
+######
+############## for our tests in latex protocol, explain what variables chosen and also do tests with different parameters: shape, error_Hinv
+######
+
+
 ''' --- #Flo T ### test if inverse is correct --- '''
-def test_Hinv_inverse(v,error_Hinv,maxiters_Hinv):
-    err = np.abs(hamiltonian.hamilton(v)*eigenmethods.Hinv(v,error_Hinv,maxiters_Hinv))   # ist das wirklich richtig für inverse??
-    return err
+#### test works in multiple dimensions (Hinv and hamiltonian in different dimensions)
+def test_Hinv_inverse(shape_input,iterations,error_Hinv,maxiters_Hinv):
+    shape = shape_input.shape
+    err = []
+    for i in range(iterations):
+        v = np.random.rand(*shape)
+        error = np.abs(v-hamiltonian.hamilton(eigenmethods.Hinv(v,error_Hinv,maxiters_Hinv)))   # calculating v - H*H^(-1)*v ~ 0
+        err.append(error)
+    return np.max(err)
 
-v=np.ones(200)
-#print(test_Hinv_inverse(v,0.0001,100))
-
-v=np.ones((50,50))
-#print(test_Hinv_inverse(v,0.0001,100))
+#test 1D
+print(test_Hinv_inverse(np.ones(50),10,0.0001,100))
+#test 2D
+print(test_Hinv_inverse(np.ones((50,50)),10,0.0001,100))
 
 
 
@@ -35,6 +45,11 @@ v = np.ones(200)
 #result_arnoldi = eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)
 print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)))
 
+################## the errors increase for higher eigenvalues????? -> can we change our breaking point in arnoldi method so that highest calculated eigenvalue has our wanted error?
+########## he says he wants an error <= 1% for eigenvalues/vectors
+
+
+
 
 
 
@@ -48,6 +63,8 @@ print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)))
 
 #Mickey/Flo H ## test with matrices we know eigenvalues/vectors -->> hamiltonians from different systems
 ### .....
+
+############ he thought all these test ideas are good
 
 
 ### some kind of test for checking if chosen error and maxiters is good?    # e.g. test different errors and outcomes   
