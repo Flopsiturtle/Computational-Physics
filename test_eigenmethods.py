@@ -51,7 +51,7 @@ print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)))
 
 def test_orthonormality(vectors):
     #sollte klappen mit den richtigen inputs, ich konnte es jetzt aber noch nicht für arnoldi testen
-    #output ist error matrix
+    #output ist error matrix, idk wie oder ob das in mehr als einer dimension klappt
     matrix = np.column_stack(vectors)
     gram = np.dot(matrix.T, matrix)
     identity = np.eye(len(vectors))
