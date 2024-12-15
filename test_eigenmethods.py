@@ -66,6 +66,7 @@ print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)))
 
 ############ he thought all these test ideas are good
 
+### maybe animate evolution of different eigenstates? - Flo H
 
 ### some kind of test for checking if chosen error and maxiters is good?    # e.g. test different errors and outcomes   
 
