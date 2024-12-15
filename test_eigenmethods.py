@@ -49,7 +49,17 @@ print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)))
 ########## he says he wants an error <= 1% for eigenvalues/vectors
 
 
+def test_orthonormality(vectors):
+    #sollte klappen mit den richtigen inputs, ich konnte es jetzt aber noch nicht für arnoldi testen
+    #output ist error matrix
+    matrix = np.column_stack(vectors)
+    gram = np.dot(matrix.T, matrix)
+    identity = np.eye(len(vectors))
+    return np.abs(gram-identity)
 
+#test für zwei orthonormale vektoren
+vec = [np.array([1,1])/np.sqrt(2), np.array([1,-1])/np.sqrt(2)]
+print(test_orthonormality(vec))
 
 
 
