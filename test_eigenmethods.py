@@ -58,8 +58,8 @@ def test_orthonormality(vectors):
     return np.abs(gram-identity)
 
 #test für zwei orthonormale vektoren
-vec = [np.array([1,1])/np.sqrt(2), np.array([1,-1])/np.sqrt(2)]
-print(test_orthonormality(vec))
+#vec = [np.array([1,1])/np.sqrt(2), np.array([1,-1])/np.sqrt(2)]
+print(np.max(test_orthonormality(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)[1])))
 
 
 
