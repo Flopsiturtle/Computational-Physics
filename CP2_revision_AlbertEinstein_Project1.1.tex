@@ -1,0 +1,237 @@
+\documentclass[11pt, letterpaper, onecolumn]{article}
+
+\usepackage[english]{babel}
+\usepackage{soul}
+\usepackage{mathtools}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[german=quotes]{csquotes}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{gensymb}
+\usepackage{units}
+\usepackage{hhline}
+\usepackage{color}
+\usepackage{titling}
+\usepackage[normalem]{ulem}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{pgfplots}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{subfigure}
+\usepackage{lipsum}
+\usepackage{url}
+\usepackage{relsize}
+
+\newgeometry{a4paper, left=20mm, right=20mm, top=30mm, bottom=30mm}
+\definecolor{pantone294}{cmyk}{1,0.6,0,0.2}
+\setlength{\columnsep}{6mm} 
+
+\title{Project 1: QM point particle in external potential} 
+\author{Florian Telleis / Florian Hollants / Mickey Wilke}
+\date{\today}
+
+\pagestyle{fancy}
+\lfoot{Humboldt-Universität zu Berlin}
+\rfoot{Project 1.1} 
+
+
+
+\begin{document}
+	
+		Deckblatt - Revision Project 1.1 
+		
+		\newpage
+	
+	
+	
+	
+	
+	
+	\tableofcontents
+	
+	
+	
+	
+	
+	\vspace{1cm}
+	
+	
+	\section{What changed regarding our first submission}
+	\subsection{Variables}
+	We changed/deleted all our old variables depending on other parameters to be now only defined by dimensionless values, without changing their value in regards to our first submission.
+	In our case of modularity where we work with the same variables in multiple python files it is also practical to add an extra python file for storing our constant variables (and some basic functions used in multiple other files). We can then import these global variables by "from variables import *". \\
+	This change worked with all the prior functions and tests except for testing the integrators in dependence of $M$ or rather $\tau$. We had to add an additional input for $\tau$ into the integrators (and therefore the tests) so that the dependence could be evaluated without having to define the integrators in the same file as the tests.
+
+
+	\subsection{Modularity}
+	As mentioned above, we improved our file management by implementing a modularity of files, dividing our prior one python file into now seven (and more for the second sub-project). The content of these modules did not change if not stated otherwise (variables, tests, convergence). The new file system is listed below: \\
+	- "variables.py": defining variables and few general functions\\
+	- "hamiltonian.py": defining potential and hamiltonian\\
+	- "test$\_$hamiltonian.py": defining the tests for the hamiltonian and also running them for multiple $N$ and dimensions \\
+	- "integrators.py": defining both the integrators \\
+	- "test$\_$integrators.py": defining the tests for the integrators and also running them for multiple $N$ and dimensions \\
+	- "test$\_$integr$\_$converg.py": testing the dependence of the integrators on $M$ or rather $\tau$ \\
+	- "animation.py": defining functions for animation and animating
+
+
+	\subsection{Tests}
+	The tests we included in the sub-project 1 were in general not modified for this revision. We now ran these tests of the hamiltonian and integrators for multiple dimensions and $N$ for proper testing. Here we take focus on $N$ = 5, 10, 15 and 20; because the relevance of boundary conditions and resulting errors decrease for large $N$. The exact output for running the testing files is shown in the following figures for each of the $N$ for 4 dimensions (hamiltonian) and 3 dimensions (integrators, due to long run-time). The tests are including "randomly" generated arrays, therefore we do these tests 10 times each and the maximum error (depending on the criteria) of each test is saved. Also notice that the output shows $N$ as a float, it is an integer nonetheless.
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=15cm]{"test_hamiltonian.png"}
+	\caption{Output of our test functions for the hamiltonian for multiple $N$ and $D$; 10 iterations.}
+	\end{center}
+	\end{figure}
+	\\
+	One can see that the errors for testing the linearity and eigenvectors are in the range of $10^{-14}$ to $10^{-12}$, where for higher dimensions the error increases. It also seems that for higher $N$ the errors also increase. But in some cases this could also be due to the "random" generation. We observe the same dependence for the hermiticity with errors up to $10^{-8}$ in 4D. The positivity of the hamiltonian was correct all the iterations.
+	\\
+	\\
+	Now our integrator tests. The unitarity of the strang-splitting integrator and linearity of both of the integrators are ~$10^{-15}$ which check with the expectation for these results. The unitarity errors of the second order integrator are as expected far larger even in 1D with $10^{-3}$ and rising for higher dimensions. This behaves similar to the energy conservation tests shows. The important detail is that no expected significant lowering of errors for higher $N$ is seen, which is most likely due $N=20$ still relatively small and the usage of randomly generated arrays, which also change the error maxima not insignificantly.
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=13cm]{"test_integrators.png"}
+	\caption{Output of our test functions for the integrators for multiple $N$ and $D$; 10 iterations.}
+	\end{center}
+	\end{figure}
+	\\
+	\\
+	Below, all the tests were run for one iteration for $N=5$ and $D=9$ as an additional testing. \\
+	With all these results we can safely conclude that our tests run (correctly) in more dimensions than $D=1$, even for small $N$.
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=4cm]{"test_hamiltonian-9D.png"}
+	\caption{Output of our test functions for the hamiltonian for $N=5$ and $D=9$; 1 iteration.}
+	\end{center}
+	\end{figure}
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=4cm]{"test_integrators-9D.png"}
+	\caption{Output of our test functions for the integrators for $N=5$ and $D=9$; 1 iteration.}
+	\end{center}
+	\end{figure}
+	
+	
+	
+	
+	
+	
+	\subsection{Convergence with rel() function xxxxxxxchange title}
+	- Flo H
+	
+	
+	
+	
+	\section{How the code works for the second sub-project}	
+	
+	
+	
+	
+	\section{Workflow}
+	
+	
+	
+	
+	\section{Implementing conjugate-gradient and power method}
+	
+	
+	
+	
+	\section{Testing}
+	!!! describe this time with detail and test all possible configurations!!!
+	
+	
+	
+	\section{Convergence of eigenvalues/eigenvectors}
+	
+    
+	
+
+
+
+
+
+
+
+
+%	\hyperref[Quellen]{$^{[1]}$}	
+
+
+
+	
+%		\begin{figure} [h] 
+%	\begin{center}
+%	\subfigure[CGM]{\includegraphics[width=0.45\textwidth]{799px-Constant_current.svg.png}}
+%    \subfigure[CHM]{\includegraphics[width=0.45\textwidth]{799px-Constant_height.svg.png}}
+%\caption{Verschiedene Modi für das RTM Abrastern, entnommen aus \hyperref[Quellen]{[3]}}
+%	\end{center}
+%	\end{figure}
+
+
+	
+
+	
+	%	\begin{figure} [h] 
+%	\begin{center}
+%	\includegraphics[width=8.8cm]{"QBER(R).jpg"}
+%	\caption{QBER($R_{det}$) for three different photon sources and different attenuations; the data points are linearly connected for better visibility}
+%	\end{center}
+%	\end{figure}
+	
+	
+	
+
+%	\hyperref[Quellen]{$^{[1]}$}	
+
+	
+	
+\newpage
+	
+
+	
+%\section{Sources and Literature} \label{sources}
+%
+%		$[1]$ \textit{Titel} - Autor; (Vers.) Datum
+%\vspace{0.4cm}
+%		 \\
+%		$[2]$ Internetseite: \textit{Titel} \\ \url{Link} \\- zuletzt besucht am Datum um Zeit
+%		\vspace{0.4cm}
+%		 \\
+		
+		
+%		$[1]$ \textit{Titel} - Autor; (Vers.) Datum
+%\vspace{0.4cm}
+%		 \\
+%		$[2]$ Internetseite: \textit{Titel} \\ \url{Link} \\- zuletzt besucht am Datum um Zeit
+%		\vspace{0.4cm}
+%		 \\
+
+	
+	
+
+	
+\section{Appendix} \label{sec:appendix}
+
+%	\begin{figure}[h]	
+%	\begin{center}	
+%	\subfigure[Random input wavefunction]{\includegraphics[width=0.35\textwidth]{function1_ABS.png}}
+%    \subfigure[Potential]
+%    {\includegraphics[width=0.35\textwidth]{potential2.png}}
+%    \subfigure[Second-order integration]
+%    {\includegraphics[width=0.35\textwidth]{so-integrator1_ABS.png}}
+%	\caption{Tests with (a) random 2D wavefunction, (b) resulting potential and (c) the following time evolution with the second-order integrator after a certain amount of time steps M (not known anymore, but around 2000 with T=2)}
+%	\label{fig:2D-so_integr}
+%	\end{center} 
+%	\end{figure}
+	
+	
+
+
+
+
+	
+\end{document}
