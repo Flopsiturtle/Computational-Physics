@@ -22,7 +22,9 @@ def Hinv(v,tolerance,maxiters):
         x = x0 + alpha0*p0
         r = r0 - alpha0*hamiltonian.hamilton(p0)
         if np.max(r) <= tolerance: 
-            return x    # return x,i if you want iterations in output
+            return x
+        if i == maxiters:
+            return "Error1","Error1"
         beta = (np.vdot(r,r)) / (np.vdot(r0,r0))
         p0 = r + beta*p0
         x0 = x
@@ -74,7 +76,7 @@ def eigenvalues(array, error_Hinv, maxiters_Hinv):
 
 def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiters_Hinv):
     vectors = krylov_space(v, number_eigen, error_Hinv, maxiters_Hinv)
-    for count, i in enumerate(range(maxiter_arnoldi)):
+    for count, j in enumerate(range(maxiter_arnoldi)):
         errors = []
         vectors = matrix_once(vectors, error_Hinv, maxiters_Hinv)
         orth_vectors = gram_schmidt(vectors)
@@ -86,17 +88,18 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
             errors.append(error)
         if np.all(np.array(errors)) <  error_arnoldi:
             return 1/np.array(eigen),orth_vectors
-            #print('Found eigenvalues')
-        else:           # same as mine: do we have to do extra step for <maxiters or output "None" enough?           
+        else:                     
             vectors = orth_vectors
             #print(np.max(errors))
+        if j+1 == maxiter_arnoldi:
+            return "Error2","Error2"
 
 
 
 
 """ --- test the code --- """
 v = np.ones(200)      # works only for high N!! # but also not N much larger than 200 !!
-#print(arnoldi(v,5,0.0001,100,0.0001,100))   
+#print(arnoldi(np.ones(60), 1, 0.0001, 1000, 0.0001, 100)[0])   
 
 
 # tests for arbitrary v
@@ -105,7 +108,7 @@ v = np.ones(200)      # works only for high N!! # but also not N much larger tha
 v = np.ones(10)   
 
 error = 0.00001
-max_integers = 200
+max_integers = 5
 #print(Hinv(v,error,max_integers))
 
 
