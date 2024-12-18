@@ -43,7 +43,7 @@ def test_eigenvalue_vector(result_arnoldi):
 
 v = np.ones(200)
 #result_arnoldi = eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)
-print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)))
+print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,10**(-7),200,10**(-7),200)))
 
 ################## the errors increase for higher eigenvalues????? -> can we change our breaking point in arnoldi method so that highest calculated eigenvalue has our wanted error?
 ########## he says he wants an error <= 1% for eigenvalues/vectors
