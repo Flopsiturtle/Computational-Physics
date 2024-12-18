@@ -15,16 +15,17 @@ def rel():
     global M, tau
     M_save = M
     tau_save = tau
-    Ms = np.linspace(10, 1000, 100).astype(int)
+    Ms = np.linspace(3000, 10000, 8).astype(int)
     E_so = []
     E_st = []
     norm_so = []
     avg_diff = []
-    for m in Ms: # change back to range 100
+    E_init = variables.inner_product(Psi, hamiltonian.hamilton(Psi)).real/(variables.inner_product(Psi, Psi)).real
+    for m in Ms:
         M = m
-        tau = 1/M # using T=1, W=1
-        so = integrators.so_integrator(Psi, M,tau)
-        st = integrators.Strang_Splitting(Psi, M,tau)
+        tau = 10/M
+        so = integrators.so_integrator(Psi, M, tau)
+        st = integrators.Strang_Splitting(Psi, M, tau)
         E_so.append(variables.inner_product(so, hamiltonian.hamilton(so)).real)
         E_st.append(variables.inner_product(st, hamiltonian.hamilton(st)).real)
         norm_so.append(variables.inner_product(so, so).real)
@@ -34,13 +35,14 @@ def rel():
     tau = tau_save
     
     figure, axs = plt.subplots(2,2)
-    axs[0,0].plot(Ms, np.array(E_so)/np.array(norm_so), label=r'$\frac{\langle\hat{\Psi}_{so}|\hat{H}|\hat{\Psi}_{so}\rangle}{\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle}$')  #,   
-    axs[0,1].plot(Ms, E_st, label=r'$\langle\hat{\Psi}_{st}|\hat{H}|\hat{\Psi}_{st}\rangle$')
-    axs[1,0].plot(Ms, norm_so, label=r'$\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle$')
-    axs[1,1].plot(Ms, avg_diff, label="avg($|\hat{\Psi}_{so}-\hat{\Psi}_{st}|$)")
+    axs[0,0].plot(Ms, np.array(E_so)/np.array(norm_so)-E_init, marker = 'o', label=r'$\frac{\langle\hat{\Psi}_{so}|\hat{H}|\hat{\Psi}_{so}\rangle}{\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle}-\langle\hat{\Psi}_0|\hat{H}|\hat{\Psi}_0\rangle$')  #,   
+    axs[0,1].plot(Ms, E_st-E_init, marker = 'o', label=r'$\langle\hat{\Psi}_{st}|\hat{H}|\hat{\Psi}_{st}\rangle-\langle\hat{\Psi}_0|\hat{H}|\hat{\Psi}_0\rangle$')
+    axs[1,0].plot(Ms, norm_so-variables.inner_product(Psi, Psi).real, marker = 'o', label=r'$\langle\hat{\Psi}_{so}|\hat{\Psi}_{so}\rangle-\langle\hat{\Psi}_0|\hat{\Psi}_0\rangle$')
+    axs[1,1].plot(Ms, avg_diff, marker = 'o', label="avg($|\hat{\Psi}_{so}-\hat{\Psi}_{st}|$)")
     for ax in axs.flat:
         ax.set_xscale('log')
         ax.set_yscale('log')
+        ax.set_xlabel('M')
         ax.legend(fontsize=28)
     
     return Ms, E_so, E_st, norm_so, avg_diff
@@ -50,8 +52,14 @@ Psi = variables.normalize(Psi)
 
 Ms, E_so, E_st, norm_so, avg_diff = rel()  
 
-plt.show()
+E_init = variables.inner_product(Psi, hamiltonian.hamilton(Psi)).real/(variables.inner_product(Psi, Psi)).real
+slopes = [(np.log10(np.array(E_so)[-1]/np.array(norm_so)[-1]-E_init) - np.log10(np.array(E_so)[0]/np.array(norm_so)[0]-E_init))/(np.log10(Ms[-1]) - np.log10(Ms[0])),
+          (np.log10(np.array(E_st)[-1]-E_init) - np.log10(np.array(E_st)[0]-E_init))/(np.log10(Ms[-1]) - np.log10(Ms[0])),
+          (np.log10(np.array(norm_so)[-1]-variables.inner_product(Psi, Psi).real) - np.log10(np.array(norm_so)[0]-variables.inner_product(Psi, Psi).real))/(np.log10(Ms[-1]) - np.log10(Ms[0])),
+          np.log10(np.array(avg_diff)[-1]) - np.log10(np.array(avg_diff)[0])]
 
+print(slopes)
+plt.show()
 
 
 
