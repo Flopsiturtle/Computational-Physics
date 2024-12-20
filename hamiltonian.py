@@ -5,6 +5,7 @@ from variables import *
 
 def potential(func):
     """defines the potential"""
+    N = func.shape[0]   # so that N variable
     V = np.zeros(func.shape)
     for n, _ in np.ndenumerate(func):
         index_arr = np.array(n)
