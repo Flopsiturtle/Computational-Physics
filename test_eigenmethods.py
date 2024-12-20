@@ -11,19 +11,14 @@ import hamiltonian
 
 ''' --- #Flo T ### test if inverse is correct --- '''
 #### test works in multiple dimensions (Hinv and hamiltonian in different dimensions)
-def test_Hinv_inverse(shape_input,iterations,error_Hinv,maxiters_Hinv):
+def test_Hinv_inverse(shape_input,iterations,error_Hinv,maxiters_Hinv,mu,epsilon):
     shape = shape_input.shape
     err = []
     for i in range(iterations):
         v = np.random.rand(*shape)
-        error = np.abs(v-hamiltonian.hamilton(eigenmethods.Hinv(v,error_Hinv,maxiters_Hinv)))   # calculating v - H*H^(-1)*v ~ 0
+        error = np.abs(v-hamiltonian.hamilton_variable(eigenmethods.Hinv(v,error_Hinv,maxiters_Hinv,mu,epsilon),mu,epsilon))   # calculating v - H*H^(-1)*v ~ 0
         err.append(error)
     return np.max(err)
-
-#test 1D
-print(test_Hinv_inverse(np.ones(50),10,0.0001,100))
-#test 2D
-print(test_Hinv_inverse(np.ones((50,50)),10,0.0001,100))
 
 
 
@@ -41,13 +36,6 @@ def test_eigenvalue_vector(result_arnoldi):
     return err
 
 
-v = np.ones(200)
-#result_arnoldi = eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)
-print(test_eigenvalue_vector(eigenmethods.arnoldi(v,5,10**(-7),200,10**(-7),200)))
-
-################## the errors increase for higher eigenvalues????? -> can we change our breaking point in arnoldi method so that highest calculated eigenvalue has our wanted error?
-########## he says he wants an error <= 1% for eigenvalues/vectors
-
 
 def test_orthonormality(vectors):
     #sollte klappen mit den richtigen inputs, ich konnte es jetzt aber noch nicht für arnoldi testen
@@ -57,10 +45,38 @@ def test_orthonormality(vectors):
     identity = np.eye(len(vectors))
     return np.abs(gram-identity)
 
+
+
+
+
+
+
+''' --- test the code --- '''
+mu = 153.9     # our mu
+#mu = 20         # his mu
+epsilon = 1/60
+
+
+#test inverse 1D
+print(test_Hinv_inverse(np.ones(200),20,10**(-7),100,mu,epsilon))
+#test inverse 2D
+#print(test_Hinv_inverse(np.ones((50,50)),10,10**(-9),100))
+
+
+
+v = np.ones(200)
+result_arnoldi = eigenmethods.arnoldi(v,5,10**(-9),200,10**(-9),200,mu,epsilon)
+print(result_arnoldi[0])
+
+#test eigenvalues/vectors
+print(test_eigenvalue_vector(result_arnoldi))
+################## the errors increase for higher eigenvalues????? -> can we change our breaking point in arnoldi method so that highest calculated eigenvalue has our wanted error?
+########## he says he wants an error <= 1% for eigenvalues/vectors
+###### maybe not here explicitly eigenvalue error 1
+
 #test für zwei orthonormale vektoren
 #vec = [np.array([1,1])/np.sqrt(2), np.array([1,-1])/np.sqrt(2)]
-print(np.max(test_orthonormality(eigenmethods.arnoldi(v,5,0.0001,100,0.0001,100)[1])))
-
+print(np.max(test_orthonormality(result_arnoldi[1])))
 
 
 

@@ -31,3 +31,8 @@ def kinetic_hamilton(func):
 def hamilton(func):
     """calculating the hamiltonian for double harmonic well"""
     return -1/(2*mu*epsilon**2)*laplace(func)+np.multiply(potential(func),func)
+
+
+def hamilton_variable(func,mu,epsilon):     # hamilton defined in the same way as above, but with input mu and epsilon for further usage in eigenmethod tests
+    """calculating the hamiltonian for double harmonic well"""
+    return -1/(2*mu*epsilon**2)*laplace(func)+np.multiply(potential(func),func)
