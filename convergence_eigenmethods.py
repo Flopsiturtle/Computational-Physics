@@ -49,6 +49,6 @@ data = get_data(4,200,240,40,mu,epsilon)     ### maybe delete input with start,f
 plt.plot(data[0],data[1],'ro')
 plt.show()
 
-### i think if eigenvalues weird just make error smaller maybe
+### i think problems with eigenvalues might be fixed now because of change in potential???
 
 
