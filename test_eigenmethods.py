@@ -29,7 +29,7 @@ def test_eigenvalue_vector(result_arnoldi):
     size = len(result_arnoldi[0])
     err = []
     for i in np.arange(size):
-        LHS = hamiltonian.hamilton(result_arnoldi[1][i])
+        LHS = hamiltonian.hamilton_variable(result_arnoldi[1][i],mu,epsilon)
         RHS = result_arnoldi[0][i]*result_arnoldi[1][i]
         max_error = np.max(np.abs(LHS-RHS))
         err.append(max_error)
