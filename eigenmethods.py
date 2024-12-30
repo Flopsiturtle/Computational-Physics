@@ -91,8 +91,7 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
         else:                     
             vectors = orth_vectors
             #print(np.max(errors))
-        if j+1 == maxiter_arnoldi:
-            return "Error2","Error2"
+    return 1/np.array(eigen),orth_vectors
 
 
 
