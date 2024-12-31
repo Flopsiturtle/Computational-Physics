@@ -43,7 +43,7 @@
 
 \begin{document}
 	
-		Deckblatt 
+		Deckblatt: Revision 1.1 + Sub-project 1.2 
 		
 		\newpage
 	
@@ -58,18 +58,14 @@
 	
 	
 	
-	\vspace{1cm}
+	\vspace{0.5cm}
 	
 	
 	\section{What changed regarding our first submission}
-	\subsection{Variables}
-	We changed/deleted all our old variables depending on other parameters to be now only defined by dimensionless values, without changing their value in regards to our first submission.
-	In our case of modularity where we work with the same variables in multiple python files it is also practical to add an extra python file for storing our constant variables (and some basic functions used in multiple other files). We can then import these global variables by "from variables import *". \\
-	This change worked with all the prior functions and tests except for testing the integrators in dependence of $M$ or rather $\tau$. We had to add an additional input for $\tau$ into the integrators (and therefore the tests) so that the dependence could be evaluated without having to define the integrators in the same file as the tests.
-
-
+	
 	\subsection{Modularity}
-	As mentioned above, we improved our file management by implementing a modularity of files, dividing our prior one python file into now seven (and more for the second sub-project). The content of these modules did not change if not stated otherwise (variables, tests, convergence). The new file system is listed below: \\
+	As a first step, we improved our file management by implementing a modularity of files, dividing our prior one python file into seven (and of course more files for the second sub-project). The content of these modules did not change if not stated otherwise in the sections Variables, Tests or Convergence. \\
+	The new file system is listed below: \\ 
 	- "variables.py": defining variables and few general functions\\
 	- "hamiltonian.py": defining potential and hamiltonian\\
 	- "test$\_$hamiltonian.py": defining the tests for the hamiltonian and also running them for multiple $N$ and dimensions \\
@@ -79,41 +75,53 @@
 	- "animation.py": defining functions for animation and animating
 
 
+\subsection{Variables}
+	We then changed/deleted all our old variables depending on other parameters to be now only defined by dimensionless values, without changing their value in regards to our first submission.
+	In our case of modularity where we work with the same variables in multiple python files it is also practical to add an extra python file for storing our constant variables (and some basic functions used in multiple other files). We can then import these global variables by "from variables import *". \\
+	This change worked with most of the prior functions and tests except when needing to change certain variables of a function in a separate file from where the function is defined. Explicitly, what changed: \\
+	\textbf{1.} For the new hamiltonian tests (see 1.3), we had to change our definition of the potential to take $N$ from the size of the given array instead of using the global $N$.\\
+	\textbf{2.} A second change regarding the hamiltonian file was done. We defined potential$\_$variable and \\hamilton$\_$variable which are the same as our old potential and hamiltonian but take $\mu$ and $\epsilon$ as an input for the convergence of eigenvalues/-vectors in the second sub-project. \\
+	\textbf{3.} Similarly, but for the first sub-project, for testing the integrators in dependence of $M$ or rather $\tau$, we had to add an additional input for $\tau$ into the integrators (and therefore the tests). Therefore, the dependence could be evaluated without having to define the integrators in the same file as the tests, which was done in our first submission.
+
+
 	\subsection{Tests}
-	The tests we included in the sub-project 1 were in general not modified for this revision. We now ran these tests of the hamiltonian and integrators for multiple dimensions and $N$ for proper testing. Here we take focus on $N$ = 5, 10, 15 and 20; because the relevance of boundary conditions and resulting errors decrease for large $N$. The exact output for running the testing files is shown in the following figures for each of the $N$ for 4 dimensions (hamiltonian) and 3 dimensions (integrators, due to long run-time). The tests are including "randomly" generated arrays, therefore we do these tests 10 times each and the maximum error (depending on the criteria) of each test is saved. Also notice that the output shows $N$ as a float, it is an integer nonetheless.
+	The tests we included in the sub-project 1 were in general not modified for this revision. We now ran these tests of the hamiltonian and integrators for multiple dimensions and $N$ for proper testing. Here we take focus on $N$ = 5, 10, 15 and 20; because the relevance of boundary conditions and resulting errors decrease for large $N$. The exact output for running the testing files is shown in the following figures for each of the $N$ for 4 dimensions (hamiltonian) and 3 dimensions (integrators, due to long run-time). The tests are including "randomly" generated arrays. Therefore these tests run 10 times each and depending on the criteria the maximum error of each test is saved.\\
+	Also notice that the output shows $N$ as a float, it is an integer nonetheless.
 	\begin{figure} [h] 
 	\begin{center}
-	\includegraphics[width=15cm]{"test_hamiltonian.png"}
+	\includegraphics[width=15cm]{"test_hamiltonian2.png"}
 	\caption{Output of our test functions for the hamiltonian for multiple $N$ and $D$; 10 iterations.}
 	\end{center}
 	\end{figure}
 	\\
-	One can see that the errors for testing the linearity and eigenvectors are in the range of $10^{-14}$ to $10^{-12}$, where for higher dimensions the error increases. It also seems that for higher $N$ the errors also increase. But in some cases this could also be due to the "random" generation. We observe the same dependence for the hermiticity with errors up to $10^{-8}$ in 4D. The positivity of the hamiltonian was correct all the iterations.
+	One can see that the errors for testing the linearity and eigenvectors are in the range of $10^{-14}$ to $10^{-13}$, where for higher dimensions the error increases. It also seems that for higher $N$ the errors also increase. But in some cases this could also be due to the "random" generation. We observe the same dependence for the hermiticity with errors up to $10^{-10}$ and eigenvectors with error up to $10^{-12}$. The positivity of the hamiltonian was correct all the iterations.\\
 	\\
-	\\
-	Now our integrator tests. The unitarity of the strang-splitting integrator and linearity of both of the integrators are ~$10^{-15}$ which check with the expectation for these results. The unitarity errors of the second order integrator are as expected far larger even in 1D with $10^{-3}$ and rising for higher dimensions. This behaves similar to the energy conservation tests shows. The important detail is that no expected significant lowering of errors for higher $N$ is seen, which is most likely due $N=20$ still relatively small and the usage of randomly generated arrays, which also change the error maxima not insignificantly.
+	Now our integrator tests. 
 	\begin{figure} [h] 
 	\begin{center}
-	\includegraphics[width=13cm]{"test_integrators.png"}
+	\includegraphics[width=13cm]{"test_integrators2.png"}
 	\caption{Output of our test functions for the integrators for multiple $N$ and $D$; 10 iterations.}
 	\end{center}
 	\end{figure}
 	\\
+	The errors of unitarity for the strang-splitting integrator and linearity for both of the integrators are in the range of $10^{-16}-10^{-15}$, which is even smaller than for the hamiltonian tests and checks with the expectation. The unitarity errors for the second-order integrator are far larger even in 1D with $10^{-5}$ and rising for higher dimensions. Even greater errors can be seen for the energy conservation tests. This is expected as energy conservation is not given for these integrators. The important detail however, is that no significant lowering of errors for higher $N$ is seen, which is most likely due $N=20$ still being relatively small and using randomly generated arrays, which change the error maxima.
 	\\
-	Below, all the tests were run for one iteration for $N=5$ and $D=9$ as an additional testing. \\
-	With all these results we can safely conclude that our tests run (correctly) in more dimensions than $D=1$, even for small $N$.
+	\\
+	Below, all the tests were run for one iteration for $N=5$ and $D=9$ as an additional testing. One can see the same behaviour as above, just exaggerated. \\
+	With all these evaluated results we can safely conclude that our tests run (correctly) in more dimensions than $D=1$, even for small $N$.
 	\begin{figure} [h] 
 	\begin{center}
-	\includegraphics[width=6cm]{"test_hamiltonian-9D.png"}
+	\includegraphics[width=6cm]{"test_hamiltonian-9D2.png"}
 	\caption{Output of our test functions for the hamiltonian for $N=5$ and $D=9$; 1 iteration.}
 	\end{center}
 	\end{figure}
 	\begin{figure} [h] 
 	\begin{center}
-	\includegraphics[width=7cm]{"test_integrators-9D.png"}
+	\includegraphics[width=7cm]{"test_integrators-9D2.png"}
 	\caption{Output of our test functions for the integrators for $N=5$ and $D=9$; 1 iteration.}
 	\end{center}
 	\end{figure}
+	
 	
 	
 	
