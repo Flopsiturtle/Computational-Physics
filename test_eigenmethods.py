@@ -1,17 +1,24 @@
 import numpy as np
+import pandas as pd
 
 import eigenmethods
 import hamiltonian
 
 
-def test_Hinv_inverse(shape_input,iterations,error_Hinv,maxiters_Hinv,mu,epsilon):      #### test works in multiple dimensions (Hinv and hamiltonian in different dimensions)
+def test_Hinv_inverse(shape_input,iterations,error_Hinv,maxiters_Hinv,mu,epsilon):      #### test works in multiple dimensions (Hinv and hamiltonian work in different dimensions)
     shape = shape_input.shape
     err = []
+    fail = 0
     for i in range(iterations):
         v = np.random.rand(*shape)
-        error = np.abs(v-hamiltonian.hamilton_variable(eigenmethods.Hinv(v,error_Hinv,maxiters_Hinv,mu,epsilon),mu,epsilon))   # calculating v - H*H^(-1)*v ~ 0
-        err.append(error)
-    return np.max(err)
+        Hinv = eigenmethods.Hinv(v,error_Hinv,maxiters_Hinv,mu,epsilon)
+        if isinstance(Hinv,str) is True:    # checking if error because maxiters
+            fail = fail + 1
+            err.append(0)
+        else:   
+            error = np.abs(v-hamiltonian.hamilton_variable(Hinv,mu,epsilon))   # calculating v - H*H^(-1)*v ~ 0
+            err.append(np.max(error))
+    return np.max(err),fail
 
 
 def test_eigenvalue_vector(result_arnoldi):     # <-- do arnoldi one time before and use as input
@@ -65,7 +72,7 @@ def test_orthonormality(vectors):
 
 
 
-''' --- test the code --- '''
+''' --- run the code --- '''
 ############ he thought all these test ideas are good
 ######
 ############## for our tests in latex protocol, explain what variables chosen and also do tests with different parameters: shape, error_Hinv
@@ -76,6 +83,43 @@ def test_orthonormality(vectors):
 mu = 20         # his mu
 epsilon = 1/60
 
+#psi = np.zeros(2)
+#iterations = 100
+#print(test_Hinv_inverse(psi,iterations,10**(-3),20,mu,epsilon))
+#exit()
+
+
+iterations = 20
+grids = np.array([5, 10, 15])
+print('Testing inverse of H*v ' + str(iterations) + ' times, for multiple N and D (tolerance =',10**(-7),', maxiters = 100). Maximum error: ')
+tab = pd.DataFrame({'N': [], '1D': [], '2D': [], '3D': []})
+for i in range(len(grids)):
+    N = grids[i]
+    dimensions = np.array([N,(N,N),(N,N,N)], dtype=object)
+    lst = [N]
+    for j in dimensions:
+        psi = np.zeros(j)
+        lst.append(str((test_Hinv_inverse(psi,iterations,10**(-7),100,mu,epsilon))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+print(' ')
+
+
+iterations = 100
+grids = np.array([10**(-4), 10**(-7), 10**(-9)])
+N = 15
+psi = np.zeros(N)
+print('Testing inverse of H*v ' + str(iterations) + ' times, for multiple tolerances and maxiters (N = 15, D = 1). Maximum error: ')
+tab = pd.DataFrame({'tolerance': [], 'maxiter=10': [], 'maxiter=14': [], 'maxiter=20': [], 'maxiter=30': []})
+for i in range(len(grids)):
+    tolerance = grids[i]
+    maxiters = np.array([10,14,20,30], dtype=object)
+    lst = [tolerance]
+    for j in maxiters:
+        lst.append(str(((test_Hinv_inverse(psi,iterations,tolerance,j,mu,epsilon)))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
 
 
 
