@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import stats 
 
+# dimensionless variables, same as in first sub-project
 N = 200
 mu = 153.9
 epsilon = 1/60
