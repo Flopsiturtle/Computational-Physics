@@ -24,7 +24,7 @@ def Hinv(v,tolerance,maxiters,mu,epsilon):
         if np.max(r) <= tolerance: 
             return x
         if i == maxiters:
-            return x    ##### here should be an error! he said code has to fail if maxiters
+            return 'Err1'    ##### here should be an error! he said code has to fail if maxiters
         beta = (np.vdot(r,r)) / (np.vdot(r0,r0))
         p0 = r + beta*p0
         x0 = x
