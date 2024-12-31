@@ -55,6 +55,7 @@ def test_positivity(Hamiltonian, psi_in, iterations):
 def test_eigenvectors(Kinetic_Hamiltonian, psi_in, iterations):
     shape = np.shape(psi_in)
     D = len(shape)
+    N = shape[0]
     plane_wave = np.zeros(shape, dtype=complex)
     err = []
     for i in range(iterations):
