@@ -93,7 +93,7 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
             #print(np.max(errors))
         if j == maxiter_arnoldi-1:
             return 'Error2','Error2'
-    return 1/np.array(eigen),orth_vectors
+    #return 1/np.array(eigen),orth_vectors
     ##### here should be an error! he said code has to fail if maxiters
 
 
@@ -104,7 +104,7 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
 #epsilon = 1/60
 
 #v = np.ones(200)     
-#print(arnoldi(np.ones(60), 4, 10**(-9), 5, 10**(-9), 100,mu,epsilon)[0])   
+#print(arnoldi(np.random.rand(200), 4, 10**(-9), 200, 10**(-9), 200,mu,epsilon)[0])   
 
 
 
