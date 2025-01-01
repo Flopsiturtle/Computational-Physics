@@ -12,7 +12,7 @@ def test_Hinv_inverse(shape_input,iterations,error_Hinv,maxiters_Hinv,mu,epsilon
     for i in range(iterations):
         v = np.random.rand(*shape)
         Hinv = eigenmethods.Hinv(v,error_Hinv,maxiters_Hinv,mu,epsilon)
-        if isinstance(Hinv,str) is True:    # checking if error because maxiters
+        if isinstance(Hinv,str) is True:    # checking if Hinv is error because of maxiters
             fail = fail + 1
             err.append(0)
         else:   
@@ -21,7 +21,7 @@ def test_Hinv_inverse(shape_input,iterations,error_Hinv,maxiters_Hinv,mu,epsilon
     return np.max(err),fail
 
 
-def test_eigenvalue_vector(result_arnoldi):     # <-- do arnoldi one time before and use as input
+def test_eigenvalue_vector(result_arnoldi):     # <-- do arnoldi one time before and use as input, then also below
     size = len(result_arnoldi[0])
     err = []
     for i in np.arange(size):
@@ -45,13 +45,13 @@ def test_orthonormality(vectors):
 
 
 
-## test our results with linalgs programs (?)
+### test our results with linalgs programs (?)
 
 
 
 
 ##### Mickey/Flo H ## test with matrices we know eigenvalues/vectors -->> hamiltonians from different systems
-##### xxx we decided not to
+#XXXXXXXX we decided not to because difficulty implementing into our system
 
 
 
@@ -60,14 +60,6 @@ def test_orthonormality(vectors):
 
 
 
-
-# some kind of test for checking if chosen error and maxiters is good?    # e.g. test different errors and outcomes   
-
-
-
-
-
-###### also if program is run multiple times, is convergence the same? what error if not --> well depends on chosen error of course...
 
 
 
@@ -78,16 +70,25 @@ def test_orthonormality(vectors):
 ############## for our tests in latex protocol, explain what variables chosen and also do tests with different parameters: shape, error_Hinv
 ######
 
-
 #mu = 153.9     # our mu
 mu = 20         # his mu
 epsilon = 1/60
 
-#psi = np.zeros(2)
-#iterations = 100
-#print(test_Hinv_inverse(psi,iterations,10**(-3),20,mu,epsilon))
+
+
+
+
+#v = np.ones(200)
+#result_arnoldi = eigenmethods.arnoldi(v, 4,10**(-9),200,10**(-9),200,mu,epsilon)
+#print(result_arnoldi)
+#print((test_eigenvalue_vector(result_arnoldi)))
 #exit()
 
+exit()
+
+
+
+''' testing Hinv '''
 
 iterations = 20
 grids = np.array([5, 10, 15])
@@ -105,7 +106,6 @@ print(tab.to_string(index=False))
 
 print(' ')
 
-
 iterations = 100
 grids = np.array([10**(-4), 10**(-7), 10**(-9)])
 N = 15
@@ -120,6 +120,66 @@ for i in range(len(grids)):
         lst.append(str(((test_Hinv_inverse(psi,iterations,tolerance,j,mu,epsilon)))))
     tab.loc[len(tab)] = lst
 print(tab.to_string(index=False))
+
+print(' ')
+
+
+''' testing eigenvalues/vectors '''
+
+grids = np.array([20, 50, 100, 200])
+print('Testing error of first four eigenvalues/vectors for multiple N and tolerances using starting vector np.ones (maxiters = 200). Maximum error: ')
+tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': [],'10**(-9)': []})
+for i in range(len(grids)):
+    N = grids[i]
+    lst = [N]
+    v = np.ones(N)
+    toler = np.array([10**(-3),10**(-5),10**(-7),10**(-9)])
+    for tol in toler:
+        arnoldi = eigenmethods.arnoldi(v, 4,tol,200,tol,200,mu,epsilon)
+        lst.append(str((test_eigenvalue_vector(arnoldi))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+#grids = np.array([20, 50, 100, 200])
+#print('Testing error of first four eigenvalues/vectors for multiple N using starting vector np.ones and np.random (tolerances =',10**(-5),10**(-5),', maxiters = 300 300). Maximum error: ')
+#tab = pd.DataFrame({'N': [], 'np.ones(N)': [], 'np.random.rand(N)': []})
+#for i in range(len(grids)):
+#    N = grids[i]
+#    lst = [N]
+#    typ = np.array([np.ones(N),np.random.rand(N)])
+#    for v in typ:
+#        arnoldi = eigenmethods.arnoldi(v, 4,10**(-5),300,10**(-5),300,mu,epsilon)
+#        lst.append(str((test_eigenvalue_vector(arnoldi))))
+#    tab.loc[len(tab)] = lst
+#print(tab.to_string(index=False))
+
+print(' ')
+
+v = np.ones(100)
+result_arnoldi = eigenmethods.arnoldi(v, 4,10**(-9),100,10**(-9),100,mu,epsilon)
+result_arnoldi2 = eigenmethods.arnoldi(v, 10,10**(-9),100,10**(-9),100,mu,epsilon)
+print('Choosing starting vector np.ones(100), tolerances',10**(-9),'maxiters = 100')
+print('4 lowest eigenvalues',result_arnoldi[0], 'and the error for eigenvalue equation',test_eigenvalue_vector(result_arnoldi))
+print('10 lowest eigenvalues',result_arnoldi2[0], 'and the error for eigenvalue equation',test_eigenvalue_vector(result_arnoldi2))
+
+print(' ')
+
+
+''' testing orthonormal '''
+
+grids = np.array([20, 50, 100, 200])
+print('Testing orthonormality of first 4 eigenvalues/vectors for multiple N and tolerances using starting vector np.ones (maxiters = 200). Maximum error: ')
+tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': [],'10**(-9)': []})
+for i in range(len(grids)):
+    N = grids[i]
+    lst = [N]
+    v = np.ones(N)
+    toler = np.array([10**(-3),10**(-5),10**(-7),10**(-9)])
+    for tol in toler:
+        arnoldi = eigenmethods.arnoldi(v, 4,tol,200,tol,200,mu,epsilon)
+        lst.append(str(np.max(test_orthonormality(arnoldi[1]))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
 
 
 
