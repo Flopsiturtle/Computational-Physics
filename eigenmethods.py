@@ -24,7 +24,7 @@ def Hinv(v,tolerance,maxiters,mu,epsilon):
         if np.max(r) <= tolerance: 
             return x
         if i == maxiters:
-            return 'Err1'    ##### here should be an error! he said code has to fail if maxiters
+            return 'Error1'    ##### here should be an error! he said code has to fail if maxiters
         beta = (np.vdot(r,r)) / (np.vdot(r0,r0))
         p0 = r + beta*p0
         x0 = x
@@ -91,6 +91,8 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
         else:                     
             vectors = orth_vectors
             #print(np.max(errors))
+        if j == maxiter_arnoldi-1:
+            return 'Error2','Error2'
     return 1/np.array(eigen),orth_vectors
     ##### here should be an error! he said code has to fail if maxiters
 
@@ -101,8 +103,8 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
 #mu = 20         # his mu
 #epsilon = 1/60
 
-v = np.ones(200)     
-#print(arnoldi(np.ones(60), 4, 10**(-9), 100, 10**(-9), 100,mu,epsilon)[0])   
+#v = np.ones(200)     
+#print(arnoldi(np.ones(60), 4, 10**(-9), 5, 10**(-9), 100,mu,epsilon)[0])   
 
 
 
