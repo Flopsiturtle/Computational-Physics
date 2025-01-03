@@ -1,0 +1,27 @@
+import numpy as np
+import pandas as pd
+
+import eigenmethods
+import hamiltonian
+
+mu = 20
+epsilon = 1/60
+
+v = np.ones(10)
+result_arnoldi = eigenmethods.arnoldi(v, 2,10**(-9),100,10**(-9),100,mu,epsilon)
+
+def ritz_method(result_arnoldi, start_deviation, iterations):
+    eigen_values, eigen_vectors = result_arnoldi
+    count = 0
+    for i in range(iterations) :
+        deviation = start_deviation / (i+1)
+        v1 = np.ones_like(eigen_vectors[0])
+        for j in range(len(eigen_vectors[0])):
+            v1[j] = eigen_vectors[0][j] + deviation
+        E1 = np.vdot(v1, hamiltonian.hamilton_variable(v1, mu, epsilon))
+        print(E1)
+        if E1 <= eigen_values[0]:
+            count += 1
+    return count
+    
+print(ritz_method(result_arnoldi, 0.01, 100))
