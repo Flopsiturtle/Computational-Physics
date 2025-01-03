@@ -19,7 +19,6 @@ def ritz_method(result_arnoldi, start_deviation, iterations):
         for j in range(len(eigen_vectors[0])):
             v1[j] = eigen_vectors[0][j] + deviation
         E1 = np.vdot(v1, hamiltonian.hamilton_variable(v1, mu, epsilon))
-        print(E1)
         if E1 <= eigen_values[0]:
             count += 1
     return count
