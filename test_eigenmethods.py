@@ -70,34 +70,79 @@ def test_ritz_method(result_arnoldi, number_eigen, start_deviation, iterations):
 
 
 
-
-
-
-
 ''' --- run the code --- '''
-############ he thought all these test ideas are good
-######
-############## for our tests in latex protocol, explain what variables chosen and also do tests with different parameters: shape, error_Hinv
-######
-
-#mu = 153.9     # our mu
-mu = 20         # his mu
+#mu = 153.9     # our mu from project 1.1
+mu = 20         # given mu
 epsilon = 1/60
 
 
 
 
 
-#v = np.ones(100)
-#result_arnoldi = eigenmethods.arnoldi(v, 2,10**(-9),200,10**(-9),200,mu,epsilon)
-#print(result_arnoldi)
-#print((test_eigenvalue_vector(result_arnoldi)))
-#exit()
+grids = np.array([20, 50, 100, 200])
+print('Testing error of first four eigenvalues/vectors for multiple N and tolerances using random odd starting vector (maxiters = 200). Maximum error: ')
+tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': [],'10**(-9)': []})
+for i in range(len(grids)):
+    N = grids[i]
+    lst = [N]
+    v = np.concatenate((np.random.random(N//2),[0]))
+    v_odd = np.concatenate((-v,list(reversed(v[:-1]))))
+    toler = np.array([10**(-3),10**(-5),10**(-7),10**(-9)])
+    for tol in toler:
+        arnoldi = eigenmethods.arnoldi(v_odd, 4,tol,200,tol,200,mu,epsilon)
+        lst.append(str((test_eigenvalue_vector(arnoldi))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
 
-#print(test_ritz_method(result_arnoldi,1,0.1,10))
+
+exit()
 
 
 
+
+grids = np.array([20, 50, 100, 200])
+print('Testing error of first four eigenvalues/vectors for multiple N and tolerances using random even starting vector (maxiters = 200). Maximum error: ')
+tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': [],'10**(-9)': []})
+for i in range(len(grids)):
+    N = grids[i]
+    lst = [N]
+    v = np.concatenate((np.random.random(N//2),[0]))
+    v_even = np.concatenate((v,list(reversed(v[:-1]))))
+    toler = np.array([10**(-3),10**(-5),10**(-7),10**(-9)])
+    for tol in toler:
+        arnoldi = eigenmethods.arnoldi(v_even, 4,tol,200,tol,200,mu,epsilon)
+        lst.append(str((test_eigenvalue_vector(arnoldi))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+exit()
+
+
+
+
+#grids = np.array([20, 20, 50, 50, 100, 100, 200, 200])
+#grids_simple = np.array([20, 50, 100, 200])
+#print('Testing error of first four eigenvalues/vectors for multiple N and tolerances using random even and odd starting vectors (maxiters = 500). Maximum error: ')
+#tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': []})
+#arnoldi = []
+#for i in range(len(grids_simple)):
+#    toler = np.array([10**(-3),10**(-5),10**(-7)])
+#    arnoldi_ev_od = []
+#    N = grids[i]
+#    for tol in toler:
+#        arnoldi_ev_od.append(generate_parity(N, mu, epsilon,tol,500))
+#    arnoldi.append(arnoldi_ev_od)
+#for i in range(len(grids)):
+#    N = grids[i]
+#    lst = [N]
+#    if i % 2 == 0:  # check if even
+#        j = 0
+#    else:
+#        j = 1 
+#    for k in range(len(toler)):
+#        lst.append(str((test_eigenvalue_vector(arnoldi_ev_od[int(i/2)][k][j]))))
+#    tab.loc[len(tab)] = lst
+#print(tab.to_string(index=False))
 
 
 
@@ -168,6 +213,10 @@ print(tab.to_string(index=False))
 #        lst.append(str((test_eigenvalue_vector(arnoldi))))
 #    tab.loc[len(tab)] = lst
 #print(tab.to_string(index=False))
+
+print(' ')
+
+
 
 print(' ')
 
