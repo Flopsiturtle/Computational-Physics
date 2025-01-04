@@ -173,7 +173,35 @@
 	\end{center}
 	\end{figure}
 	The eigenvectors seem to have converged from $N=200$ onwards although two of the four eigenvalues seem to have vanished. Zooming in on one the lower dot reveals, that the two eigenvalues are much closer compared to the distance to the other two eigenvalues. Since we don't expect the eigenvalues to change much anymore, we say that the infinite volume limit is well approximated for $N>240$. 
- 	
+ 	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=7cm]{"eigenvectors_noParity.png"}
+	\caption{Eigenvectors for $N=240$ with $\mu$ and $\varepsilon$ from the infinite volume series, plotted against $n\varepsilon=\frac{x}{r}$}
+	\end{center}
+	\end{figure}
+ 	First we notice, that the eigenvectors are exclusively real. This is, because we have chosen a real starting vector for the arnoldi method, which in return only produces real eigenvectors, since the hamiltonian has no imaginary part. We could have started with a complex starting vector, and gotten complex eigenvectors as well, but since we can multiply any eigenvector by a complex phase without changing the fact that it is still an eigenvector of the operator, we would have been able to generate the purely real eigenvectors from there as well.
+	Secondly we notice, that while the lower two eigenvectors look symmetric/antisymmetric the same is not really true for the other two. That observation gives motivation to the next subsection in which we try to improve on the process by making use of the symmetries of our system.
+	\subsection{Parity}
+ 	The Parity operator takes any function $\psi(x)$ from the hilbert space and returns $\mathbb{P}\psi(x)=\psi(-x)$. The operator has the two degenerate eigenvalues $\pm1$ which correspond to symmetric (even) and antisymmetric (odd) functions. Using the symmetry of our potential $V(x)=V(-x)$ we can show, that the parity operator commutes with the hamiltonian.
+
+  	\begin{align*}
+		[\hat{H},\hat{\mathbb{P}}]f(x)&=\hat{H}f(-x)-\hat{\mathbb{P}}\left(-\frac{\hbar^2}{2ma^2}\sum\limits_k\left(f(x+ae_k)+f(x-ae_k)-2f(x)\right)+V(x)f(x) \right)\\
+	    &=-\frac{\hbar^2}{2ma^2}\sum\limits_k\left(f(-x+ae_k)+f(-x-ae_k)-2f(-x)\right)+V(x)f(-x)\\&+\frac{\hbar^2}{2ma^2}\sum\limits_k\left(f(-x+ae_k)+f(-x-ae_k)-2f(-x)\right)-V(-x)f(-x)\\
+	    &=0
+	\end{align*}
+ 	From this result follows, that we can simultaneously diagonalize both operators, meaning that any eigenvector of one operator has to be an eigenvector of the other operator as well. Being an eigenvector of the parity operator means, that $\psi(x)=\pm\psi(-x)$, the eigenvectors have to be either even or odd! This confirms what could have been presumed when looking at the results earlier.
+	Now we want to use this result to improve the arnoldi method. To do this, we make the observation that applying the hamiltonian operator to an even/odd function will return an even/odd function. This can be shown by doing the explicit calculation, or by reasoning about the fact that an even/odd function is automatically an eigenvector of the parity operator. We want to show that $f(x)=\pm f(-x)\implies (\hat{H}f)(x)=\pm(\hat{H}f)(-x)$:
+ 	\begin{align*}
+    		(\hat{H}f)(-x)&=\hat{\mathbb{P}}(\hat{H}f)(x)=\hat{H}(\hat{\mathbb{P}}f)(x)=\pm(\hat{H}f)(x)
+	\end{align*}
+ 	Since the arnoldi-method consists of repeatedly applying the hamiltonian operator we can see, that using an even/odd vector as a starting guess ensures that we only find even/odd solutions, reducing the space of possible eigenvectors drastically, and since we know all eigenvectors of the hamiltonian must be even/odd we can be sure, that we aren't missing any. Using even/odd starting guesses we generated the eigenvectors for the lowest two eigenvalues for each starting guess, and plotted them all again.
+  	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=7cm]{"eigenvectors_Parity.png"}
+	\caption{Eigenvectors for $N=241$ with $\mu$ and $\varepsilon$ from the infinite volume series, plotted against $n\varepsilon=\frac{x}{r}$}
+	\end{center}
+	\end{figure}
+ 	We chose $N=241$ since it is easier to produce even and odd starting guesses for odd values of $N$. Not only do we see a lot of improvement especially for the higher two eigenvectors, the method is also a lot faster than before, making our code much more efficient.
 
 
 
