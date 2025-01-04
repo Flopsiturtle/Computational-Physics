@@ -39,9 +39,19 @@ def test_orthonormality(vectors):
     return np.abs(gram-identity)
 
 
-
-#Mickey ## test if really lowest eigenvalue
-
+#checks for some small deviation if we really have smallest eigenvalue
+def ritz_method(result_arnoldi, start_deviation, iterations):   #starts with the given deviation and then makes it smaller each iteration
+    eigen_values, eigen_vectors = result_arnoldi
+    count = 0
+    for i in range(iterations) :
+        deviation = start_deviation / (i+1)
+        v1 = np.ones_like(eigen_vectors[0])
+        for j in range(len(eigen_vectors[0])):
+            v1[j] = eigen_vectors[0][j] + deviation
+        E1 = np.vdot(v1, hamiltonian.hamilton_variable(v1, mu, epsilon))
+        if E1 <= eigen_values[0]:
+            count += 1
+    return count    #returns number of times the eigenenergie was smaller than the one we calculated
 
 
 
