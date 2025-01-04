@@ -24,6 +24,7 @@ def Hinv(v,tolerance,maxiters,mu,epsilon):
         if np.max(r) <= tolerance: 
             return x
         if i == maxiters:
+            print('!!maxiter reached in Conjugate Gradient!!')
             return 'Error1'    ##### here should be an error! he said code has to fail if maxiters
         beta = (np.vdot(r,r)) / (np.vdot(r0,r0))
         p0 = r + beta*p0
@@ -92,6 +93,7 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
             vectors = orth_vectors
             #print(np.max(errors))
         if j == maxiter_arnoldi-1:
+            print('!!maxiter reached in Arnoldi!!')
             return 'Error2','Error2'
     #return 1/np.array(eigen),orth_vectors
     ##### here should be an error! he said code has to fail if maxiters
