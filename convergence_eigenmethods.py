@@ -92,8 +92,8 @@ def plot_eigenvectors(eigenvalues, eigenvectors):
     plt.tight_layout()
     plt.show()
 
-def generate_parity():
-    v = np.concatenate((np.random.random(120),[0])) 
+def generate_parity(N, mu, epsilon):
+    v = np.concatenate((np.random.random(N//2),[0])) 
     v_even = np.concatenate((v,list(reversed(v[:-1]))))
     v_odd = np.concatenate((-v,list(reversed(v[:-1]))))
     Eig_val_even, Eig_vec_even = eigenmethods.arnoldi(v_even, 2, 10**(-6), 500, 10**(-6), 500,mu,epsilon)
