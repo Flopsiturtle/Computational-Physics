@@ -40,16 +40,16 @@ def test_orthonormality(vectors):
 
 
 #checks for some small deviation if we really have smallest eigenvalue
-def ritz_method(result_arnoldi, start_deviation, iterations):   #starts with the given deviation and then makes it smaller each iteration
+def test_ritz_method(result_arnoldi, number_eigen, start_deviation, iterations):   #starts with the given deviation and then makes it smaller each iteration
     eigen_values, eigen_vectors = result_arnoldi
     count = 0
     for i in range(iterations) :
         deviation = start_deviation / (i+1)
-        v1 = np.ones_like(eigen_vectors[0])
-        for j in range(len(eigen_vectors[0])):
-            v1[j] = eigen_vectors[0][j] + deviation
+        v1 = np.ones_like(eigen_vectors[number_eigen])
+        for j in range(len(eigen_vectors[number_eigen])):
+            v1[j] = eigen_vectors[number_eigen][j] + deviation
         E1 = np.vdot(v1, hamiltonian.hamilton_variable(v1, mu, epsilon))
-        if E1 <= eigen_values[0]:
+        if E1 <= eigen_values[number_eigen]:
             count += 1
     return count    #returns number of times the eigenenergie was smaller than the one we calculated
 
@@ -88,11 +88,18 @@ epsilon = 1/60
 
 
 
-#v = np.ones(200)
-#result_arnoldi = eigenmethods.arnoldi(v, 4,10**(-9),200,10**(-9),200,mu,epsilon)
+#v = np.ones(100)
+#result_arnoldi = eigenmethods.arnoldi(v, 2,10**(-9),200,10**(-9),200,mu,epsilon)
 #print(result_arnoldi)
 #print((test_eigenvalue_vector(result_arnoldi)))
 #exit()
+
+#print(test_ritz_method(result_arnoldi,1,0.1,10))
+
+
+
+
+
 
 exit()
 
@@ -190,7 +197,26 @@ for i in range(len(grids)):
     tab.loc[len(tab)] = lst
 print(tab.to_string(index=False))
 
+print(' ')
 
+
+''' testing Ritz method'''
+
+iterations = 100
+grids = np.array(['first', 'second'])
+print('Testing ritz method for first and second eigenvalue for multiple tolerances of arnoldi using starting vector np.ones(220) (start deviation Ritz: 0.01) (maxiters = 200). Number of times eigenvalue was NOT smallest out of 100 iterations of deviation: ')
+tab = pd.DataFrame({'eigenvalue': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': [],'10**(-9)': []})
+v = np.ones(220)
+toler = np.array([10**(-3),10**(-5),10**(-7),10**(-9)])
+arnoldi = []
+for tol in toler:
+    arnoldi.append(eigenmethods.arnoldi(v, 2,tol,200,tol,200,mu,epsilon))
+for i in range(len(grids)):
+    lst = [str(grids[i])]
+    for j in range(len(toler)):
+        lst.append(str((test_ritz_method(arnoldi[j],i,0.01,iterations))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
 
 
 
