@@ -129,8 +129,38 @@
 	
 	
 	\subsection{Convergence with rel() function xxxxxxxchange title}
-	- Flo H
-	
+	We are interested in seeing how certain quantities behave for different values of $M$ and therefore different values of $\tau$. We will look at $\Delta E$ for both integrators, as well as the deviation of the norm for the second-order integrator, and lastly, we will look at the average difference between the two integrators. For that we will take a specific time $T$ and calculate the time evolution of one specific state in $M$ steps up to that time $T$. Afterwards, we repeat the same process for different values of $M$.\\
+    Since both integrators use approximations that improve with smaller values of $\tau$, we expect the deviation of the norm and energy to decrease with increasing $M$. Lets look at the second order integrator first: $U(t,0)=1-i\hat{H}\hat{\tau}-\frac12\hat{H}^2\hat{\tau}^2$
+    \begin{align*}
+        \braket{\psi_t|\psi_t}&=\bra{\psi_0}[U^\dagger(t,0)U(t,0)]^M\ket{\psi_0}\\
+        &=\bra{\psi_0}\left[1+\frac{1}{4}\hat{H}^4\hat{\tau}^4 \right]^M\ket{\psi_0}\\
+        &=\bra{\psi_0}1+\frac{M}{4}\hat{H}^4\hat{\tau}^4+\mathcal{O}(\hat{\tau}^6)\ket{\psi_0}\\
+        &\approx \braket{\psi_0|\psi_0}+\frac{\hat{T}\hat{E}_0^4}{4}\hat{\tau}^3\braket{\psi_0|\psi_0}\\
+        \implies \Delta|\psi_t|^2&\sim\hat{\tau}^3\sim M^{-3}
+    \end{align*}
+    Now we look at the strang-splitting integrator: $U(t,0)=e^{-i\frac{\hat{V}\hat{\tau}}{2}}e^{-i\hat{K}\hat{\tau}}e^{-i\frac{\hat{V}\hat{\tau}}{2}}$
+    \begin{align*}
+        U(t,0)&=e^{-i\frac{\hat{V}\hat{\hat{\tau}}}{2}}e^{-i\hat{K}\hat{\hat{\tau}}}e^{-i\frac{\hat{V}\hat{\hat{\tau}}}{2}}\\
+        &=(1-i\hat{\tau}\frac{V}{2}-\frac{1}{2}\left(\hat{\tau}\frac{V}{2}\right)^2+\frac{i}{6}\left(\hat{\tau}\frac{V}{2}\right)^3)(1-i\hat{\tau} K-\frac{1}{2}\left(\hat{\tau} K\right)^2+\frac{i}{6}\left(\hat{\tau} K\right)^3)(1-i\hat{\tau}\frac{V}{2}-\frac{1}{2}\left(\hat{\tau}\frac{V}{2}\right)^2+\frac{i}{6}\left(\hat{\tau}\frac{V}{2}\right)^3)\\&+\mathcal(O)(\hat{\tau}^4)\\
+        &=1-i\hat{\tau} H-\frac{1}{2}\hat{\tau}^2(K^2+V^2+KV+VK)\\&+\frac{i\hat{\tau}^3}{6}\left(8\left(\frac{V}{2} \right)^3 + 3K\left(\frac{V}{2} +\right)^2 + 3\left(\frac{V}{2} \right)^2K +3K^2\frac{V}{2}+3\frac{V}{2}K^2 +6\frac{V}{2}K\frac{V}{2}+K^3 \right) +\mathcal{O}(\hat{\tau}^4)\\
+        &=e^{-iH\hat{\tau}}+\mathcal{O}(\hat{\tau}^3)
+    \end{align*}
+Therefore we can conclude that
+\begin{align*}
+    \braket{\psi_t|\psi_t}&=\bra{\psi_0}U^\dagger U\ket{\psi_0}\\
+    &=\bra{\psi_0}((e^{iH\hat{\tau}}+\mathcal{O}(\hat{\tau}^3))(e^{-iH\hat{\tau}}+\mathcal{O}(\hat{\tau}^3)))^M\ket{\psi_0}\\
+    &=\bra{\psi_0}(1+\mathcal{O}(\hat{\tau}^3))^M\ket{\psi_0}\\
+    &=\braket{\psi_0|\psi_0}+\bra{\psi_0}M\mathcal{O}(\hat{\tau}^3)\ket{\psi_0}\\
+    &=\braket{\psi_0|\psi_0}+\bra{\psi_0}\mathcal{O}(\hat{\tau}^2)\ket{\psi_0}
+\end{align*}
+We therefore expect $\Delta|\psi_t|^2\sim\hat{\hat{\tau}}^2\sim M^{-2}$
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=7cm]{"inf_vol_lim.png"}
+	\caption{log-log plots against M}
+	\end{center}
+	\end{figure}
+	The calculated are [[-3.0198987799444197, -1.9999479182661908], [-3.009455253603387, -2.004740059443111]], which aligns with our predictions.
 	
 
 	\\
