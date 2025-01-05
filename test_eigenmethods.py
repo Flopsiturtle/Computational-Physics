@@ -76,6 +76,29 @@ mu = 20         # given mu
 epsilon = 1/60
 
 
+
+
+
+grids = np.array([20, 50, 100, 200])
+print('Testing error of first four eigenvalues/vectors for multiple N and tolerances using random odd starting vector (maxiters = 200). Maximum error: ')
+tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': []})
+for i in range(len(grids)):
+    N = grids[i]
+    lst = [N]
+    v = np.concatenate((np.random.random(N//2),[0]))
+    v_odd = np.concatenate((-v,list(reversed(v[:-1]))))
+    toler = np.array([10**(-3),10**(-5)])
+    print(v_odd)
+    for tol in toler:
+        arnoldi = eigenmethods.arnoldi(v_odd, 2,tol,10000,tol,10000,mu,epsilon)
+        lst.append(str((test_eigenvalue_vector(arnoldi))))
+    tab.loc[len(tab)] = lst
+print(tab.to_string(index=False))
+
+
+exit()
+
+
 grids = np.array([20, 50, 100, 200])
 print('Testing error of first four eigenvalues/vectors for multiple N and tolerances using random even starting vector (maxiters = 200). Maximum error: ')
 tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': [],'10**(-9)': []})
@@ -92,28 +115,6 @@ for i in range(len(grids)):
 print(tab.to_string(index=False))
 
 exit()
-
-
-grids = np.array([20, 50, 100, 200])
-print('Testing error of first four eigenvalues/vectors for multiple N and tolerances using random odd starting vector (maxiters = 200). Maximum error: ')
-tab = pd.DataFrame({'N': [], '10**(-3)': [], '10**(-5)': [],'10**(-7)': []})
-for i in range(len(grids)):
-    N = grids[i]
-    lst = [N]
-    v = np.concatenate((np.random.random(N//2),[0]))
-    v_odd = np.concatenate((-v,list(reversed(v[:-1]))))
-    toler = np.array([10**(-3),10**(-5),10**(-7)])
-    for tol in toler:
-        arnoldi = eigenmethods.arnoldi(v_odd, 2,tol,10000,tol,10000,mu,epsilon)
-        lst.append(str((test_eigenvalue_vector(arnoldi))))
-    tab.loc[len(tab)] = lst
-print(tab.to_string(index=False))
-
-
-exit()
-
-
-
 
 
 
