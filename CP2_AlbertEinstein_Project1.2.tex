@@ -188,13 +188,93 @@ We therefore expect $\Delta|\psi_t|^2\sim\hat{\hat{\tau}}^2\sim M^{-2}$
 	
 	\section{Implementing conjugate-gradient and power method}
 	
-	
+
+
 	
 	
 	\section{Testing}
-	!!! describe this time with detail and test all possible configurations!!!
+	The tests in this section are done in a similar fashion as in the first sub-project. Meaning, that we code separate tests for our functions, which are the conjugate gradient and Arnoldi method. These can then be used with varying parameters (e.g. $N$ and tolerance) to evaluate different behaviours. Notice, this is not the task of convergence of eigenvalues/eigenvectors but the needed preparation for this part to ensure correct results. \\
+	Two important aspects to add: 1. We ran all tests multiple times with different parameters, the tests shown in this chapter are therefore a distinct selection to underline noticed effects. 2. The figures in this chapter do not have a detailed description, as the important information is given in the caption of the figure/in the figure itself and it would just be too much text cluttering.
+
+	\subsection{Conjugate-gradient}
+	We start with testing our implementation of the conjugate gradient method. Our method does not calculate explicitly the inverse of the hamiltonian but the inverse multiplied with a vector $v$ or in code language $H^{-1}(v)$. In this way, we never have to write $H$ as a matrix (same as in sub-project 1.1) but can use the hamilton function acting on $v$. Therefore, we can simply test if our result is actually inverse by calculating $v-H(H^{-1}(v))\thickapprox 0$ and output the maximum error of all the array elements. The conjugate gradient method is also implemented to work in multiple dimensions. A test for multiple $N$ and $D$ is shown in figure \ref{fig:test_inverse-ND}. A following test for multiple tolerances and max iterations is shown in figure \ref{fig:test_inverse-tol}.
+	\begin{figure} [h] 
+	\begin{center}	
+	\includegraphics[width=17cm]{"test_inverse_ND2 better.png"}
+	\caption{Test for the conjugate gradient method for multiple $N$ and $D$; 20 iterations with each time a "randomly" generated array $v$ being tested. Output: maximum error and as a second element the number of times the maximum iterations (maxiters) were reached.} \label{fig:test_inverse-ND}
+	\end{center}
+	\end{figure}
+	\begin{figure} [h] 
+	\begin{center}	
+	\includegraphics[width=19cm]{"test_inverse_tolMax.png"}
+	\caption{Test for the conjugate gradient method for multiple tolerances and max iterations; 100 iterations with each time a "randomly" generated array $v$ being tested. Output: maximum error and as a second element the number of times the maximum iterations (maxiters) were reached. Notice: when every iteration reaches the maxiters (does not converge) we set the error to 0 as a place-holder!} \label{fig:test_inverse-tol}
+	\end{center}
+	\end{figure}
+	\\
+	With these test results, we can conclude that our conjugate gradient method correctly converges to the inverse for high enough max iterations, with an error depending on the prior set tolerance. The implementation even works in multiple dimensions.
 	
 	
+	\subsection{Orthonormality and Ritz}
+	Furthermore, we can test our implementation of the Arnoldi method, which uses the conjugate gradient and power method. Both have a tolerance and max iteration, which are kept the same for both methods.\\
+	First, we check if the first four calculated eigenvectors are really orthonormal. This is done for different $N$ and tolerances of the Arnoldi method. The starting vector $v$ is generated via "np.ones($N$)" and the test is shown in figure \ref{fig:test_orth}.\\
+	One observes that the orthonormality test outputs exceptionally low errors in the range of $10^{-16}-10^{-15}$.
+	\begin{figure} [h] 
+	\begin{center}	
+	\includegraphics[width=19cm]{"test_eigen_orth-tol.png"}
+	\caption{Test for orthonormality of first 4 eigenvectors calculated via the Arnoldi method, for multiple $N$ and tolerances. Output: maximum error of all the different array elements.} \label{fig:test_orth}
+	\end{center}
+	\end{figure}
+	\\
+	\\
+	As a second test, we implemented the Rayleigh-Ritz method to check if the calculated lowest eigenvalue is in fact the lowest possible eigenvalue. The test is done for the lowest (first) eigenvalue and the second lowest (second) eigenvalue and corresponding eigenvector. We vary the tolerance of Arnoldi and the starting deviations of the Ritz method. The output is the number of times the studied eigenvalue was not the smallest. The iterations of the tests are done by increasingly lowering the starting deviation. We also did multiple tests for different $N$ but chose to show the results for a starting vector $v$ of "np.ones(220)". Though, the important aspect that the first eigenvalue is always the smallest was always true. The results can be seen in figure \ref{fig:test_ritz}.
+	\begin{figure} [h] 
+	\begin{center}	
+	\includegraphics[width=19cm]{"test_ritz-N220-dev0.01.png"}
+	\caption{Testing the two lowest eigenvalues with Ritz method for eigenvalues/vectors calculated via the Arnoldi method for multiple starting deviations of Ritz and tolerances of Arnoldi. The red rectangles show the only parameter changing between the three tests. Output: number of times the studied eigenvalue was not the smallest one.} \label{fig:test_ritz}
+	\end{center}
+	\end{figure}
+	\\
+	The Ritz method always outputs the first eigenvalue as the lowest, as expected. This cannot be said for the second lowest eigenvalue, again, as expected. Why the count at the last test for the second eigenvalue at $tolerance=10^{-7}$ is not 100 but 11 is not clear, but this could be a random artefact at these exact parameters.
+	
+	
+	\subsection{Eigenvalue equation}
+	As a last step, we evaluate the eigenvalue equation that can be calculated with the eigenvalues/vectors from the Arnoldi method and the hamiltonian. This is done by looking at the maximum error of all the array elements between the two sides of the eigenvalue equation.\\
+	We start with an initial vector of "np.ones($N$)" with multiple $N$ and different tolerances for the Arnoldi method. This first test is shown in figure \ref{fig:test_eigen_ones}.
+	\begin{figure} [h] 
+	\begin{center}	
+	\includegraphics[width=19cm]{"test_eigen.png"}
+	\caption{Testing the eigenvalue equation for the four lowest eigenvalues/vectors calculated via the Arnoldi method for multiple $N$ ($v$=np.ones($N$)) and tolerances. Output: maximum error of the eigenvalue equation for each of the four eigenvalues} \label{fig:test_eigen_ones}
+	\end{center}
+	\end{figure}
+	\\
+	With an initial guess of $v$=np.ones($N$), one can see that to achieve an error of $<1\%$ for the eigenvalues we would need to have tolerances of $10^{-9}$. As for $10^{-7}$ and $N=200$ the error of the fourth eigenvalue/vector is $1,66\%$. But after careful analysis of the hamiltonian and starting conditions, we found that the four lowest eigenvalues are not the bland four lowest calculated eigenvalues for a random initial guess but the output of our Arnoldi method is dependent on the initial guess. You can read more deeply into this discussion in the next section of convergence! Without interfering with the argumentation of the next section, we can already test the new initial guesses. This will be an even and odd starting vector, where each the lowest and second lowest eigenvalue is degenerate for these two initial guesses. Which together make up our four lowest eigenvalues.\\
+	Thus, we have to test the same parameters as in figure \ref{fig:test_eigen_ones} with both of the new initial guesses but only for the two lowest eigenvalues each, see figure \ref{fig:test_eigen_even-odd}. EXPLAIN IF USED RANDOM OR NOT AND WHY + WHAT WE USE NOW FOR FIGURE BELOW AND CONVERGENCE SECTION
+	\begin{figure} [h] 
+	\begin{center}	
+	\includegraphics[width=19cm]{"test_eigen.png"}
+	\caption{WRONG IMAGE\\
+	Testing the eigenvalue equation for the four lowest eigenvalues/vectors calculated via the Arnoldi method for multiple $N$ (random $v$ is even/odd) and tolerances. Output: maximum error of the eigenvalue equation} \label{fig:test_eigen_even-odd}
+	\end{center}
+	\end{figure}
+	\\
+	!!!!EVALUATE EVALUATE EVALUATE EVALUATE!!!!\\
+	ALSO WRITE THIS IN THE LAST TEST BELOW
+	\\
+	\\
+	As a final but small test, we just look if our input of the numbers of eigenvalues the Arnoldi method has to calculate has any influence on the calculation itself. A simple comparison can bee seen in figure \ref{fig:test_eigen_number}. As one can observe, the change results in no difference.
+	\begin{figure} [h] 
+	\begin{center}	
+	\includegraphics[width=19cm]{"test_eigen_numbers.png"}
+	\caption{The lowest eigenvalues from calculation via the Arnoldi method and errors of the eigenvalue equation for the 4 lowest and 10 lowest eigenvalues.} \label{fig:test_eigen_number}
+	\end{center}
+	\end{figure}
+		\\
+		\\
+		With all these tests from the different sections, we can conclude that our functions do work as expected under the condition of choosing the right conditions. This means we take an even and odd starting vector for which we only calculate the two lowest eigenvalues. Because of this, we can set the tolerances to $10^{-6}-10^{-7}$ and for every $N$ still have errors of smaller than $1\%$. The important aspect is to also set the maximum iterations high enough to not run into an error.\\
+		With this meaningful work done, we can advance to furthermore analyse the behaviour of eigenvalues and eigenfunction under convergence in the next section.
+	
+
+ 
 	
 	\section{Convergence of eigenvalues/eigenvectors}
 
