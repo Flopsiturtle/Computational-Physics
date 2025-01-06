@@ -318,7 +318,12 @@ We therefore expect $\Delta|\psi_t|^2\sim\hat{\hat{\tau}}^2\sim M^{-2}$
  	We chose $N=241$ since it is easier to produce even and odd starting guesses for odd values of $N$. Not only do we see a lot of improvement especially for the higher two eigenvectors, the method is also a lot faster than before, making our code much more efficient.
 	\subsection{Continuum Limit}
     	We want to look at the continuum limit in the infinite volume case. To do that we have to take the limit for $a\rightarrow0$. We have two variables that depend on $a$: $N=\frac{L}{a}$ and $\epsilon=\frac{a}{r}$. Since we only work with the dimensionless variables, we have to take the limit for $N\rightarrow\infty$ and $\epsilon\rightarrow0$ in such a way, that $N\epsilon=\frac{L}{r}=const$. To be in the infinite volume limit we will use $N\epsilon=\frac{241}{60}$. We will then make a list of multipliers $m\geq1$ and use values for $N=241*m$ and $\epsilon=\frac{1}{60\cdot m}$, we then plot the Eigenvalues against the different multipliers.
-
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=7cm]{"eigenvectors_Parity.png"}
+	\caption{Eigenvectors for $N=241$ with $\mu$ and $\varepsilon$ from the infinite volume series, plotted against $n\varepsilon=\frac{x}{r}$ using parity}
+	\end{center}
+	\end{figure}
 
 
 
