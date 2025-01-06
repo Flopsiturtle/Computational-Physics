@@ -32,12 +32,15 @@ def get_data(number_eigen,start,finish,gap,mu,epsilon):
     x = []
     y = []
     for N in np.arange(start,finish+gap,gap):
-        v = np.random.random(N)
-        #print(eigenmethods.arnoldi(v, 1, 0.0001, 100, 0.0001, 200)[0])
-        data = eigenmethods.arnoldi(v, number_eigen, 10**(-7), 10000, 10**(-7), 10000,mu,epsilon)[0]
-        if isinstance(data,str) is False: 
-            x.append(N)
-            y.append(data)
+        print(N)
+        v = np.concatenate((np.ones(N//2),[0])) 
+        v_even = np.concatenate((v,list(reversed(v[:-1]))))
+        v_odd = np.concatenate((-v,list(reversed(v[:-1]))))
+        data_even = eigenmethods.arnoldi(v_even, number_eigen//2, 10**(-7), 10000, 10**(-7), 10000,mu,epsilon)[0]
+        data_odd = eigenmethods.arnoldi(v_odd, number_eigen//2, 10**(-7), 10000, 10**(-7), 10000,mu,epsilon)[0]
+        data = np.concatenate((data_even, data_odd))
+        x.append(N)
+        y.append(data)
     return x,y
 
 
@@ -45,12 +48,14 @@ def get_data(number_eigen,start,finish,gap,mu,epsilon):
 mu = 20         # his mu
 epsilon = 1/60
 """
-data = get_data(4,40,240,40,mu,epsilon)     ### maybe delete input with start,finish,gap to be always the same and give input of errors and maxiters, depending on usecase we want for final test
+data = get_data(4,20,260,40,mu,epsilon)     ### maybe delete input with start,finish,gap to be always the same and give input of errors and maxiters, depending on usecase we want for final test
 plt.plot(data[0],data[1],'ro')
 plt.show()
 """
 ### i think problems with eigenvalues might be fixed now because of change in potential???
-
+v = np.concatenate((np.ones(20//2),[0])) 
+v_even = np.concatenate((v,list(reversed(v[:-1]))))
+print(eigenmethods.arnoldi(v_even, 2, 10**(-5), 10000, 10**(-5), 10000, mu, epsilon))
 
 ## for N = 200 we plot the eigenvalues against the tolerance of the arnoldi method (not the H_inv)
 ## we also blor the evolution of the eigenvectors with the tolerance
@@ -124,10 +129,10 @@ def continuum():
         Eig_vec.append(np.concatenate((Eig_vec_even,Eig_vec_odd)))
     return Eig_val, Eig_vec
 
-
+"""
 plt.plot(np.arange(1,11, 2), continuum()[0], 'ro')
 plt.show()
-
+"""
 
 
 #tol_evol(4)
