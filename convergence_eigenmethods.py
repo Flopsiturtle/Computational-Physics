@@ -96,8 +96,8 @@ def generate_parity(N, mu, epsilon):
     v = np.concatenate((np.random.random(N//2),[0])) 
     v_even = np.concatenate((v,list(reversed(v[:-1]))))
     v_odd = np.concatenate((-v,list(reversed(v[:-1]))))
-    Eig_val_even, Eig_vec_even = eigenmethods.arnoldi(v_even, 2, 10**(-6), 500, 10**(-6), 500,mu,epsilon)
-    Eig_val_odd, Eig_vec_odd = eigenmethods.arnoldi(v_odd, 2, 10**(-6), 500, 10**(-6), 500,mu,epsilon)
+    Eig_val_even, Eig_vec_even = eigenmethods.arnoldi(v_even, 2, 10**(-6), 5000, 10**(-6), 5000,mu,epsilon)
+    Eig_val_odd, Eig_vec_odd = eigenmethods.arnoldi(v_odd, 2, 10**(-6), 5000, 10**(-6), 5000,mu,epsilon)
     return np.concatenate((Eig_val_even,Eig_val_odd)), np.concatenate((Eig_vec_even,Eig_vec_odd))
 """
 v = np.random.random(241)
