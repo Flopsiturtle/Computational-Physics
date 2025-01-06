@@ -34,7 +34,7 @@ def get_data(number_eigen,start,finish,gap,mu,epsilon):
     for N in np.arange(start,finish+gap,gap):
         v = np.random.random(N)
         #print(eigenmethods.arnoldi(v, 1, 0.0001, 100, 0.0001, 200)[0])
-        data = eigenmethods.arnoldi(v, number_eigen, 10**(-7), 500, 10**(-7), 500,mu,epsilon)[0]
+        data = eigenmethods.arnoldi(v, number_eigen, 10**(-7), 10000, 10**(-7), 10000,mu,epsilon)[0]
         if isinstance(data,str) is False: 
             x.append(N)
             y.append(data)
@@ -85,7 +85,7 @@ def plot_eigenvectors(eigenvalues, eigenvectors):
     
     for i, (eigenvalue, eigenvector) in enumerate(zip(eigenvalues, eigenvectors)):
         ax = axes[i]
-        ax.plot(np.arange(-100,101)*variables.epsilon, eigenvector, marker='o', linestyle='-')
+        ax.plot(np.arange(-120,121)*variables.epsilon, eigenvector, marker='o', linestyle='-')
         ax.set_title(f"Eigenvalue: {eigenvalue:.4f}", fontsize=14)
         ax.grid(True)
     
@@ -100,31 +100,36 @@ def generate_parity(N, mu, epsilon):
     Eig_val_odd, Eig_vec_odd = eigenmethods.arnoldi(v_odd, 2, 10**(-6), 500, 10**(-6), 500,mu,epsilon)
     return np.concatenate((Eig_val_even,Eig_val_odd)), np.concatenate((Eig_vec_even,Eig_vec_odd))
 """
-v = np.random.random(201)
-Eig_val, Eig_vec = eigenmethods.arnoldi(v, 4, 10**(-6), 500, 10**(-6), 500,mu,epsilon)
+v = np.random.random(241)
+Eig_val, Eig_vec = eigenmethods.arnoldi(v, 4, 10**(-7), 10000, 10**(-7), 10000,mu,epsilon)
 plot_eigenvectors(Eig_val, Eig_vec)
-plot_parity()
 """
-
+"""
+Eig_val, Eig_vec = generate_parity(241, mu, epsilon)
+plot_eigenvectors(Eig_val, Eig_vec)
+"""
 def continuum():
     multi = np.arange(1,11, 2)
     Eig_val, Eig_vec = [], []
     for m in multi:
-        N = 201 * m
+        N = 241 * m
         eps = epsilon/m
         v = np.concatenate((np.random.random(N//2),[0])) 
         v_even = np.concatenate((v,list(reversed(v[:-1]))))
         v_odd = np.concatenate((-v,list(reversed(v[:-1]))))
         print(m, N, eps)
-        print(v_even)
-        Eig_val_even, Eig_vec_even = eigenmethods.arnoldi(v_even, 2, 10**(-6), 500, 10**(-6), 500,mu,eps)
-        Eig_val_odd, Eig_vec_odd = eigenmethods.arnoldi(v_odd, 2, 10**(-6), 500, 10**(-6), 500,mu,eps)
+        Eig_val_even, Eig_vec_even = eigenmethods.arnoldi(v_even, 2, 10**(-6), 5000, 10**(-6), 5000,mu,eps)
+        Eig_val_odd, Eig_vec_odd = eigenmethods.arnoldi(v_odd, 2, 10**(-6), 5000, 10**(-6), 5000,mu,eps)
         Eig_val.append(np.concatenate((Eig_val_even,Eig_val_odd)))
         Eig_vec.append(np.concatenate((Eig_vec_even,Eig_vec_odd)))
     return Eig_val, Eig_vec
 
-plt.plot(np.arange(1,11, 2), continuum()[0])
+
+plt.plot(np.arange(1,11, 2), continuum()[0], 'ro')
 plt.show()
+
+
+
 #tol_evol(4)
 ### choose a value for N for which we have already converged in the infinite volume limit
 ### lets say N_0 = 200 for epsilon_0 = 1/60
