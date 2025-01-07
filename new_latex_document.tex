@@ -87,10 +87,14 @@
 	\vspace{0.5cm}
 	
 	
-	\section{What changed regarding our first submission}
+	\section{How the code works}
+	Before addressing the main changes, we quickly explain how to run the new code structure. To test the hamiltonian and integrators you can just run the files "test$\_$hamiltonian.py" and "test$\_$integrators.py", respectively. We wrote separate functions that run the defined tests and output tables. These functions are called by running the two files (one can change the information inside of the functions, change the input or only run one of the functions).\\
+	To get the final animation you have to run the file "animation.py". To show you, the changes to our project files did not affect our animation in a meaningful way, we included the animation that was run with the revised code. \\ 
+	Running the file "test$\_$integr$\_$converg.py" outputs the testing for the convergence of the integrators.
+	
 	
 	\subsection{Modularity}
-	As a first step, we improved our file management by implementing a modularity of files, dividing our prior one python file into seven (and of course more files for the second sub-project). The content of these modules did not change if not stated otherwise in the sections Variables, Tests or Convergence. \\
+	Now, what changed explicitly regarding our first submission. As a first step, we improved our file management by implementing a modularity of files, dividing our prior one python file into seven (and of course more files for the second sub-project). The content of these modules did not change if not stated otherwise in the sections Variables, Tests or Convergence. \\
 	The new file system is listed below: \\ 
 	- "variables.py": defining variables and few general functions\\
 	- "hamiltonian.py": defining potential and hamiltonian\\
@@ -104,7 +108,7 @@
 \subsection{Variables}
 	We then changed/deleted all our old variables depending on other parameters to be now only defined by dimensionless values, without changing their value in regards to our first submission. In our case of modularity, where we work with the same variables in multiple python files, it is practical to store these global variables (and some basic functions used in multiple other files) in an extra python file. We can then import these global variables by "from variables import *". \\
 	This change worked with most of the prior functions and tests. Except, when needing to change certain variables of a function in a separate file from where the function is defined, which means the change of variable is not possible in a separate file. Explicitly, what changed: \\
-	\textbf{1.} For the new hamiltonian tests (see section 1.3), we had to change our definition of the potential to take $N$ from the size of the given array instead of using the global $N$.\\
+	\textbf{1.} For the new hamiltonian tests (see section 1.4), we had to change our definition of the potential to take $N$ from the size of the given array instead of using the global $N$.\\
 	\textbf{2.} A second change regarding the hamiltonian file was done. We defined potential$\_$variable and \\hamilton$\_$variable which are the same as our old potential and hamiltonian but take $\mu$ and $\epsilon$ as an input for the convergence of eigenvalues/-vectors in the second sub-project, where we have to change these.\\
 	\textbf{3.} Similarly, but for the first sub-project, for testing the integrators in dependence of $M$ or rather $\tau$, we had to add an additional input for $\tau$ into the integrators (and therefore the tests). Thus, the dependence could be evaluated without having to define the integrators in the same file as the tests, which was falsely done in our first submission.
 
@@ -308,17 +312,15 @@ We therefore expect $\Delta|\psi_t|^2\sim\hat{\hat{\tau}}^2\sim M^{-2}$
 	\end{figure}
 	\\
 	With an initial guess of $v$=np.ones($N$), one can see that to achieve an error of $<1\%$ for the eigenvalues we would need to have tolerances of $10^{-9}$. As for $10^{-7}$ and $N=200$ the error of the fourth eigenvalue/vector is $1,66\%$. But after careful analysis of the hamiltonian and starting conditions, we found that the four lowest eigenvalues are not the bland four lowest calculated eigenvalues for a random initial guess but the output of our Arnoldi method is dependent on the initial guess. You can read more deeply into this discussion in the next section of convergence! Without interfering with the argumentation of the next section, we can already test the new initial guesses. This will be an even and odd starting vector, where each the lowest and second lowest eigenvalue is degenerate for these two initial guesses. Which together make up our four lowest eigenvalues.\\
-	Thus, we have to test the same parameters as in figure \ref{fig:test_eigen_ones} with both of the new initial guesses but only for the two lowest eigenvalues each, see figure \ref{fig:test_eigen_even-odd}. EXPLAIN IF USED RANDOM OR NOT AND WHY + WHAT WE USE NOW FOR FIGURE BELOW AND CONVERGENCE SECTION
+	Thus, we have to test the same parameters as in figure \ref{fig:test_eigen_ones} with both of the new initial guesses but only for the two lowest eigenvalues each. The first tests were done by using randomly generated functions, which were odd or even. But this randomness meant that depending on the starting vector, we could get a good convergence below our set tolerance, or we would run into the max iterations. These were the results from extensive tests.  We now use odd and even vectors build with ones. The results can be seen in figure \ref{fig:test_eigen_even-odd}.
 	\begin{figure} [H] 
 	\begin{center}	
-	\includegraphics[width=19cm]{"test_eigen.png"}
-	\caption{WRONG IMAGE\\
-	Testing the eigenvalue equation for the four lowest eigenvalues/vectors calculated via the Arnoldi method for multiple $N$ (random $v$ is even/odd) and tolerances. Output: maximum error of the eigenvalue equation} \label{fig:test_eigen_even-odd}
+	\includegraphics[width=19cm]{"test_eigen_even-odd.png"}
+	\caption{Testing the eigenvalue equation for an odd and even starting vector of ones; for each the two lowest eigenvalues/vectors are calculated via the Arnoldi method for multiple $N$ and tolerances. Output: maximum error of the eigenvalue equation} \label{fig:test_eigen_even-odd}
 	\end{center}
 	\end{figure}
 	\\
-	!!!!EVALUATE EVALUATE EVALUATE EVALUATE!!!!\\
-	ALSO WRITE THIS IN THE LAST TEST BELOW
+	We now observe for a tolerance of $10^{-7}$ errors of smaller than $1\%$ for all eigenvalues and $N$, which was our wanted limit.
 	\\
 	\\
 	As a final but small test, we just look if our input of the numbers of eigenvalues the Arnoldi method has to calculate has any influence on the calculation itself. A simple comparison can bee seen in figure \ref{fig:test_eigen_number}. As one can observe, the change results in no difference.
@@ -330,8 +332,8 @@ We therefore expect $\Delta|\psi_t|^2\sim\hat{\hat{\tau}}^2\sim M^{-2}$
 	\end{figure}
 		\\
 		\\
-		With all these tests from the different sections, we can conclude that our functions do work as expected under the condition of choosing the right conditions. This means we take an even and odd starting vector for which we only calculate the two lowest eigenvalues. Because of this, we can set the tolerances to $10^{-6}-10^{-7}$ and for every $N$ still have errors of smaller than $1\%$. The important aspect is to also set the maximum iterations high enough to not run into an error.\\
-		With this meaningful work done, we can advance to furthermore analyse the behaviour of eigenvalues and eigenfunctions under convergence in the next section.
+		With all these tests from the different sections, we can conclude that our functions do work as expected under the condition of choosing the right conditions. This means we take an even and odd starting vector for which we only calculate the two lowest eigenvalues. Because of this, we can set the tolerances to $10^{-7}$ and for every $N$ still have errors of smaller than $1\%$. The important aspect is to also set the maximum iterations high enough to not run into an error.\\
+		With this meaningful work done, we can advance to furthermore analyse the behaviour of eigenvalues and eigenfunction under convergence in the next section.
 	
 
  	\section{Convergence of eigenvalues/eigenvectors}
