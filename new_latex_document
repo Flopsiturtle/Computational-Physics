@@ -191,11 +191,11 @@ We therefore expect $\Delta|\psi_t|^2\sim\hat{\hat{\tau}}^2\sim M^{-2}$
 	\begin{figure} [H] 
 	\begin{center}
 	\includegraphics[width=16cm]{"final_loglog_1.png"}
-	\caption{log-log plots against M}
+	\caption{log-log plots against M with slopes [-3.0198987799444197, -1.9999479182661908, -3.009455253603387, -2.004740059443111]}
 	\end{center}
 	\end{figure}
     \noindent
-	The calculated slopes are [-3.0198987799444197, -1.9999479182661908, -3.009455253603387, -2.004740059443111], which aligns with our predictions.
+	The calculated slopes align with our predicted scaling.
  	(noch die neue Animation reinpacken um zu zeigen dass modular funktioniert?)
 
 
