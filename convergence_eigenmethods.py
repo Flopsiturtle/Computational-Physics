@@ -90,7 +90,7 @@ epsilon = 1/60
 
 
 
-#plot_inf_vol()
-#plot_cont_lim()
-#plot_eigenvectors(N=41)
+plot_inf_vol()
+plot_cont_lim()
+plot_eigenvectors(N=41)
 
