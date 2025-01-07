@@ -12,7 +12,7 @@ import hamiltonian
 def Hinv(v,tolerance,maxiters,mu,epsilon):
     size = (v.shape)[0]
     D = len(v.shape)    
-    x0 = np.zeros((size,)*D)   # D-dimensional --- can be changed to x0 = np.zeros(N) if only works in 1D
+    x0 = np.zeros((size,)*D)   
     r0 = v - hamiltonian.hamilton_variable(x0,mu,epsilon)
     if np.max(r0) <= tolerance:    
         return x0
@@ -24,8 +24,7 @@ def Hinv(v,tolerance,maxiters,mu,epsilon):
         if np.max(r) <= tolerance: 
             return x
         if i == maxiters:
-            print('!!maxiter reached in Conjugate Gradient!!')
-            return 'Error1'    ##### here should be an error! he said code has to fail if maxiters
+            return 'Error1'    
         beta = (np.vdot(r,r)) / (np.vdot(r0,r0))
         p0 = r + beta*p0
         x0 = x
@@ -95,37 +94,3 @@ def arnoldi(v, number_eigen, error_arnoldi, maxiter_arnoldi, error_Hinv, maxiter
         if j == maxiter_arnoldi-1:
             print('!!maxiter reached in Arnoldi!!')
             return 'Error2','Error2'
-    #return 1/np.array(eigen),orth_vectors
-    ##### here should be an error! he said code has to fail if maxiters
-
-
-
-""" --- test the code --- """
-#mu = 153.9     # our mu
-#mu = 20         # his mu
-#epsilon = 1/60
-
-#v = np.ones(200)     
-#print(arnoldi(np.random.rand(200), 4, 10**(-9), 200, 10**(-9), 200,mu,epsilon)[0])   
-
-
-
-
-# tests for arbitrary v
-#### 1D test
-v = np.ones(10)   
-error = 10**(-7)
-max_integers = 50
-#print(Hinv(v,error,max_integers,mu,epsilon))
-
-#### 1D test for complex with our gaussian
-#n, v=variables.gaussian_1D(-int(N/4),int(N/16))
-v = variables.normalize(v)
-#print(Hinv(v,error,max_integers,mu,epsilon))
-
-
-# 2D test    ######## fixed conjugate, works now in multidimensional!!!
-v = np.ones((20,20))   
-error = 0.00001
-max_integers = 200
-#print(Hinv(v,error,max_integers,mu,epsilon))
