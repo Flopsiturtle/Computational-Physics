@@ -107,22 +107,22 @@ def tab_eigen_ones(N_array):
             lst.append(str((test_eigenvalue_vector(arnoldi))))
         tab.loc[len(tab)] = lst
     print(tab.to_string(index=False))
-
-########## commented out because we didnt use in final report but still used for testing and finding best v
-#def tab_eigen_random(N_array):      
-    #grids = N_array
-    #print('Testing error of first four eigenvalues/vectors for multiple N using starting vector np.ones and np.random (tolerances =',10**(-5),10**(-5),', maxiters = 300 300). Maximum error: ')
-    #tab = pd.DataFrame({'N': [], 'np.ones(N)': [], 'np.random.rand(N)': []})
-    #for i in range(len(grids)):
-    #    N = grids[i]
-    #    lst = [N]
-    #    typ = np.array([np.ones(N),np.random.rand(N)])
-    #    for v in typ:
-    #        arnoldi = eigenmethods.arnoldi(v, 4,10**(-5),300,10**(-5),300,mu,epsilon)
-    #        lst.append(str((test_eigenvalue_vector(arnoldi))))
-    #    tab.loc[len(tab)] = lst
-    #print(tab.to_string(index=False))
-
+"""
+####### commented out because we didnt use in final report but still used for testing and finding best v
+def tab_eigen_random(N_array):      
+    grids = N_array
+    print('Testing error of first four eigenvalues/vectors for multiple N using starting vector np.ones and np.random (tolerances =',10**(-5),10**(-5),', maxiters = 300 300). Maximum error: ')
+    tab = pd.DataFrame({'N': [], 'np.ones(N)': [], 'np.random.rand(N)': []})
+    for i in range(len(grids)):
+        N = grids[i]
+        lst = [N]
+        typ = np.array([np.ones(N),np.random.rand(N)])
+        for v in typ:
+            arnoldi = eigenmethods.arnoldi(v, 4,10**(-5),300,10**(-5),300,mu,epsilon)
+            lst.append(str((test_eigenvalue_vector(arnoldi))))
+        tab.loc[len(tab)] = lst
+    print(tab.to_string(index=False))
+"""
 def tab_eigen_even(N_array):
     grids = N_array
     print('Testing error of first two even eigenvalues/vectors for multiple N and tolerances using ones as starting vector (maxiters = 10000). Maximum error: ')
