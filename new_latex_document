@@ -415,7 +415,8 @@ We therefore expect $\Delta|\psi_t|^2\sim\hat{\hat{\tau}}^2\sim M^{-2}$
 	\caption{Eigenvalues of the hamiltonian for $N=mN_0$, $\varepsilon=\frac{\varepsilon_0}{m}$, $N_0=241$, $\varepsilon_0=\frac{1}{60}$ against $m$}
 	\end{center}
 	\end{figure}
-	We can see, that the Eigenvalues have converged to the continuum limit from the very beginning, meaning the eigenvalues and vectors we found in the infinite volume limit, were already also converged in the continuum limit. While this result might be a little surprising, the starting value for $\varepsilon$ was chosen to be the same as we chose when making the animation of the wavefunction in the potential. In order to make that simulation work, we had to adjust the parameters accordingly. So when we settled on $N=200$ and $\varepsilon=\frac{1}{60}$ for the animation, since we found that those values worked well for it, we chose values for the infinite volume and continuum limit already. 
+	We can see, that the Eigenvalues have converged to the continuum limit from the very beginning, meaning the eigenvalues and vectors we found in the infinite volume limit, were already also converged in the continuum limit. While this result might be a little surprising, the starting value for $\varepsilon$ was chosen to be the same as we chose when making the animation of the wavefunction in the potential. In order to make that simulation work, we had to adjust the parameters accordingly. So when we settled on $N=200$ and $\varepsilon=\frac{1}{60}$ for the animation, since we found that those values worked well for it, we chose values for the infinite volume and continuum limit already.\\
+	Therefore the Eigenvalues in the infinite volume, continuum limit ($N=241$, $\mu=20$, $\varepsilon=\frac{1}{60}$) are [0.48652252 1.39727169 0.48653768 1.39893003]. 
 
 
 	
