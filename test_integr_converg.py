@@ -63,9 +63,8 @@ plt.show()
 
 
 
-exit()
-
-""" testing from above displayed without tabulars"""
+"""
+# testing from above displayed without tabulars
 iterations = 10
 grids = np.array([5, 10,15])
 for i in range(len(grids)):
@@ -80,3 +79,4 @@ for i in range(len(grids)):
         print("testing linearity of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_linearity_integrator(integrators.Strang_Splitting, psi, iterations)))))
         print("testing energy conservation of the Second-Order integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.so_integrator, psi, iterations)))))
         print("testing energy conservation of the Strang-Splitting integrator. Maximum error: " + str(np.max(np.abs(test_energy_conserv(integrators.Strang_Splitting, psi, iterations)))))
+"""
