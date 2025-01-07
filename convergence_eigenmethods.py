@@ -19,7 +19,6 @@ def plot_eigenvectors(eigenvalues, eigenvectors):
     cols = 2
     rows = (num_eigenvectors + cols - 1) // cols
 
-    # Create the figure and subplots
     fig, axes = plt.subplots(rows, cols, figsize=(12, rows * 4))
     axes = axes.flatten()
     
