@@ -58,20 +58,9 @@ vector<char> initCold(int D, int N){
     return state;
 }
 
-// Initializes state in hot system
-vector<int> initHot(int D, int N, int S){
-    srand(S);
-    vector<int> state(pow(N, D), 0);
-
-    for (int i = 0; i<state.size();  i++){
-        state[i] = rand() % 2 ? 1 : -1; // Random spin (+1 or -1)
-    }
-
-    return state;
-}
 
 // Initializes state in hot system
-vector<char> initHot2(int D, int N, int S){
+vector<char> initHot(int D, int N, int S){
     vector<char> state((pow(N,D) + 7) / 8, 0);
     default_random_engine generator(S); 
     uniform_int_distribution<> dis(1, 2);
@@ -288,7 +277,7 @@ int main(){
 
     for (int i = 0; i<500; i++){
         cout << i << endl;
-        vector<char> state = initHot2(D, N, i);
+        vector<char> state = initHot(D, N, i);
         generateHistory(state, D, N, Beta, B, M, i, 1);
     }
     
