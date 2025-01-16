@@ -3,6 +3,8 @@
 #include <cmath>
 #include <numeric>
 #include <fstream>
+#include <sstream>
+#include <string>
 
 #include <random>
 
@@ -136,6 +138,36 @@ void printGrid2D(vector<char> grid, int N){
     }
 }
 
+void appendColumn(const string& filename, const string& new_column){
+    ifstream infile(filename);
+    ifstream infile2(new_column);
+    ofstream temp_file("temp.csv");
+    string line, line2;
+
+    size_t i = 0; // Index for the new column values
+    while (getline(infile2, line2)) {
+        getline(infile, line);
+        //cout << i << line << line2 << endl;
+        // Append the new value to each line
+        temp_file << line << line2 << ", ";
+
+        temp_file << endl;
+        i++;
+    }
+
+    infile.close();
+    infile2.close();
+    temp_file.close();
+
+    // Replace the original file with the updated one
+    remove(filename.c_str());
+    rename("temp.csv", filename.c_str());
+}
+
+
+
+
+
 
 // Calculates the Hamiltonian with periodic boundary conditions and external field
 double calculateHamiltonian(const vector<char> &state, int D, int N, double Beta, double B) {
@@ -210,28 +242,32 @@ void metropolisStep(vector<char> &state, int D, int N, double Beta, double B, in
 }
 
 // Generates data for history plot in .csv file
-void generateHistory(vector<char> &state, int D, int N, double Beta, double B, int M, int S){
+void generateHistory(vector<char> &state, int D, int N, double Beta, double B, int M, int S, bool append = 0){
     ofstream outfile("Results/History.csv");
 
     if (!outfile) {
         cerr << "File could not be opened!" << endl;
     }
 
-    outfile << 0 << "," << calculateMagnetization(state, D, N) << endl;
+    outfile << calculateMagnetization(state, D, N) << endl;
 
     for (int i = 0; i<M; i++){
-        cout << i << endl;
+        //cout << i << endl;
         metropolisStep(state, D, N, Beta, B,  S);
-        outfile << i+1 << "," << calculateMagnetization(state, D, N) << endl;
+        outfile << calculateMagnetization(state, D, N) << endl;
     }
 
     outfile.close();
+    if (append){
+        appendColumn("Results/Replica.csv", "Results/History.csv");
+    }
+    
 }
 
 
 
 int main(){
-    int D, N, S;
+    int D, N, S, M;
     double Beta, B;
 
     cout << "Enter the number of dimensions (D): ";
@@ -240,8 +276,8 @@ int main(){
     cout << "Enter the number of points per dimension (N): ";
     cin >> N;
 
-    cout << "Enter the seed to use for random numbers (S): ";
-    cin >> S;
+    cout << "Enter the length of the Markov-Chain (M): ";
+    cin >> M;
 
     cout << "Enter the value for the coupling (Beta = J/kT): ";
     cin >> Beta;
@@ -250,13 +286,18 @@ int main(){
     cin >> B;
 
 
-    vector<char> state = initHot2(D, N, S);
+    
 
     //metropolisStep(state, D, N, Beta, B, S);
 
     //printGrid2D(state, N);
     //cout << calculateHamiltonian(state, D, N, Beta, B) << endl;
-    generateHistory(state, D, N, Beta, B, 1000, S);
+    for (int i = 0; i<500; i++){
+        cout << i << endl;
+        vector<char> state = initHot2(D, N, i);
+        generateHistory(state, D, N, Beta, B, M, i, 1);
+    }
+    
     //printGrid2D(state, N);
     //metropolisStep(state, D, N, Beta, B, S);
     //printGrid2D(state, N);
