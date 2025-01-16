@@ -232,9 +232,10 @@ void metropolisStep(vector<char> &state, int D, int N, double Beta, double B, in
 
 // Generates data for history plot in .csv file
 void generateHistory(vector<char> &state, int D, int N, double Beta, double B, int M, int S, bool append = 0){
-    ofstream outfile("Results/History.csv");
+    ofstream outfile("Results/MagnetizationHistory.csv");
+    ofstream outfile2("Results/EnergyHistory.csv");
 
-    if (!outfile) {
+    if (!outfile || !outfile2) {
         cerr << "File could not be opened!" << endl;
     }
 
@@ -244,11 +245,14 @@ void generateHistory(vector<char> &state, int D, int N, double Beta, double B, i
         //cout << i << endl;
         metropolisStep(state, D, N, Beta, B,  S);
         outfile << calculateMagnetization(state, D, N) << endl;
+        outfile2 << calculateHamiltonian(state, D, N, Beta, B) << endl;
     }
 
     outfile.close();
+    outfile2.close();
     if (append){
-        appendColumn("Results/Replica.csv", "Results/History.csv");
+        appendColumn("Results/MagnetizationReplica.csv", "Results/MagnetizationHistory.csv");
+        appendColumn("Results/EnergyReplica.csv", "Results/EnergyHistory.csv");
     }
     
 }
@@ -275,7 +279,7 @@ int main(){
     cin >> B;
 
 
-    for (int i = 0; i<500; i++){
+    for (int i = 0; i<10; i++){
         cout << i << endl;
         vector<char> state = initHot(D, N, i);
         generateHistory(state, D, N, Beta, B, M, i, 1);
