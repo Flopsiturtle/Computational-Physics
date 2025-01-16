@@ -286,21 +286,12 @@ int main(){
     cin >> B;
 
 
-    
-
-    //metropolisStep(state, D, N, Beta, B, S);
-
-    //printGrid2D(state, N);
-    //cout << calculateHamiltonian(state, D, N, Beta, B) << endl;
     for (int i = 0; i<500; i++){
         cout << i << endl;
         vector<char> state = initHot2(D, N, i);
         generateHistory(state, D, N, Beta, B, M, i, 1);
     }
     
-    //printGrid2D(state, N);
-    //metropolisStep(state, D, N, Beta, B, S);
-    //printGrid2D(state, N);
 
     return 0;
 }
