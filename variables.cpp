@@ -58,7 +58,6 @@ vector<char> initCold(int D, int N){
     return state;
 }
 
-
 // Initializes state in hot system
 vector<char> initHot(int D, int N, int S){
     vector<char> state((pow(N,D) + 7) / 8, 0);
@@ -114,6 +113,7 @@ void printGrid1D(vector<char> grid, int N){
 
     cout << " ]" << endl;
 }
+
 // Helper to print Grid in 2D
 void printGrid2D(vector<char> grid, int N){
     cout << "Grid:" << endl;
@@ -127,6 +127,7 @@ void printGrid2D(vector<char> grid, int N){
     }
 }
 
+// appends new Column of data to csv file
 void appendColumn(const string& filename, const string& new_column){
     ifstream infile(filename);
     ifstream infile2(new_column);
@@ -198,8 +199,6 @@ void metropolisStep(vector<char> &state, int D, int N, double Beta, double B, in
     int count = 0;
 
     for (int i = 0; i<pow(N, D); i++){
-        //vector<char> guess = state;
-        //flipSpin(guess, i);
         double deltaH = 2*B*getSpin(state, i); 
         vector<int> coordinates = indexToPosition(i, D, N);
 
@@ -212,20 +211,11 @@ void metropolisStep(vector<char> &state, int D, int N, double Beta, double B, in
             deltaH += 2*Beta*getSpin(state, i)*(getSpin(state, index1) + getSpin(state, index2));
         }
 
-        //double deltaHOld = calculateHamiltonian(guess, D, N, Beta, B) - calculateHamiltonian(state, D, N, Beta, B);
         double r = dis(generator);
 
-        //if (deltaH != deltaHOld){
-        //    cout << "diff: " << deltaH-deltaHOld << endl;
-        //} 
-        
-        //if (i == pow(N, D)/2){
-        //    cout << exp(-deltaH) << " > " <<  r << " ? " << endl;
-        //}
         if (exp(-deltaH) > r){
             flipSpin(state, i);
         }
-        //cout << "deltaH: " <<  deltaH << endl;
     }
     
 }
