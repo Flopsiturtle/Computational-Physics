@@ -211,7 +211,7 @@ void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, i
         double deltaH = 2*B*getSpin(state, i); 
 
         for (int d = 0; d<D; d++){
-            deltaH += 2*Beta*getSpin(state, i)*(getSpin(state, neighbors[i][d]) + getSpin(state, neighbors[i][d+1]));
+            deltaH += 2*Beta*getSpin(state, i)*(getSpin(state, neighbors[i][2*d]) + getSpin(state, neighbors[i][2*d+1]));
         }
 
         double r = dis(generator);

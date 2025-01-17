@@ -3,9 +3,9 @@ import numpy as np
 import pandas as pd
 
 # Load the data
-data = pd.read_csv("Results/EnergyReplica.csv")
+data = pd.read_csv("Results/MagnetizationReplica.csv")
 
-run = 200 #also equal to the value of the random seed used
+run = 0 #also equal to the value of the random seed used
 
 
 # Plot the data
