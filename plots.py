@@ -5,7 +5,7 @@ import pandas as pd
 # Load the data
 data = pd.read_csv("Results/MagnetizationReplica.csv")
 
-run = 0 #also equal to the value of the random seed used
+run = 0 #also equal to the value of the random seed used!
 
 
 # Plot the data
