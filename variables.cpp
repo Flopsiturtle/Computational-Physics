@@ -207,7 +207,8 @@ void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, i
     uniform_real_distribution<double> dis(0,1);
     int count = 0;
 
-    for (int i = 0; i<pow(N, D); i++){
+    int totalSpins = pow(N, D);
+    for (int i = 0; i < totalSpins; i++){
         double deltaH = 2*B*getSpin(state, i); 
 
         for (int d = 0; d<D; d++){
@@ -234,7 +235,7 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
 
     outfile << calculateMagnetization(state, D, N) << endl;
 
-    for (int i = 0; i<M; i++){
+    for (int i = 0; i < M; i++){
         //cout << i << endl;
         metropolisStep(state, neighbors, D, N, Beta, B,  S);
         outfile << calculateMagnetization(state, D, N) << endl;
