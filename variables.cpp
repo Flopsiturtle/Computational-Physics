@@ -273,7 +273,7 @@ int main(){
 
     vector<vector<int>> neighbors = precomputeNeighbors(D, N);
 
-    for (int i = 0; i<10; i++){
+    for (int i = 0; i<500; i++){
         cout << i << endl;
         vector<char> state = initHot(D, N, i);
         generateHistory(state, neighbors, D, N, Beta, B, M, i, 1);
