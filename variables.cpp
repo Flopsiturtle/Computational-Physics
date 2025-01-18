@@ -51,7 +51,7 @@ void flipSpin(vector<char> &state, int n) {
 vector<char> initCold(int D, int N){
     vector<char> state((pow(N,D) + 7) / 8, 0);
 
-    for (int i = 0; i<pow(N,D); i++){
+    for (int i = 0;i<pow(N,D); i++){
         setSpin(state, i, 1);
     }
 
@@ -59,19 +59,7 @@ vector<char> initCold(int D, int N){
 }
 
 // Initializes state in hot system
-vector<int> initHot(int D, int N, int S){
-    srand(S);
-    vector<int> state(pow(N, D), 0);
-
-    for (int i = 0; i<state.size();  i++){
-        state[i] = rand() % 2 ? 1 : -1; // Random spin (+1 or -1)
-    }
-
-    return state;
-}
-
-// Initializes state in hot system
-vector<char> initHot2(int D, int N, int S){
+vector<char> initHot(int D, int N, int S){
     vector<char> state((pow(N,D) + 7) / 8, 0);
     default_random_engine generator(S); 
     uniform_int_distribution<> dis(1, 2);
@@ -125,6 +113,7 @@ void printGrid1D(vector<char> grid, int N){
 
     cout << " ]" << endl;
 }
+
 // Helper to print Grid in 2D
 void printGrid2D(vector<char> grid, int N){
     cout << "Grid:" << endl;
@@ -138,6 +127,7 @@ void printGrid2D(vector<char> grid, int N){
     }
 }
 
+// appends new Column of data to csv file
 void appendColumn(const string& filename, const string& new_column){
     ifstream infile(filename);
     ifstream infile2(new_column);
@@ -164,30 +154,39 @@ void appendColumn(const string& filename, const string& new_column){
     rename("temp.csv", filename.c_str());
 }
 
-
-
-
-
-
-// Calculates the Hamiltonian with periodic boundary conditions and external field
-double calculateHamiltonian(const vector<char> &state, int D, int N, double Beta, double B) {
-    double H = 0.0;
-    double h;
+// Function to precompute the nearest neighbors for each point on the grid
+vector<vector<int>> precomputeNeighbors(int D, int N) {
+    vector<vector<int>> neighbors(pow(N, D), vector<int>(2 * D));
 
     for (int i = 0; i < pow(N, D); ++i) {
         vector<int> coordinates = indexToPosition(i, D, N);
 
-        for (int d=0; d<D; ++d) {
+        for (int d = 0; d < D; ++d) {
             vector<int> neighbor = coordinates;
             neighbor[d] = periodicBoundary(coordinates[d] + 1, N);
+            neighbors[i][2 * d] = positionToIndex(neighbor, D, N);
 
-            int neighborIndex = positionToIndex(neighbor, D, N);
-            H -= Beta * getSpin(state, i) * getSpin(state, neighborIndex);
+            neighbor[d] = periodicBoundary(coordinates[d] - 1, N);
+            neighbors[i][2 * d + 1] = positionToIndex(neighbor, D, N);
+        }
+    }
+
+    return neighbors;
+}
+
+// Calculates the Hamiltonian with periodic boundary conditions and external field
+double calculateHamiltonian(const vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B) {
+    double H = 0.0;
+    double h;
+
+    for (int i = 0; i < pow(N, D); ++i) {
+        for (int d = 0; d < D; ++d) {
+            H -= Beta * getSpin(state, i) * getSpin(state, neighbors[i][2*d]);
         }
         H -= B * getSpin(state, i);
     }
 
-    h = H/pow(N, D);
+    h = H / pow(N, D);
     return H;
 }
 
@@ -203,63 +202,51 @@ double calculateMagnetization(const vector<char> &state, int D, int N) {
 }
 
 // Calculates one step of the Metropolis algorithm
-void metropolisStep(vector<char> &state, int D, int N, double Beta, double B, int S){
+void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int S){
     static default_random_engine generator(S);
     uniform_real_distribution<double> dis(0,1);
     int count = 0;
 
-    for (int i = 0; i<pow(N, D); i++){
-        //vector<char> guess = state;
-        //flipSpin(guess, i);
+    int totalSpins = pow(N, D);
+    for (int i = 0; i < totalSpins; i++){
         double deltaH = 2*B*getSpin(state, i); 
-        vector<int> coordinates = indexToPosition(i, D, N);
 
         for (int d = 0; d<D; d++){
-            vector<int> neighbor = coordinates;
-            neighbor[d] = periodicBoundary(coordinates[d] + 1, N);
-            int index1 = positionToIndex(neighbor, D, N);
-            neighbor[d] = periodicBoundary(coordinates[d] - 1, N);
-            int index2 = positionToIndex(neighbor, D, N);
-            deltaH += 2*Beta*getSpin(state, i)*(getSpin(state, index1) + getSpin(state, index2));
+            deltaH += 2*Beta*getSpin(state, i)*(getSpin(state, neighbors[i][2*d]) + getSpin(state, neighbors[i][2*d+1]));
         }
 
-        //double deltaHOld = calculateHamiltonian(guess, D, N, Beta, B) - calculateHamiltonian(state, D, N, Beta, B);
         double r = dis(generator);
 
-        //if (deltaH != deltaHOld){
-        //    cout << "diff: " << deltaH-deltaHOld << endl;
-        //} 
-        
-        //if (i == pow(N, D)/2){
-        //    cout << exp(-deltaH) << " > " <<  r << " ? " << endl;
-        //}
         if (exp(-deltaH) > r){
             flipSpin(state, i);
         }
-        //cout << "deltaH: " <<  deltaH << endl;
     }
     
 }
 
 // Generates data for history plot in .csv file
-void generateHistory(vector<char> &state, int D, int N, double Beta, double B, int M, int S, bool append = 0){
-    ofstream outfile("Results/History.csv");
+void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int M, int S, bool append = 0){
+    ofstream outfile("Results/MagnetizationHistory.csv");
+    ofstream outfile2("Results/EnergyHistory.csv");
 
-    if (!outfile) {
+    if (!outfile || !outfile2) {
         cerr << "File could not be opened!" << endl;
     }
 
     outfile << calculateMagnetization(state, D, N) << endl;
 
-    for (int i = 0; i<M; i++){
+    for (int i = 0; i < M; i++){
         //cout << i << endl;
-        metropolisStep(state, D, N, Beta, B,  S);
+        metropolisStep(state, neighbors, D, N, Beta, B,  S);
         outfile << calculateMagnetization(state, D, N) << endl;
+        outfile2 << calculateHamiltonian(state, neighbors, D, N, Beta, B) << endl;
     }
 
     outfile.close();
+    outfile2.close();
     if (append){
-        appendColumn("Results/Replica.csv", "Results/History.csv");
+        appendColumn("Results/MagnetizationReplica.csv", "Results/MagnetizationHistory.csv");
+        appendColumn("Results/EnergyReplica.csv", "Results/EnergyHistory.csv");
     }
     
 }
@@ -285,22 +272,14 @@ int main(){
     cout << "Enter the value for the magnetic field (B = b/kT): ";
     cin >> B;
 
+    vector<vector<int>> neighbors = precomputeNeighbors(D, N);
 
-    
-
-    //metropolisStep(state, D, N, Beta, B, S);
-
-    //printGrid2D(state, N);
-    //cout << calculateHamiltonian(state, D, N, Beta, B) << endl;
     for (int i = 0; i<500; i++){
         cout << i << endl;
-        vector<char> state = initHot2(D, N, i);
-        generateHistory(state, D, N, Beta, B, M, i, 1);
+        vector<char> state = initHot(D, N, i);
+        generateHistory(state, neighbors, D, N, Beta, B, M, i, 1);
     }
     
-    //printGrid2D(state, N);
-    //metropolisStep(state, D, N, Beta, B, S);
-    //printGrid2D(state, N);
 
     return 0;
 }
