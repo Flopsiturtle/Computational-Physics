@@ -42,6 +42,7 @@ plt.bar(x,y,width,align='edge')
 
 
 ### distributiuon using gaussian kernel
+##### cool but problem: wants to be zero at the edges!      (even more at right because of the zero at end)
 data = probs_array[0]
 kde = gaussian_kde(data)
 dist_space = linspace(min(data),max(data),100)
