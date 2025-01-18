@@ -29,7 +29,7 @@ def prob_distr(probs_array,num_bars):
 
 
 ### initiate which array
-probs_array = np.loadtxt('test_probs.txt')
+probs_array = np.loadtxt('prob_distr results/test_probs.txt')
 
 
 ### my distribution function
