@@ -26,6 +26,8 @@ def prob_distr(probs_array,num_bars):
     x = np.arange(min,max+bar_size,bar_size)
     return x,bars,bar_size
 
+############## how do we want to incorporate errors into distribution?
+######### maybe own distribution of errors (easy implementation) - but then no meaning over which values have which errors
 
 
 ### initiate which array
