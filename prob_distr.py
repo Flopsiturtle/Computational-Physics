@@ -14,7 +14,7 @@ test_probs = np.random.normal(10,1,(2,500)) # mean 10 with st_dev 1
 test_probs[1]=(np.random.rand(1,500))   # errors not gaussian
 #np.random.seed(20)
 #test_probs2 = np.random.rand(2,500)
-np.savetxt('test_probs_gauss.txt',test_probs)
+#np.savetxt('test_probs_gauss.txt',test_probs)
 
 
 #plt.bar(bincenters, y, width=bar_size, color='r', yerr=menStd)
@@ -50,11 +50,6 @@ def bootstrap_samples(data,numb_samples,size_small_sample):
         boot_samples.append(samples_list)
     return boot_samples
 
-probs_array = np.loadtxt('prob_distr results/test_probs_gauss.txt')
-data = probs_array[0]
-#print(bootstrap_samples(data,20,1))
-
-
 def mean_error_hist(boot_samples,num_bars):
     boot_histos = []
     for j in np.arange(len(boot_samples)):
@@ -80,42 +75,48 @@ data = probs_array[0]
 num_bars = 50
 
 ###
-boot_samples = bootstrap_samples(data,20,5)
+numb_samples = 50
+size_small_sample = 5
+
+boot_samples = bootstrap_samples(data,numb_samples,size_small_sample)
 data_boots,error_boots,binEdges = mean_error_hist(boot_samples,num_bars)
 bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
 bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
-print(np.max(data_boots))
-print(np.min(data_boots))
-plt.bar(bar_centers, data_boots, width=bar_size, color='r', yerr=error_boots)
+plt.bar(bar_centers, data_boots, width=bar_size, color=['cornflowerblue','royalblue'], yerr=error_boots)
+plt.title('#bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
 plt.show()
 
+
+
+#plt.bar(bar_centers, data_boots, width=bar_size, yerr=error_boots,facecolor='k',alpha=0.1)
+#plt.step(bar_centers, data_boots,'k',linestyle='--',linewidth=1)
+
+
+exit()
+
+
+''' --- test with the other forms --- '''
+
+y,binEdges = np.histogram(boot_samples,bins=num_bars)
+bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
+bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
+plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step'
+
+
+'''distributiuon using gaussian kernel'''
+####### cool but problem: wants to be zero at the edges! - could work for our values because gaussian i think      (even more at right because of the zero at end)
+data = probs_array[0]
+kde = gaussian_kde(data)
+dist_space = linspace(min(data),max(data),100)
+plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='red')
+
+plt.show()
 
 
 
 exit()
 
 
-
-
-
-
-
-
-#print(bootstrap_means(data_hist,50,10))
-
-def mean_mean_error(mean_samples):
-    mean_mean = np.mean(mean_samples)
-    R = len(mean_samples)
-    err_mean = np.sqrt(np.sum((mean_samples-mean_mean)**2)/(R*(R-1)))
-    return mean_mean,err_mean
-
-mean_samples = bootstrap_means(data,100,5)
-y = mean_mean_error(mean_samples)
-print(y[0])
-plt.hist(y[0],density=False, bins=num_bars, color='purple')         # , histtype='step'
-
-
-plt.show()
 
 
 
@@ -149,24 +150,17 @@ def prob_distr(probs_array,num_bars,density):
 
 
 
-x,y,width = prob_distr(probs_array,num_bars,density=1)
-plt.bar(x,y,width,align='edge', color='C0')
+#x,y,width = prob_distr(probs_array,num_bars,density=1)
+#plt.bar(x,y,width,align='edge', color='C0')
 #plt.xticks(x)
 
-plt.show()                                   
+#plt.show()                                   
 
 
-exit()
+#exit()
 
 
 
-''' --- distributiuon using gaussian kernel --- '''
-####### cool but problem: wants to be zero at the edges! - could work for our values because gaussian i think      (even more at right because of the zero at end)
-data = probs_array[0]
-kde = gaussian_kde(data)
-dist_space = linspace(min(data),max(data),100)
-plt.plot(dist_space,(kde(dist_space)/np.max(data))*(np.max(y)), color='red')
 
-plt.show()
 
 
