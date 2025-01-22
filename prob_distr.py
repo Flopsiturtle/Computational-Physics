@@ -16,16 +16,14 @@ test_probs[1]=(np.random.rand(1,500))   # errors not gaussian
 #test_probs2 = np.random.rand(2,500)
 np.savetxt('test_probs_gauss.txt',test_probs)
 
-### initiate which array
-probs_array = np.loadtxt('prob_distr results/test_probs_gauss.txt')
-data = probs_array[0]
-num_bars = 50
 
+#plt.bar(bincenters, y, width=bar_size, color='r', yerr=menStd)
+#plt.show()
 
 
 ############## how do we want to incorporate errors into distribution?
 ######### maybe distribution of errors (easy implementation) - but then no meaning of which values have which errors
-## he says try bootstrap method or doing way more replicas and then statistical mean (same as before from lecture) over means -> use overall mean as value for histogramm and error of value as error for histrogramm
+#----- he says try bootstrap method or doing way more replicas and then statistical mean (same as before from lecture) over means -> use overall mean as value for histogramm and error of value as error for histrogramm
 
 
 
@@ -39,50 +37,69 @@ num_bars = 50
 #plt.show()
 
 
-''' mix of both methods '''
-y,binEdges = np.histogram(data,bins=num_bars)
-bincenters = 0.5*(binEdges[1:]+binEdges[:-1])
-bar_size = (np.max(data)-np.min(data))/num_bars
-menStd = 1
-print(y)
-#plt.bar(bincenters, y, width=bar_size, color='r', yerr=menStd)
-#plt.show()
-
-
-
-#plt.show()
-
-
-
 ''' --- bootstrap --- '''
-
-data_hist,aaaa = np.histogram(data,bins=num_bars)
-
 
 def bootstrap_samples(data,numb_samples,size_small_sample):
     boot_samples = []
     for i in np.arange(numb_samples):
         samples = []
         for i in np.arange(len(data)/size_small_sample):
-            samp = random.sample(data.tolist(), size_small_sample)
+            samp = random.sample(data.tolist(), size_small_sample)      # take random elements of given data, in total 500
             samples.append(samp)
-        samples_list = np.concatenate(samples).tolist()
+        samples_list = np.concatenate(samples)    # and put all 500 into one sample array, working like a new array of 500 replicas
         boot_samples.append(samples_list)
     return boot_samples
 
-
-#print(bootstrap_samples(data,20,5))
-#print(len(bootstrap_samples(data,1,5)))
+probs_array = np.loadtxt('prob_distr results/test_probs_gauss.txt')
+data = probs_array[0]
+#print(bootstrap_samples(data,20,1))
 
 
 def mean_error_hist(boot_samples,num_bars):
     boot_histos = []
-    for i in np.arange(len(boot_samples)):
-        y,binEdges = np.histogram(data,bins=num_bars)
+    for j in np.arange(len(boot_samples)):
+        y,binEdges = np.histogram(boot_samples[j],bins=num_bars)   # create histogramm for all samples (each size 500) of boot-method
         boot_histos.append(y)
+    mean_histo_ordered = []
+    err_histo_ordered = []
     for i in np.arange(num_bars):
-        for i in np.arange(len(boot_samples)):
-            
+        mean_samples = [item[i] for item in boot_histos]     # take only specific bar elements of each sample
+        mean_mean = np.mean(mean_samples)
+        R = len(mean_samples)
+        err_mean = np.sqrt(np.sum((mean_samples-mean_mean)**2)/(R*(R-1)))
+        mean_histo_ordered.append(mean_mean)
+        err_histo_ordered.append(err_mean)
+    return mean_histo_ordered,err_histo_ordered,binEdges
+
+
+
+''' run the code '''
+### initiate which array
+probs_array = np.loadtxt('prob_distr results/test_probs_gauss.txt')
+data = probs_array[0]
+num_bars = 50
+
+###
+boot_samples = bootstrap_samples(data,20,5)
+data_boots,error_boots,binEdges = mean_error_hist(boot_samples,num_bars)
+bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
+bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
+print(np.max(data_boots))
+print(np.min(data_boots))
+plt.bar(bar_centers, data_boots, width=bar_size, color='r', yerr=error_boots)
+plt.show()
+
+
+
+
+exit()
+
+
+
+
+
+
+
 
 #print(bootstrap_means(data_hist,50,10))
 
