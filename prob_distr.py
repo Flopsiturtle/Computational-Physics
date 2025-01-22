@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import random
+
 from scipy.stats.kde import gaussian_kde
 from numpy import linspace
 
@@ -7,15 +9,17 @@ from numpy import linspace
 
 
 ### create and save test arrays
-#np.random.seed(1)
-#test_probs = np.random.rand(2,500)  # 2D array with 500 elements: 1D is values and 2D is errors - for 500 replicas
+np.random.seed(1)
+test_probs = np.random.normal(10,1,(2,500)) # mean 10 with st_dev 1
+test_probs[1]=(np.random.rand(1,500))   # errors not gaussian
 #np.random.seed(20)
 #test_probs2 = np.random.rand(2,500)
-#np.savetxt('test_probs2.txt',test_probs2)
+np.savetxt('test_probs_gauss.txt',test_probs)
 
 ### initiate which array
-probs_array = np.loadtxt('prob_distr results/test_probs2.txt')
-
+probs_array = np.loadtxt('prob_distr results/test_probs_gauss.txt')
+data = probs_array[0]
+num_bars = 50
 
 
 
@@ -29,20 +33,78 @@ probs_array = np.loadtxt('prob_distr results/test_probs2.txt')
 
 
 ''' --- easiest way for a histogram --- '''
-data = probs_array[0]
-weights = np.ones_like(data)/float(len(data))   # add weights=weights into plt.hist() for density plot
-num_bars = 50
-plt.hist(data,density=False, bins=num_bars, color='green')         # , histtype='step'
-#plt.xticks(range(num_bars+1)) #---- wrong - would have to be with max/min -> would be my function
+#weights = np.ones_like(data)/float(len(data))   # add weights=weights into plt.hist() for density plot
+#plt.hist(data,density=False, bins=num_bars, color='green')         # , histtype='step'
+#plt.xticks(.....) #would have to be with max/min -> my function
+#plt.show()
+
+
+''' mix of both methods '''
+y,binEdges = np.histogram(data,bins=num_bars)
+bincenters = 0.5*(binEdges[1:]+binEdges[:-1])
+bar_size = (np.max(data)-np.min(data))/num_bars
+menStd = 1
+print(y)
+#plt.bar(bincenters, y, width=bar_size, color='r', yerr=menStd)
+#plt.show()
+
+
 
 #plt.show()
 
 
-#exit()
 
-a = np.array([[0,1,2,3],[0,1,2,3]])
+''' --- bootstrap --- '''
 
-print(a/2)
+data_hist,aaaa = np.histogram(data,bins=num_bars)
+
+
+def bootstrap_samples(data,numb_samples,size_small_sample):
+    boot_samples = []
+    for i in np.arange(numb_samples):
+        samples = []
+        for i in np.arange(len(data)/size_small_sample):
+            samp = random.sample(data.tolist(), size_small_sample)
+            samples.append(samp)
+        samples_list = np.concatenate(samples).tolist()
+        boot_samples.append(samples_list)
+    return boot_samples
+
+
+#print(bootstrap_samples(data,20,5))
+#print(len(bootstrap_samples(data,1,5)))
+
+
+def mean_error_hist(boot_samples,num_bars):
+    boot_histos = []
+    for i in np.arange(len(boot_samples)):
+        y,binEdges = np.histogram(data,bins=num_bars)
+        boot_histos.append(y)
+    for i in np.arange(num_bars):
+        for i in np.arange(len(boot_samples)):
+
+            
+#print(bootstrap_means(data_hist,50,10))
+
+def mean_mean_error(mean_samples):
+    mean_mean = np.mean(mean_samples)
+    R = len(mean_samples)
+    err_mean = np.sqrt(np.sum((mean_samples-mean_mean)**2)/(R*(R-1)))
+    return mean_mean,err_mean
+
+mean_samples = bootstrap_means(data,100,5)
+y = mean_mean_error(mean_samples)
+print(y[0])
+plt.hist(y[0],density=False, bins=num_bars, color='purple')         # , histtype='step'
+
+
+plt.show()
+
+
+
+
+
+
 
 
 ''' --- my own version --- '''
