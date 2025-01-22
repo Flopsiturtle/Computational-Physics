@@ -70,7 +70,7 @@ def mean_error_hist(boot_samples,num_bars):
 
 ''' run the code '''
 ### initiate which array
-probs_array = np.loadtxt('prob_distr results/test_probs_gauss.txt')
+probs_array = np.loadtxt('prob_distr results/test_probs_gauss2.txt')
 data = probs_array[0]
 num_bars = 50
 
@@ -92,23 +92,29 @@ plt.show()
 #plt.step(bar_centers, data_boots,'k',linestyle='--',linewidth=1)
 
 
+
 exit()
 
 
+
+
+
 ''' --- test with the other forms --- '''
-
-y,binEdges = np.histogram(boot_samples,bins=num_bars)
-bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
-bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
-plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step'
-
-
 '''distributiuon using gaussian kernel'''
 ####### cool but problem: wants to be zero at the edges! - could work for our values because gaussian i think      (even more at right because of the zero at end)
 data = probs_array[0]
+y,binEdges = np.histogram(data,bins=num_bars)
+
 kde = gaussian_kde(data)
 dist_space = linspace(min(data),max(data),100)
 plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='red')
+
+
+
+'''distributiuon using original data'''
+bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
+bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
+plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step'
 
 plt.show()
 
