@@ -82,8 +82,8 @@ def mean_error_hist(boot_samples,num_bars):
         boot_histos.append(y)
     for i in np.arange(num_bars):
         for i in np.arange(len(boot_samples)):
-
             
+
 #print(bootstrap_means(data_hist,50,10))
 
 def mean_mean_error(mean_samples):
