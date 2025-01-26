@@ -41,22 +41,25 @@ def mean_error_hist(boot_samples,num_bars):
 
 ''' --- function for plotting the final histogram  --- '''
 
-def final_histogramm(data,calc_mean_mean,num_bars,numb_samples,size_small_sample):
+def final_histogramm(TYPE,data,calc_mean_mean,num_bars,numb_samples,size_small_sample):
     ### data
     boot_samples = bootstrap_samples(data,numb_samples,size_small_sample)
     data_boots,error_boots,binEdges = mean_error_hist(boot_samples,num_bars)
     bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
     bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
     ### plotting
-    plt.figure(figsize=(11,7))
+    plt.figure(figsize=(9,6))
     plt.bar(bar_centers, data_boots, width=bar_size, color=['cornflowerblue','royalblue'], label="bars")    # histogram from bootstrap
     plt.errorbar(bar_centers, data_boots, fmt=" ", yerr=error_boots, color='black', capsize=2, label="error")      # error-bars from bootstrap
     plt.axvline(x=calc_mean_mean, color='red', label="mean-mean calc")       # visaulizing the bootstrap calculated mean
     plt.axvline(x=np.mean(boot_samples), linestyle='dashed', color='limegreen', label="mean-mean boot")       # visaulizing the beforehand calculated mean
     plt.legend(loc="upper left")
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('#bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
+    plt.xlabel('value')
+    plt.ylabel('counts')
+    if TYPE == 0:
+        plt.title('Magnetizazion: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
+    if TYPE == 1:
+        plt.title('Energy: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
     plt.show()
 
 
@@ -77,11 +80,11 @@ numb_samples = 50
 size_small_sample = 5
 
 # magnetization
-final_histogramm(data_magn,calc_mean_mean_magn,num_bars,numb_samples,size_small_sample)
+final_histogramm(0,data_magn,calc_mean_mean_magn,num_bars,numb_samples,size_small_sample)
 # energy
-final_histogramm(data_energy,calc_mean_mean_energy,num_bars,numb_samples,size_small_sample)
+final_histogramm(1,data_energy,calc_mean_mean_energy,num_bars,numb_samples,size_small_sample)
 
-
+###### titles have to be different!!!!!
 
 
 
