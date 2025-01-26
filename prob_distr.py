@@ -76,8 +76,10 @@ calc_mean_mean_energy = 10
 ### set number of bars for histograms
 num_bars = 50
 ### set parameters for bootstrap-method
+np.random.seed(0)
 numb_samples = 50
 size_small_sample = 5
+
 
 # magnetization
 final_histogramm(0,data_magn,calc_mean_mean_magn,num_bars,numb_samples,size_small_sample)
