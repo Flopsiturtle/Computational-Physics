@@ -7,13 +7,13 @@ from numpy import linspace
 
 
 
-
 ''' --- implementing bootstrap-method for our 500 replicas --- '''
 
 def bootstrap_samples(data,numb_samples,size_small_sample):
     boot_samples = []
     for i in np.arange(numb_samples):
-        samples = []
+        samples = [data]    ###### do we take original data into account for later histogramm means????
+        #random.seed(i)         ###### what about dependence on seed????
         for i in np.arange(len(data)/size_small_sample):
             samp = random.sample(data.tolist(), size_small_sample)      # take random elements of given data, in total 500
             samples.append(samp)
@@ -65,9 +65,9 @@ def final_histogramm(TYPE,data,calc_mean_mean,num_bars,numb_samples,size_small_s
 
 ''' --- run the code --- '''
 ### initiate which array
-probs_array_magn = np.loadtxt('prob_distr results/test_probs_gauss2.txt') # change for magn
+probs_array_magn = np.loadtxt('prob_distr results/test_probs_gauss.txt') # change for magn
 data_magn = probs_array_magn[0]
-probs_array_energy = np.loadtxt('prob_distr results/test_probs_gauss2.txt') # change for energy
+probs_array_energy = np.loadtxt('prob_distr results/test_probs_gauss.txt') # change for energy
 data_energy = probs_array_energy[0]
 ### define what is the beforehand calculated mean
 calc_mean_mean_magn = 10
@@ -76,7 +76,7 @@ calc_mean_mean_energy = 10
 ### set number of bars for histograms
 num_bars = 50
 ### set parameters for bootstrap-method
-np.random.seed(0)
+random.seed(0)  # starting seed
 numb_samples = 50
 size_small_sample = 5
 
