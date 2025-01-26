@@ -86,6 +86,8 @@ plt.bar(bar_centers, data_boots, width=bar_size, color=['cornflowerblue','royalb
 plt.title('#bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
 plt.show()
 
+###### also good idea: draw one vertical line with our calculated mean mean !!!!!!!!
+
 
 
 #plt.bar(bar_centers, data_boots, width=bar_size, yerr=error_boots,facecolor='k',alpha=0.1)
