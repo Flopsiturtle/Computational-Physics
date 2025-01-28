@@ -10,10 +10,10 @@ from numpy import linspace
 ''' --- implementing bootstrap-method for our 500 replicas --- '''
 
 def bootstrap_samples(data,numb_samples,size_small_sample):
-    boot_samples = []
+    boot_samples = [data]   ###### do we take original data into account for later histogramm means????
     for i in np.arange(numb_samples):
-        samples = [data]    ###### do we take original data into account for later histogramm means????
-        #random.seed(i)         ###### what about dependence on seed????
+        samples = []    
+        #random.seed(10*i)     ###### what about dependence on seed????
         for i in np.arange(len(data)/size_small_sample):
             samp = random.sample(data.tolist(), size_small_sample)      # take random elements of given data, in total 500
             samples.append(samp)
@@ -47,36 +47,40 @@ def final_histogramm(TYPE,data,calc_mean_mean,num_bars,numb_samples,size_small_s
     data_boots,error_boots,binEdges = mean_error_hist(boot_samples,num_bars)
     bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
     bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
+    mean_boot_samples = np.mean(boot_samples)
+        #R = len(boot_samples)
+        #err_mean_boot = np.sqrt(np.sum((boot_samples-mean_boot_samples)**2)/(R*(R-1)))     # no meaning for this error as no real values in distribution but only histo values
     ### plotting
     plt.figure(figsize=(9,6))
     plt.bar(bar_centers, data_boots, width=bar_size, color=['cornflowerblue','royalblue'], label="bars")    # histogram from bootstrap
     plt.errorbar(bar_centers, data_boots, fmt=" ", yerr=error_boots, color='black', capsize=2, label="error")      # error-bars from bootstrap
-    plt.axvline(x=calc_mean_mean, color='red', label="mean-mean calc")       # visaulizing the bootstrap calculated mean
-    plt.axvline(x=np.mean(boot_samples), linestyle='dashed', color='limegreen', label="mean-mean boot")       # visaulizing the beforehand calculated mean
+    plt.axvline(x=calc_mean_mean[0], color='red', label="orignal mean")       # visaulizing the bootstrap calculated mean
+    plt.axvline(x=mean_boot_samples, linestyle='dashed', color='limegreen', label="bootstrap mean")       # visaulizing the beforehand calculated mean
     plt.legend(loc="upper left")
     plt.xlabel('value')
     plt.ylabel('counts')
     if TYPE == 0:
+        plt.annotate('orignal mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
+        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3)),(90,270),xycoords='figure points')
         plt.title('Magnetizazion: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
     if TYPE == 1:
+        plt.annotate('orignal mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
+        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3)),(90,270),xycoords='figure points')
         plt.title('Energy: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
     plt.show()
 
 
 ''' --- run the code --- '''
 ### initiate which array
-probs_array_magn = np.loadtxt('prob_distr results/test_probs_gauss.txt') # change for magn
-data_magn = probs_array_magn[0]
-probs_array_energy = np.loadtxt('prob_distr results/test_probs_gauss.txt') # change for energy
-data_energy = probs_array_energy[0]
+data_magn = np.loadtxt('Results/mean_mag.csv') # magn mean data
+data_energy = np.loadtxt('Results/mean_energies.csv') # energies mean data
 ### define what is the beforehand calculated mean
-calc_mean_mean_magn = 10
-calc_mean_mean_energy = 10
-
+calc_mean_mean_magn = np.array([7181.257,2.111])
+calc_mean_mean_energy = np.array([-6235.977,0.629])
 ### set number of bars for histograms
 num_bars = 50
 ### set parameters for bootstrap-method
-random.seed(0)  # starting seed
+random.seed(5)  # starting seed 0 - bad, 5 - good
 numb_samples = 50
 size_small_sample = 5
 
@@ -86,24 +90,24 @@ final_histogramm(0,data_magn,calc_mean_mean_magn,num_bars,numb_samples,size_smal
 # energy
 final_histogramm(1,data_energy,calc_mean_mean_energy,num_bars,numb_samples,size_small_sample)
 
-###### titles have to be different!!!!!
+################ titles have to be different!!!!!
 
 
-
-exit()
-
-''' --- distributiuon using gaussian kernel --- '''
-y,binEdges = np.histogram(data,bins=num_bars)
-kde = gaussian_kde(data)
-dist_space = linspace(min(data),max(data),100)
-plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='purple')
-plt.show()
 
 
 
 exit()
+
 
 ''' --- for checking: histogram using original replicas without bootsrap --- '''
+y,binEdges = np.histogram(data_magn,bins=num_bars)
+bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
+bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
+plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step'
+
+plt.show()
+
+y,binEdges = np.histogram(data_energy,bins=num_bars)
 bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
 bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
 plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step'
@@ -114,7 +118,20 @@ plt.show()
 
 
 
+exit()
 
+''' --- distributiuon using gaussian kernel --- '''
+y,binEdges = np.histogram(data_magn,bins=num_bars)
+kde = gaussian_kde(data_magn)
+dist_space = linspace(min(data_magn),max(data_magn),100)
+plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='purple')
+plt.show()
+
+y,binEdges = np.histogram(data_energy,bins=num_bars)
+kde = gaussian_kde(data_energy)
+dist_space = linspace(min(data_energy),max(data_energy),100)
+plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='purple')
+plt.show()
 
 
 
