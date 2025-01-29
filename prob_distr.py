@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+random.seed(5) 
+
 
 from scipy.stats.kde import gaussian_kde
 from numpy import linspace
@@ -48,26 +50,30 @@ def final_histogramm(TYPE,data,calc_mean_mean,num_bars,numb_samples,size_small_s
     bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
     bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
     mean_boot_samples = np.mean(boot_samples)
-        #R = len(boot_samples)
-        #err_mean_boot = np.sqrt(np.sum((boot_samples-mean_boot_samples)**2)/(R*(R-1)))     # no meaning for this error as no real values in distribution but only histo values
+    R = len(boot_samples)
+    err_mean_boot = np.sqrt(np.sum((boot_samples-mean_boot_samples)**2)/(R*(R-1)))     # no meaning for this error as no real values in distribution but only histo values
     ### plotting
     plt.figure(figsize=(9,6))
     plt.bar(bar_centers, data_boots, width=bar_size, color=['cornflowerblue','royalblue'], label="bars")    # histogram from bootstrap
     plt.errorbar(bar_centers, data_boots, fmt=" ", yerr=error_boots, color='black', capsize=2, label="error")      # error-bars from bootstrap
     plt.axvline(x=calc_mean_mean[0], color='red', label="orignal mean")       # visaulizing the bootstrap calculated mean
+    plt.bar(calc_mean_mean[0], 30, width=calc_mean_mean[1],facecolor='r',alpha=0.1)
     plt.axvline(x=mean_boot_samples, linestyle='dashed', color='limegreen', label="bootstrap mean")       # visaulizing the beforehand calculated mean
+    plt.bar(mean_boot_samples, 30, width=err_mean_boot,facecolor='g',alpha=0.1)
     plt.legend(loc="upper left")
     plt.xlabel('value')
     plt.ylabel('counts')
     if TYPE == 0:
         plt.annotate('orignal mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
-        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3)),(90,270),xycoords='figure points')
+        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,270),xycoords='figure points')
         plt.title('Magnetizazion: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
     if TYPE == 1:
         plt.annotate('orignal mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
-        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3)),(90,270),xycoords='figure points')
+        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,270),xycoords='figure points')
         plt.title('Energy: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
     plt.show()
+
+
 
 
 ''' --- run the code --- '''
@@ -80,7 +86,6 @@ calc_mean_mean_energy = np.array([-6235.977,0.629])
 ### set number of bars for histograms
 num_bars = 50
 ### set parameters for bootstrap-method
-random.seed(5)  # starting seed 0 - bad, 5 - good
 numb_samples = 50
 size_small_sample = 5
 
