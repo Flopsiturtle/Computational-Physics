@@ -12,7 +12,7 @@ from numpy import linspace
 ''' --- implementing bootstrap-method for our 500 replicas --- '''
 
 def bootstrap_samples(data,numb_samples,size_small_sample):
-    boot_samples = [data]   ###### do we take original data into account for later histogramm means????
+    boot_samples = [data]   ###### do we take original data into account for later histogram means????
     for i in np.arange(numb_samples):
         samples = []    
         #random.seed(10*i)     ###### what about dependence on seed????
@@ -26,7 +26,7 @@ def bootstrap_samples(data,numb_samples,size_small_sample):
 def mean_error_hist(boot_samples,num_bars):
     boot_histos = []
     for j in np.arange(len(boot_samples)):
-        y,binEdges = np.histogram(boot_samples[j],bins=num_bars)   # create histogramm for all samples (each size 500) of boot-method
+        y,binEdges = np.histogram(boot_samples[j],bins=num_bars)   # create histogram for all samples (each size 500) of boot-method
         boot_histos.append(y)
     mean_histo_ordered = []
     err_histo_ordered = []
@@ -64,11 +64,11 @@ def final_histogramm(TYPE,data,calc_mean_mean,num_bars,numb_samples,size_small_s
     plt.xlabel('value')
     plt.ylabel('counts')
     if TYPE == 0:
-        plt.annotate('orignal mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
+        plt.annotate('original mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
         plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,270),xycoords='figure points')
-        plt.title('Magnetizazion: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
+        plt.title('Magnetization: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
     if TYPE == 1:
-        plt.annotate('orignal mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
+        plt.annotate('original mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
         plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,270),xycoords='figure points')
         plt.title('Energy: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
     plt.show()
@@ -104,7 +104,7 @@ final_histogramm(1,data_energy,calc_mean_mean_energy,num_bars,numb_samples,size_
 exit()
 
 
-''' --- for checking: histogram using original replicas without bootsrap --- '''
+''' --- for checking: histogram using original replicas without bootstrap --- '''
 y,binEdges = np.histogram(data_magn,bins=num_bars)
 bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
 bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
