@@ -1,0 +1,113 @@
+\documentclass[11pt, letterpaper, onecolumn]{article}
+
+\usepackage[english]{babel}
+\usepackage{soul}
+\usepackage{mathtools}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[german=quotes]{csquotes}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{gensymb}
+\usepackage{units}
+\usepackage{hhline}
+\usepackage{color}
+\usepackage{titling}
+\usepackage[normalem]{ulem}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{pgfplots}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{subfigure}
+\usepackage{lipsum}
+\usepackage{url}
+\usepackage{relsize}
+
+\newgeometry{a4paper, left=20mm, right=20mm, top=30mm, bottom=30mm}
+\definecolor{pantone294}{cmyk}{1,0.6,0,0.2}
+\setlength{\columnsep}{6mm} 
+
+\title{Project 1: QM point particle in external potential} 
+\author{Florian Telleis / Florian Hollants / Mickey Wilke}
+\date{\today}
+
+\pagestyle{fancy}
+\lfoot{Humboldt-Universität zu Berlin}
+\rfoot{Project 1.1} 
+
+
+
+\begin{document}
+	
+	
+	\tableofcontents
+	
+	
+	
+	\vspace{1cm}
+	
+	
+	
+	\section{Workflow}
+	...
+	\\
+	\\
+	\underline{Probability distribution} \\
+	A simple probability distribution for our calculated data of 500 mean values (500 replicas with one mean per replica, each for magnetization and energy) can easily be calculated with numpy´s histogram module and then be plotted with matplotlib´s bar module. Moreover, as we want to implement specific errors for each bar into our distribution, we can fundamentally choose between two procedures: \\
+	1. We can compute a lot more replicas for the same given parameters to then calculate the overall mean and statistical error (with given equations in lecture) for each bar of the histogram. This would be an exact method. However, in order to not have to compute hundreds and thousands of more replicas we chose a resampling procedure. \\
+	2. The bootstrap-method can be used to estimate a real sampling distribution by just resampling our given data. We implemented the method in the following way: first, we take a certain number (function input "size$\_$small$\_$samples") of elements from the given array and append these values into a new array until we reach the original length of the given data; in our case 500. This will be done a specific number of times, e.g. N-times (function input "numb$\_$samples"). Also using the original data, at the end we get (N+1) "independent" arrays of same size; just as we would have computed 500 replicas and their means (N+1)-times explicitly. This procedure is of course an approximation, but we are also working with statistical changes from one replica to another, which underlines the bootstrap-method being used. 
+	\\
+	As already explained for method 1, we can split our newly computed arrays of replica-means into specific bars of the final histogram (function input "numb$\_$bars"). For each bar, we calculate the overall mean with its statistical error, as explained in the lecture. These values can then be used for the final histogram with error bars. The histogram plot was afterwards refurbished for better visibility and evaluation of the distributions.
+	\\
+	\\
+	An important note: as expected for statistical progresses, the outcome of our bootstrap-method is highly dependent on the chosen parameters of sampling number and chosen random seed. These parameters were tested extensively with hindsight on the error of the overall mean via the bootstrap method being criterion for statistical $\sigma$-deviation. The parameters used for our final calculations via bootstrap-method are: random.seed=5, numb$\_$bars=50, numb$\_$boot$\_$samples=100, size$\_$small$\_$samples=5.
+	
+
+
+
+
+	\section{Testing first set of parameters}
+	
+	\subsection{Probability distribution}
+	We now evaluate the probability distributions of magnetization and energy. The procedure used for calculating our data and resampling sets was already explained in the workflow. Thus, both of the histograms can be seen in the figures below. All parameters for the bootstrap-method and the plotting itself, except the x-axis and therefore x-size of the bars, were kept the same for both figures.
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=17cm]{"magn_histo_final.png"}
+\caption{Magnetization histogram via bootstrap-method. With statistical error bars, mean of the original- and bootstrap-distribution, respective statistical error added as $\Delta x$ bars (view values in figure).}
+	\end{center}
+	\end{figure}
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=17cm]{"energy_histo_final.png"}
+\caption{Energy histogram via bootstrap-method. With statistical error bars, mean of the original- and bootstrap-distribution, respective statistical error added as $\Delta x$ bars (view values in figure).}
+	\end{center}
+	\end{figure}
+	\\
+	One can observe a relatively good Gaussian distribution for both histograms, as expected for a statistical deviation of replicas (viable for calculating replicas and bootstrapping them). Both the beforehand and via bootstrap calculated mean are nearly identical (maximum $\pm0.2$ for magnetization). Whereas the bootstrap errors are around 50-times larger, stemming from the statistical resampling nature of the bootstrap-method. Still, just from looking at both plots, one could argue, that the errors of the bootstrap mean are approximately in a $1\sigma$-deviation. \\
+	Furthermore, the energy means are more densely distributed around the overall mean than the magnetization means, also visible in different sizes of errors. This can also be seen in figure \ref{fig:app1} in the appendix, where the same energy histogram is plotted with the x-axis being in the same size limits as for the magnetization.
+
+	
+	
+	
+	
+	
+
+\newpage
+
+	
+\section{Appendix} \label{sec:appendix}
+
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=17cm]{"energy-mag_histo_final.png"}
+\caption{To visualize the narrower distribution of the energy in regards to magnetization: same energy histogram via bootstrap-method as seen before, now with the x-axis being in the same size limits as for the magnetization. With statistical error bars, mean of the original- and bootstrap-distribution, respective statistical error added as $\Delta x$ bars (view values in figure).}	\label{fig:app1}
+	\end{center}
+	\end{figure}
+
+
+	
+\end{document}
