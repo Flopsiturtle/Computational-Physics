@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-random.seed(5) 
+boot_seed = 5
+random.seed(boot_seed) 
 
-
+### can be deleted if we dont want to use gaussian in report
 from scipy.stats.kde import gaussian_kde
 from numpy import linspace
 
@@ -12,10 +13,9 @@ from numpy import linspace
 ''' --- implementing bootstrap-method for our 500 replicas --- '''
 
 def bootstrap_samples(data,numb_samples,size_small_sample):
-    boot_samples = [data]   ###### do we take original data into account for later histogram means????
+    boot_samples = [data]   ###### take original data into account for later histogram means = use as one more sample replica
     for i in np.arange(numb_samples):
         samples = []    
-        #random.seed(10*i)     ###### what about dependence on seed????
         for i in np.arange(len(data)/size_small_sample):
             samp = random.sample(data.tolist(), size_small_sample)      # take random elements of given data, in total 500
             samples.append(samp)
@@ -51,26 +51,33 @@ def final_histogramm(TYPE,data,calc_mean_mean,num_bars,numb_samples,size_small_s
     bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
     mean_boot_samples = np.mean(boot_samples)
     R = len(boot_samples)
-    err_mean_boot = np.sqrt(np.sum((boot_samples-mean_boot_samples)**2)/(R*(R-1)))     # no meaning for this error as no real values in distribution but only histo values
+    err_mean_boot = np.sqrt(np.sum((boot_samples-mean_boot_samples)**2)/(R*(R-1)))     # statistical error of bootstrap distribution around mean, not really "error of mean"
     ### plotting
-    plt.figure(figsize=(9,6))
-    plt.bar(bar_centers, data_boots, width=bar_size, color=['cornflowerblue','royalblue'], label="bars")    # histogram from bootstrap
-    plt.errorbar(bar_centers, data_boots, fmt=" ", yerr=error_boots, color='black', capsize=2, label="error")      # error-bars from bootstrap
-    plt.axvline(x=calc_mean_mean[0], color='red', label="orignal mean")       # visaulizing the bootstrap calculated mean
-    plt.bar(calc_mean_mean[0], 30, width=calc_mean_mean[1],facecolor='r',alpha=0.1)
-    plt.axvline(x=mean_boot_samples, linestyle='dashed', color='limegreen', label="bootstrap mean")       # visaulizing the beforehand calculated mean
-    plt.bar(mean_boot_samples, 30, width=err_mean_boot,facecolor='g',alpha=0.1)
-    plt.legend(loc="upper left")
+    plt.figure(figsize=(9.3,6))
+    plt.bar(bar_centers, data_boots, width=bar_size, color=['cornflowerblue','royalblue'], label="bootstrap bars")    # histogram from bootstrap
+    plt.errorbar(bar_centers, data_boots, fmt=" ", yerr=error_boots, color='black', capsize=2, label="bar error")      # error-bars from bootstrap
+    plt.axvline(x=calc_mean_mean[0], color='red', label="original mean,\nwith error as red bar")       # visaulizing the bootstrap calculated mean
+    plt.bar(calc_mean_mean[0], 40, width=calc_mean_mean[1],facecolor='r',alpha=0.2)     # error of mean
+    plt.axvline(x=mean_boot_samples, linestyle='dashed', color='limegreen', label="bootstrap mean,\nwith error as green bar")       # visaulizing the beforehand calculated mean
+    plt.bar(mean_boot_samples, 40, width=err_mean_boot,facecolor='g',alpha=0.1)     # error of mean
+    handles, labels = plt.gca().get_legend_handles_labels()
+    order = [2,3,0,1]
+    plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc="upper left")
+    plt.ylim(0,35)
     plt.xlabel('value')
     plt.ylabel('counts')
     if TYPE == 0:
-        plt.annotate('original mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
-        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,270),xycoords='figure points')
-        plt.title('Magnetization: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
+        plt.xlim(7020,7320)
+        plt.annotate('original mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,270),xycoords='figure points')
+        plt.annotate('bootstrap mean: '+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,250),xycoords='figure points')
+        plt.title('Magnetization histogram via bootstrap-method')
     if TYPE == 1:
-        plt.annotate('original mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,290),xycoords='figure points')
-        plt.annotate('bootstrap mean:'+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,270),xycoords='figure points')
-        plt.title('Energy: #bars = {0}, #boot samples = {1}, size small samples = {2}'.format(num_bars,numb_samples,size_small_sample))
+        plt.xlim(-6290,-6180)
+        #plt.xlim(-6395,-6075) # same delta x as magn plot
+        plt.annotate('original mean: '+ str(calc_mean_mean[0])+' +- '+str(calc_mean_mean[1]),(90,270),xycoords='figure points')
+        plt.annotate('bootstrap mean: '+ str(np.round(mean_boot_samples,3))+' +- '+str(np.round(err_mean_boot,3)),(90,250),xycoords='figure points')
+        plt.title('Energy histogram via bootstrap-method')
+        #plt.title('Energy histogram via bootstrap-method (with the same $\Delta x$ as magnetization plot)')
     plt.show()
 
 
@@ -86,8 +93,9 @@ calc_mean_mean_energy = np.array([-6235.977,0.629])
 ### set number of bars for histograms
 num_bars = 50
 ### set parameters for bootstrap-method
-numb_samples = 50
+numb_samples = 100
 size_small_sample = 5
+print('Parameters used for bootstrap-method: random.seed={3}, #bars={0}, #boot samples={1}, size small samples={2}'.format(num_bars,numb_samples,size_small_sample,boot_seed))
 
 
 # magnetization
@@ -95,13 +103,15 @@ final_histogramm(0,data_magn,calc_mean_mean_magn,num_bars,numb_samples,size_smal
 # energy
 final_histogramm(1,data_energy,calc_mean_mean_energy,num_bars,numb_samples,size_small_sample)
 
-################ titles have to be different!!!!!
-
-
-
 
 
 exit()
+
+
+
+
+
+
 
 
 ''' --- for checking: histogram using original replicas without bootstrap --- '''
@@ -120,10 +130,6 @@ plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step
 plt.show()
 
 
-
-
-
-exit()
 
 ''' --- distributiuon using gaussian kernel --- '''
 y,binEdges = np.histogram(data_magn,bins=num_bars)
@@ -145,49 +151,16 @@ plt.show()
 
 
 
+
+
+
+
 exit()
 
 
 
-
-
-### create and save test arrays
-#np.random.seed(1)
-#test_probs = np.random.normal(10,1,(2,500)) # mean 10 with st_dev 1
-#test_probs[1]=(np.random.rand(1,500))   # errors not gaussian
-#np.random.seed(20)
-#test_probs2 = np.random.rand(2,500)
-#np.savetxt('test_probs_gauss.txt',test_probs)
-
-
-#plt.bar(bincenters, y, width=bar_size, color='r', yerr=menStd)
-#plt.show()
-
-
-############## how do we want to incorporate errors into distribution?
-######### maybe distribution of errors (easy implementation) - but then no meaning of which values have which errors
-#----- he says try bootstrap method or doing way more replicas and then statistical mean (same as before from lecture) over means -> use overall mean as value for histogramm and error of value as error for histrogramm
-
-
-
-''' --- easiest way for a histogram --- '''
-#weights = np.ones_like(data)/float(len(data))   # add weights=weights into plt.hist() for density plot
-#plt.hist(data,density=False, bins=num_bars, color='green')         # , histtype='step'
-#plt.xticks(.....) #would have to be with max/min -> my function
-#plt.show()
-
-
-
-
-#plt.bar(bar_centers, data_boots, width=bar_size, yerr=error_boots,facecolor='k',alpha=0.1)
-#plt.step(bar_centers, data_boots,'k',linestyle='--',linewidth=1)
-
-
-
 ''' --- my own version --- '''
-# ----- does the same
-##### pro for mine: can be changed to our meaning, maybe for error implementation
-##### con for mine: maybe slower, does not easily change between histo and density (fix: number/probs.shape)
+# ----- does the same but worse probably
 def prob_distr(probs_array,num_bars,density):
     probs, probs_err = probs_array
     max = np.max(probs)
@@ -206,14 +179,8 @@ def prob_distr(probs_array,num_bars,density):
         return x,bars,bar_size
     return x,bars,bar_size
 
-
-
-
 #x,y,width = prob_distr(probs_array,num_bars,density=1)
 #plt.bar(x,y,width,align='edge', color='C0')
 #plt.xticks(x)
-
 #plt.show()                                   
 
-
-#exit()
