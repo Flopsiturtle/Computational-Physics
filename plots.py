@@ -4,7 +4,7 @@ import pandas as pd
 
 # Load the data
 #data = pd.read_csv("Results/MagnetizationReplica.csv")
-data = pd.read_csv("Results/EnergyReplica.csv")
+data = pd.read_csv("Results2\MagB0.010000Beta0.161290.csv")
 
 run = 0 #also equal to the value of the random seed used!
 

@@ -225,7 +225,7 @@ void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, i
 }
 
 // Generates data for history plot in .csv file
-void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int M, int S, bool append = 0){
+void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int M, int S, bool append, const string& filenameM, const string& filenameE){
     ofstream outfile("Results/MagnetizationHistory.csv");
     ofstream outfile2("Results/EnergyHistory.csv");
 
@@ -245,8 +245,8 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
     outfile.close();
     outfile2.close();
     if (append){
-        appendColumn("Results/MagnetizationReplica.csv", "Results/MagnetizationHistory.csv");
-        appendColumn("Results/EnergyReplica.csv", "Results/EnergyHistory.csv");
+        appendColumn(filenameM, "Results/MagnetizationHistory.csv");
+        appendColumn(filenameE, "Results/EnergyHistory.csv");
     }
     
 }
@@ -255,7 +255,7 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
 
 int main(){
     int D, N, S, M;
-    double Beta, B;
+    double B;
 
     cout << "Enter the number of dimensions (D): ";
     cin >> D;
@@ -266,20 +266,28 @@ int main(){
     cout << "Enter the length of the Markov-Chain (M): ";
     cin >> M;
 
-    cout << "Enter the value for the coupling (Beta = J/kT): ";
-    cin >> Beta;
-
     cout << "Enter the value for the magnetic field (B = b/kT): ";
     cin >> B;
 
     vector<vector<int>> neighbors = precomputeNeighbors(D, N);
 
-    for (int i = 0; i<500; i++){
-        cout << i << endl;
-        vector<char> state = initHot(D, N, i);
-        generateHistory(state, neighbors, D, N, Beta, B, M, i, 1);
+     vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.2, 1/2.6, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
+
+    for (double Beta : betaValues) {
+        string filenameM = "Results2/MagB" + to_string(B) + "Beta" + to_string(Beta) + ".csv";
+        string filenameE = "Results2/EnB" + to_string(B) + "Beta" + to_string(Beta) + ".csv";
+
+        for (int i = 0; i < 500; i++) {
+            cout << "Beta: " << Beta << ", Seed: " << i << endl;
+            vector<char> state = initHot(D, N, i);
+            generateHistory(state, neighbors, D, N, Beta, B, M, i, 1, filenameM, filenameE);
+        }
     }
     
 
     return 0;
 }
+
+
+/// Plan for now: for specific values of Beta and B, generate 500 replicas of the system and calculate the magnetization and energy for each replica.
+/// How do I save the data efficiently?
