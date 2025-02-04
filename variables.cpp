@@ -228,22 +228,29 @@ void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, i
 void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int M, int S, bool append, const string& filenameM, const string& filenameE){
     ofstream outfile("Results/MagnetizationHistory.csv");
     ofstream outfile2("Results/EnergyHistory.csv");
+    ofstream outfileState("stateEvolution.csv");
 
-    if (!outfile || !outfile2) {
+    if (!outfile || !outfile2 || !outfileState) {
         cerr << "File could not be opened!" << endl;
     }
 
     outfile << calculateMagnetization(state, D, N) << endl;
 
     for (int i = 0; i < M; i++){
-        //cout << i << endl;
+        cout << calculateMagnetization(state, D, N) << endl;
         metropolisStep(state, neighbors, D, N, Beta, B,  S);
         outfile << calculateMagnetization(state, D, N) << endl;
         outfile2 << calculateHamiltonian(state, neighbors, D, N, Beta, B) << endl;
+
+        for (int j = 0; j < pow(N, D); j++) {
+            outfileState << static_cast<int>(getSpin(state, j)) << " ";
+        }
+        outfileState << endl;
     }
 
     outfile.close();
     outfile2.close();
+    outfileState.close();
     if (append){
         appendColumn(filenameM, "Results/MagnetizationHistory.csv");
         appendColumn(filenameE, "Results/EnergyHistory.csv");
@@ -255,7 +262,7 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
 
 int main(){
     int D, N, S, M;
-    double B;
+    double B, Beta;
 
     cout << "Enter the number of dimensions (D): ";
     cin >> D;
@@ -269,10 +276,16 @@ int main(){
     cout << "Enter the value for the magnetic field (B = b/kT): ";
     cin >> B;
 
+    cout << "Enter the value for the coupling strength (Beta = J/kT): ";
+    cin >> Beta;
+
     vector<vector<int>> neighbors = precomputeNeighbors(D, N);
 
-     vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.2, 1/2.6, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
+    vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.2, 1/2.6, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
 
+    vector<char> state = initHot(D, N, 1);
+    generateHistory(state, neighbors, D, N, Beta, B, M, 1, 0, "Results/MagnetizationHistory", "Results/EnergyHistory");
+    /*
     for (double Beta : betaValues) {
         string filenameM = "Results2/MagB" + to_string(B) + "Beta" + to_string(Beta) + ".csv";
         string filenameE = "Results2/EnB" + to_string(B) + "Beta" + to_string(Beta) + ".csv";
@@ -283,7 +296,7 @@ int main(){
             generateHistory(state, neighbors, D, N, Beta, B, M, i, 1, filenameM, filenameE);
         }
     }
-    
+    */
 
     return 0;
 }
