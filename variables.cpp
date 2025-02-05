@@ -202,12 +202,11 @@ double calculateMagnetization(const vector<char> &state, int D, int N) {
 }
 
 // Calculates one step of the Metropolis algorithm
-void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int S){
-    static default_random_engine generator(S);
+void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, default_random_engine &generator){
+    
     uniform_real_distribution<double> dis(0,1);
-    int count = 0;
-
     int totalSpins = pow(N, D);
+
     for (int i = 0; i < totalSpins; i++){
         double deltaH = 2*B*getSpin(state, i); 
 
@@ -216,7 +215,6 @@ void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, i
         }
 
         double r = dis(generator);
-
         if (exp(-deltaH) > r){
             flipSpin(state, i);
         }
@@ -225,7 +223,7 @@ void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, i
 }
 
 // Generates data for history plot in .csv file
-void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int M, int S, bool append, const string& filenameM, const string& filenameE){
+void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int M, int S, bool append, bool evol, const string& filenameM, const string& filenameE){
     ofstream outfile("Results/MagnetizationHistory.csv");
     ofstream outfile2("Results/EnergyHistory.csv");
     ofstream outfileState("stateEvolution.csv");
@@ -234,18 +232,22 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
         cerr << "File could not be opened!" << endl;
     }
 
+    default_random_engine generator(S);
     outfile << calculateMagnetization(state, D, N) << endl;
+    outfile2 << calculateHamiltonian(state, neighbors, D, N, Beta, B) << endl;
 
     for (int i = 0; i < M; i++){
-        cout << calculateMagnetization(state, D, N) << endl;
-        metropolisStep(state, neighbors, D, N, Beta, B,  S);
+        metropolisStep(state, neighbors, D, N, Beta, B, generator);
         outfile << calculateMagnetization(state, D, N) << endl;
         outfile2 << calculateHamiltonian(state, neighbors, D, N, Beta, B) << endl;
 
-        for (int j = 0; j < pow(N, D); j++) {
+        if (evol){
+            for (int j = 0; j < pow(N, D); j++) {
             outfileState << static_cast<int>(getSpin(state, j)) << " ";
+            }
+            outfileState << endl;
         }
-        outfileState << endl;
+        
     }
 
     outfile.close();
@@ -261,8 +263,8 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
 
 
 int main(){
-    int D, N, S, M;
-    double B, Beta;
+    int D, N, M;
+    double B;
 
     cout << "Enter the number of dimensions (D): ";
     cin >> D;
@@ -276,27 +278,25 @@ int main(){
     cout << "Enter the value for the magnetic field (B = b/kT): ";
     cin >> B;
 
-    cout << "Enter the value for the coupling strength (Beta = J/kT): ";
-    cin >> Beta;
 
     vector<vector<int>> neighbors = precomputeNeighbors(D, N);
 
     vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.2, 1/2.6, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
 
-    vector<char> state = initHot(D, N, 1);
-    generateHistory(state, neighbors, D, N, Beta, B, M, 1, 0, "Results/MagnetizationHistory", "Results/EnergyHistory");
-    /*
-    for (double Beta : betaValues) {
-        string filenameM = "Results2/MagB" + to_string(B) + "Beta" + to_string(Beta) + ".csv";
-        string filenameE = "Results2/EnB" + to_string(B) + "Beta" + to_string(Beta) + ".csv";
+    //vector<char> state = initHot(D, N, 9);
+    //generateHistory(state, neighbors, D, N, 5.0, B, M, 9, 0, 1, "Results/MagnetizationHistory", "Results/EnergyHistory");
+    
+    for (double beta : betaValues) {
+        string filenameM = "Results2/MagB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
+        string filenameE = "Results2/EnB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
 
         for (int i = 0; i < 500; i++) {
-            cout << "Beta: " << Beta << ", Seed: " << i << endl;
+            cout << "Beta: " << beta << ", Seed: " << i << endl;
             vector<char> state = initHot(D, N, i);
-            generateHistory(state, neighbors, D, N, Beta, B, M, i, 1, filenameM, filenameE);
+            generateHistory(state, neighbors, D, N, beta, B, M, i, 1, 0, filenameM, filenameE);
         }
     }
-    */
+    
 
     return 0;
 }
