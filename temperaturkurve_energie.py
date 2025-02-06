@@ -8,8 +8,8 @@ R = 500
 
 exp_value_list = []
 stat_err_list = []
-beta_list = np.linspace(0.2,10,24)
-for name in glob.glob('C:\\Users\\Mickey\\Desktop\\Computational-Physics\\Results\\EnB0.010000Beta*.csv'):
+beta_list = np.linspace(0.2,10,25)
+for name in glob.glob('Results2\\EnB0.010000Beta*.csv'):
     column_names = ['replica_number' + str(i+1) for i in range(R)]
     energydata =  pd.read_csv(name, names = column_names, index_col=False) #change path accordingly
     energydata.index = energydata.index + 1
@@ -30,3 +30,6 @@ for name in glob.glob('C:\\Users\\Mickey\\Desktop\\Computational-Physics\\Result
 exp_value_list = np.flip(np.array(exp_value_list))
 stat_err_list = np.flip(np.array(stat_err_list))
 plt.errorbar(beta_list, exp_value_list/10000, yerr = stat_err_list/10000, fmt = 'o')
+#plt.title('Magnetization')
+plt.title('Energy')
+plt.show()
