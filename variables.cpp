@@ -283,8 +283,8 @@ int main(){
 
     vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.2, 1/2.6, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
 
-    //vector<char> state = initHot(D, N, 9);
-    //generateHistory(state, neighbors, D, N, 5.0, B, M, 9, 0, 1, "Results/MagnetizationHistory", "Results/EnergyHistory");
+    //vector<char> state = initHot(D, N, 19);
+    //generateHistory(state, neighbors, D, N, 0.43, B, M, 19, 0, 1, "Results/MagnetizationHistory", "Results/EnergyHistory");
     
     for (double beta : betaValues) {
         string filenameM = "Results2/MagB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
