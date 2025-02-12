@@ -8,8 +8,9 @@ R = 500
 
 'lose all values below thermalization'
 
-column_names = ['replica_number' + str(i+1) for i in range(R)]
+column_names = ['replica_number' + str(i+1) for i in range(R+1)]
 energydata =  pd.read_csv('C:\\Users\\Mickey Wilke\\Desktop\\cp2_ising\\EnergyReplica.csv', names = column_names, index_col=False) #change path accordingly
+energydata = energydata.drop(['replica_number' + str(R+1)], axis = 1)
 energydata.index = energydata.index + 1
 x = energydata.index.values
 indexnames = energydata[energydata.index < Nth].index
@@ -31,12 +32,6 @@ deviation = (mean_energies - exp_value)**2
 stat_err = np.sqrt(np.sum(deviation) / (R*(R - 1)))
 print('mean energy:' + str(exp_value))
 print('energy statistical error:' + str(stat_err))
-
-
-
-
-Nth = 200
-R = 500
 
 
 'lose all values below thermalization'
@@ -63,10 +58,6 @@ deviation = (mean_mag - exp_value)**2
 stat_err = np.sqrt(np.sum(deviation) / (R*(R - 1)))
 print('mean magnetisation:' + str(exp_value))
 print('magnetisation statistical error:' + str(stat_err))
-
-
-
-
 
 
 
