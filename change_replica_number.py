@@ -21,8 +21,9 @@ def f(x, m, n):
 'Energy'
 
 
-column_names = ['replica_number' + str(i+1) for i in range(R)]
+column_names = ['replica_number' + str(i+1) for i in range(R+1)]
 energydata =  pd.read_csv('C:\\Users\\Mickey Wilke\\Desktop\\cp2_ising\\EnergyReplica.csv', names = column_names, index_col=False) #change path accordingly
+energydata = energydata.drop(['replica_number' + str(R+1)], axis = 1)
 energydata.index = energydata.index + 1
 x = energydata.index.values
 indexnames = energydata[energydata.index < Nth].index
@@ -62,8 +63,9 @@ ax3.plot(x, y, label =  'linear fit $f=mx+n$')
 
 'magnetization'
 
-column_names = ['replica_number' + str(i+1) for i in range(R)]
+column_names = ['replica_number' + str(i+1) for i in range(R+1)]
 energydata =  pd.read_csv('C:\\Users\\Mickey Wilke\\Desktop\\cp2_ising\\MagnetizationReplica.csv', names = column_names, index_col=False) #change path accordingly
+energydata = energydata.drop(['replica_number' + str(R+1)], axis = 1)
 energydata.index = energydata.index + 1
 x = energydata.index.values
 indexnames = energydata[energydata.index < Nth].index
