@@ -29,8 +29,8 @@ for i in range(R):
 exp_value = 1/len(mean_energies) * np.sum(mean_energies)
 deviation = (mean_energies - exp_value)**2
 stat_err = np.sqrt(np.sum(deviation) / (R*(R - 1)))
-print(exp_value)
-print(stat_err)
+print('mean energy:' + str(exp_value))
+print('energy statistical error:' + str(stat_err))
 
 
 
@@ -61,8 +61,11 @@ for i in range(R):
 exp_value = 1/len(mean_mag) * np.sum(mean_mag)
 deviation = (mean_mag - exp_value)**2
 stat_err = np.sqrt(np.sum(deviation) / (R*(R - 1)))
-print(exp_value)
-print(stat_err)
+print('mean magnetisation:' + str(exp_value))
+print('magnetisation statistical error:' + str(stat_err))
+
+
+
 
 
 
