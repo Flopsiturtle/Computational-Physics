@@ -4,7 +4,7 @@ import random
 boot_seed = 5
 random.seed(boot_seed) 
 
-### can be deleted if we dont want to use gaussian in report
+### only used for gaussian representation, not important for report
 from scipy.stats.kde import gaussian_kde
 from numpy import linspace
 
@@ -105,82 +105,28 @@ final_histogramm(1,data_energy,calc_mean_mean_energy,num_bars,numb_samples,size_
 
 
 
-exit()
 
 
 
+''' --- here are the parts used which are in the appendix of the report --- '''
 
+def orig_histo_and_Gauss(data):
+    #### for checking: histogram using original replicas without bootstrap
+    y,binEdges = np.histogram(data,bins=num_bars)
+    bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
+    bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
+    plt.bar(bar_centers,y, width=bar_size, color='green')     
+    #### distributiuon using gaussian kernel
+    kde = gaussian_kde(data)
+    dist_space = linspace(min(data),max(data),100)
+    plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='purple')
+    #### plot
+    plt.title('histogram of original 500 replicas and gaussian "fit"')
+    plt.xlabel('value')
+    plt.ylabel('counts')
+    #plt.show() # delete the # if you want to plot this 
 
+orig_histo_and_Gauss(data_magn)
+orig_histo_and_Gauss(data_energy)
 
-
-
-''' --- for checking: histogram using original replicas without bootstrap --- '''
-y,binEdges = np.histogram(data_magn,bins=num_bars)
-bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
-bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
-plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step'
-
-plt.show()
-
-y,binEdges = np.histogram(data_energy,bins=num_bars)
-bar_centers = 0.5*(binEdges[1:]+binEdges[:-1])
-bar_size = ((np.max(binEdges)-np.min(binEdges))/num_bars)
-plt.bar(bar_centers,y, width=bar_size, color='green')         # , histtype='step'
-
-plt.show()
-
-
-
-''' --- distributiuon using gaussian kernel --- '''
-y,binEdges = np.histogram(data_magn,bins=num_bars)
-kde = gaussian_kde(data_magn)
-dist_space = linspace(min(data_magn),max(data_magn),100)
-plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='purple')
-plt.show()
-
-y,binEdges = np.histogram(data_energy,bins=num_bars)
-kde = gaussian_kde(data_energy)
-dist_space = linspace(min(data_energy),max(data_energy),100)
-plt.plot(dist_space,kde(dist_space)/np.max(kde(dist_space))*(np.max(y)), color='purple')
-plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-exit()
-
-
-
-''' --- my own version --- '''
-# ----- does the same but worse probably
-def prob_distr(probs_array,num_bars,density):
-    probs, probs_err = probs_array
-    max = np.max(probs)
-    min = np.min(probs)
-    bar_size = (max-min)/num_bars
-    bars = []
-    for i in np.arange(num_bars):
-        number = probs[(probs>=(min+bar_size*i)) & (probs<(max+bar_size*(i+1-num_bars)))]
-        bars.append(number.size)
-    bars[num_bars-1] += 1
-    bars.append(0)
-    x = np.arange(min,max+bar_size,bar_size)
-    if density == 0:
-        for i in np.arange(num_bars):
-            bars[i] = bars[i]/((probs.shape)[0])
-        return x,bars,bar_size
-    return x,bars,bar_size
-
-#x,y,width = prob_distr(probs_array,num_bars,density=1)
-#plt.bar(x,y,width,align='edge', color='C0')
-#plt.xticks(x)
-#plt.show()                                   
 
