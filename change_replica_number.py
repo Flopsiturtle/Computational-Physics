@@ -3,13 +3,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 Nth = 200
-R = 100
+R = 500
+
+fig, (ax1, ax2) = plt.subplots(2, 1)
+fig.suptitle('change replica number', fontsize = 30)
+ax1.set_xlabel('replica number', fontsize = 20)
+ax1.set_ylabel('statistical error', fontsize = 20)
+ax1.tick_params(axis='both', which='major', labelsize=20)
+ax2.set_xlabel('replica number', fontsize = 20)
+ax2.set_ylabel('statistical error', fontsize = 20)
+ax2.tick_params(axis='both', which='major', labelsize=20)
 
 'Energy'
 'lose all values below thermalization'
 
 column_names = ['replica_number' + str(i+1) for i in range(R)]
-energydata =  pd.read_csv('C:\\Users\\Mickey Wilke\\Desktop\\cp2_ising\\EnergyReplica.csv', names = column_names, index_col=False) #change path accordingly
+energydata =  pd.read_csv('C:\\Users\\Mickey\\Desktop\\Computational-Physics\\Results\\EnergyReplica.csv', names = column_names, index_col=False) #change path accordingly
+
 energydata.index = energydata.index + 1
 x = energydata.index.values
 indexnames = energydata[energydata.index < Nth].index
@@ -35,15 +45,14 @@ for j in [i + 2 for i in range(R-2)]:
     stat_error.append(stat_err)
     
 x = [i + 2 for i in range(R-2)]
-plt.plot(x, stat_error)
-plt.show()
+ax1.plot(x, stat_error, label = 'Energy error')
 
 
 'magnetization'
 'lose all values below thermalization'
 
 column_names = ['replica_number' + str(i+1) for i in range(R)]
-energydata =  pd.read_csv('C:\\Users\\Mickey Wilke\\Desktop\\cp2_ising\\MagnetizationReplica.csv', names = column_names, index_col=False) #change path accordingly
+energydata =  pd.read_csv('C:\\Users\\Mickey\\Desktop\\Computational-Physics\\Results\\MagnetizationReplica.csv', names = column_names, index_col=False) #change path accordingly
 energydata.index = energydata.index + 1
 x = energydata.index.values
 indexnames = energydata[energydata.index < Nth].index
@@ -69,4 +78,6 @@ for j in [i + 2 for i in range(R-2)]:
     stat_error.append(stat_err)
     
 x = [i + 2 for i in range(R-2)]
-plt.plot(x, stat_error)
+ax2.plot(x, stat_error, label = 'Magnetisation error', color = 'r')
+ax1.legend(fontsize = 20)
+ax2.legend(fontsize = 20)
