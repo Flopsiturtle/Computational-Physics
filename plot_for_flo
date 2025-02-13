@@ -1,0 +1,16 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+R = 500
+
+column_names = ['replica_number' + str(i+1) for i in range(R+1)]
+energydata =  pd.read_csv('C:\\Users\\Mickey\\Desktop\\Computational-Physics-1\\Results2\\MagB0.005000Beta0.500000.csv', names = column_names, index_col=False) #change path accordingly
+#energydata = energydata.drop(['replica_number' + str(R+1)], axis = 1)
+energydata.index = energydata.index + 1
+x = energydata.index.values
+#indexnames = energydata[energydata.index < Nth].index
+#energydata.drop(indexnames, inplace =True)
+for i in column_names:
+    plt.plot(x, energydata[i])
+plt.show()
