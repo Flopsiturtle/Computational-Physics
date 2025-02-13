@@ -106,7 +106,7 @@
     \\
     \\
     \noindent
-    To plot the probability distribution, you must run the file "prob$\_$distr.py". The input of the functions used for plotting the histograms can be changed regarding the input data (.csv file) and the parameters of the bootstrap-method. Finally, at the end of the file there is the code for visualizing our original replicas - however, this is not being plotted when you run the file, you would need to delete a "$\#$" at the end of the code.
+    To plot the probability distribution, you must run the file \textbf{prob$\_$distr.py}. The input of the functions used for plotting the histograms can be changed regarding the input data (.csv file) and the parameters of the bootstrap-method. Finally, at the end of the file there is the code for visualizing our original replicas - however, this is not being plotted when you run the file, you would need to delete a "$\#$" at the end of the code.
 
     \noindent
     \underline{Temperature dependency of the densities}
