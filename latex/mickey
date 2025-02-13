@@ -222,6 +222,28 @@
 
 
 
+\subsection{Probability distribution}
+	We now evaluate the probability distributions of magnetization and energy for our original 500 replicas. The procedure used for calculating our data and resampling sets was already explained in the workflow. Thus, both of the histograms can be seen in the figures \ref{fig:histo_final_magn} and \ref{fig:histo_final_energy} below. All parameters for the bootstrap-method and the plotting itself, except the x-axis and therefore x-size of the bars, were kept the same for both figures.
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=17cm]{"magn_histo_final.png"}
+\caption{Magnetization histogram via bootstrap-method. With statistical error bars, mean of the original- and bootstrap-distribution, respective statistical error added as $\Delta x$ bars (view values in figure).}	\label{fig:histo_final_magn}
+	\end{center}
+	\end{figure}
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=17cm]{"energy_histo_final.png"}
+\caption{Energy histogram via bootstrap-method. With statistical error bars, mean of the original- and bootstrap-distribution, respective statistical error added as $\Delta x$ bars (view values in figure).}	\label{fig:histo_final_energy}
+	\end{center}
+	\end{figure}
+	\\
+	\\
+	One can observe a relatively good Gaussian distribution for both histograms, as expected for a statistical deviation of replicas which are statistically independent of one and each other (viable for calculating replicas and bootstrapping them). Both the beforehand and via bootstrap calculated mean are nearly identical (maximum $\pm0.2$ for magnetization). Whereas the bootstrap errors are around 50-times larger, stemming from the statistical resampling nature of the bootstrap-method. Still, just from looking at both plots, one could argue, that the errors of the bootstrap mean are approximately in a $1\sigma$-deviation. Which is expected for the Gaussian distribution around a 'true' mean, as explained at the beginning of the workflow section "probability distribution". \\
+	Furthermore, the energy means are more densely distributed around the overall mean than the magnetization means, also visible in different sizes of errors. This can also be seen in figure \ref{fig:app1} in the appendix, where the same energy histogram is plotted with the x-axis being in the same size limits as for the magnetization.
+	Finally, it is important to discuss the outcome of the bootstrap-method in regards to the original replica set. By looking at the histograms of the original replicas, one notices a distinct similarity to the bootstrap histogram. For example the high "mean" peak for the energy histograms. This is of course obvious, as we are just resampling our data, but it has to be noted nonetheless. Therefore, for additional more careful analysis of the task, it would be wiser to explicitly calculate lots of replicas which then can be used for a probability distribution with errors. As for our task, the method we used worked well enough for interpretation.
+
+
+
     \noindent
     \underline{Temperature dependency of the densities}
     \\
@@ -238,9 +260,35 @@
 
 
 
-	
+
+
+
+\newpage
 
 	
+\section{Appendix} \label{sec:appendix}
+
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=17cm]{"energy-mag_histo_final.png"}
+\caption{To visualize the narrower distribution of the energy in regards to magnetization: same energy histogram via bootstrap-method as seen before, now with the x-axis being in the same size limits as for the magnetization. With statistical error bars, mean of the original- and bootstrap-distribution, respective statistical error added as $\Delta x$ bars (view values in figure).}	\label{fig:app1}
+	\end{center}
+	\end{figure}
+
+
+\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=11cm]{"orig_magn.png"}
+\caption{Magnetization: original data histogram and Gaussian "fit"}	\label{fig:app2}
+	\end{center}
+	\end{figure}
+
+	\begin{figure} [h] 
+	\begin{center}
+	\includegraphics[width=11cm]{"orig_energy.png"}
+\caption{Energy: original data histogram and Gaussian "fit"}	\label{fig:app3}
+	\end{center}
+	\end{figure}	
 	
 
 
