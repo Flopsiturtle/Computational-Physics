@@ -4,7 +4,7 @@ import random
 boot_seed = 5
 random.seed(boot_seed) 
 
-### only used for gaussian representation, not important final histograms
+### only used for gaussian representation, not important for final histograms
 from scipy.stats.kde import gaussian_kde
 from numpy import linspace
 
