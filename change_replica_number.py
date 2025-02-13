@@ -57,8 +57,9 @@ y = f(x, *popt)
 ax1.plot(x, stat_error,  label = 'Energy error')
 ax3.plot(x, linearised, label = 'linearised energy error \n of the form $1/y^2 $')
 ax3.plot(x, y, label =  'linear fit $f=mx+n$')
-#print(popt, pcov)
-
+print('Energy:')
+print('m = ' + str(popt[0]) + ' +/- ' + str(np.sqrt(pcov[0][0])))
+print('n = ' + str(popt[1]) + ' +/- ' + str(np.sqrt(pcov[1][1])))
 
 
 'magnetization'
@@ -97,7 +98,9 @@ y = f(x, *popt)
 ax2.plot(x, stat_error, label = 'Magnetisation error', color = 'r')
 ax4.plot(x, linearised, label = 'linearised energy error \n of the form $1/y^2 $', color = 'r')
 ax4.plot(x, y, label =  'linear fit $f=mx+n$', color = 'g')
-#print(popt, pcov)
+print('Magnetisation:')
+print('m = ' + str(popt[0]) + ' +/- ' + str(np.sqrt(pcov[0][0])))
+print('n = ' + str(popt[1]) + ' +/- ' + str(np.sqrt(pcov[1][1])))
 
 
 ax1.legend(fontsize = 10)
