@@ -1,0 +1,230 @@
+\documentclass[11pt, letterpaper, onecolumn]{article}
+ 
+\usepackage[english]{babel}
+\usepackage{soul}
+\usepackage{mathtools}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[german=quotes]{csquotes}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{gensymb}
+\usepackage{units}
+\usepackage{siunitx}
+\usepackage{hhline}
+\usepackage{color}
+\usepackage{titling}
+\usepackage[normalem]{ulem}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{pgfplots}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{subfigure}
+\usepackage{lipsum}
+\usepackage{url}
+\usepackage{relsize}
+\usepackage{braket}
+
+\newgeometry{a4paper, left=20mm, right=20mm, top=30mm, bottom=30mm}
+\definecolor{pantone294}{cmyk}{1,0.6,0,0.2}
+\setlength{\columnsep}{6mm} 
+
+\title{Project 2: Ising model} 
+\author{Florian Telleis / Florian Hollants / Mickey Wilke}
+\date{\today}
+
+\pagestyle{fancy}
+\lfoot{Humboldt-Universität zu Berlin}
+\rfoot{Project 1.1} 
+
+
+
+\begin{document}
+	
+	\newgeometry{left=14mm, right=13.5mm, top=13.5mm, bottom=30mm}
+	\begin{titlepage}
+		\thispagestyle{empty}
+		\begin{figure}
+			
+		\end{figure}
+		\vspace*{-43mm}\hspace{-6mm}\textbf{\textcolor{pantone294}{\large{Mathematisch-Naturwissenschaftliche Fakultät}}}\\\\\\\\\\
+		\textcolor{pantone294}{Institut für Physik}\\
+		\vspace{30mm}
+		\begin{center}
+			\textcolor{pantone294}{\huge{Computational Physics II}}\\\vspace*{7mm}
+			\textcolor{pantone294}{\huge{\textbf{\thetitle}}}\\\vspace*{10mm}
+			\textcolor{pantone294}{\theauthor}\\\vspace*{10mm}
+			\textcolor{pantone294}{\thedate}\\\vspace*{20mm}
+			\begin{tabular}{ll}
+				\textbf{Work Group:} & Albert Einstein	 \\ \\
+				\textbf{Students:} & Florian Telleis (612716) \\
+									& Florian Hollants (648689)\\
+									& Mickey  Wilke (642815)\\ \\
+				\textbf{Submitted:} & 15.02.2025 \\ \\				
+			\end{tabular}
+		\end{center}
+	\end{titlepage}
+	\makeatother
+	\restoregeometry
+		
+		\newpage
+	
+	
+	
+	
+	
+	
+    \tableofcontents
+    \vspace{1cm}
+    
+    
+    
+    
+    
+    \section{How the code works}
+    \underline{Calculation of the mean energy and magnetisation}
+    \\
+    \\
+    \noindent
+    The mean energy, magnetisation and the corresponding errors may be calculated with the file \textbf{calculate$\_$means.py} and by using \textbf{EnergyReplica.csv} from the folder \textbf{Results}.\\
+    The corresponding path to the \textbf{EnergyReplica.csv} file needs to be entered into the \textbf{pd.read$\_$csv()} function. Using the \textbf{changing$\_$thermalisation$\_$cutoff.py} file the corrsponding plot \ref{thermcutoff} can be reproduced. The path to the \textbf{EnergyReplica.csv} and \textbf{MagnetizationReplica.csv} file need to be provided in the functions.\\
+    
+    \noindent
+    \underline{Numerical analysis of the statistical errors}
+    \\
+    \\
+    \noindent
+    In order to replicate the diagrams which show the behavior of the statistical errors you need to use the files \textbf{change$\_$configuration$\_$number.py} and \textbf{change$\_$replica$\_$number.py} for the plots regarding the number of configurations and the number of replicas respectively. In this file there are two spots where paths to the files \textbf{EnergyReplica.csv} and \textbf{MagnetizationReplica.csv} need to be provided once again in the \textbf{pd.read$\_$csv()} function. \\
+    
+    \noindent
+    \underline{Temperature dependency of the densities}
+    \\
+    \\
+    \noindent
+    !!!part of flo about how the the data in Results2 can be replicated!!!\\
+    The file \textbf{temperature$\_$dependency.py} generates the plots for the temperature dependencies. Just as before there are two spots where the paths need to be provided. In order for the code to work properly all the required files should be stored in one folder which we sent you as \textbf{Results2}. If you keep the data in a folder named \textbf{Results2} you only need to change the part of the path before that.
+	
+
+
+
+    \pagebreak
+    \section{Workflow}
+    \underline{Calculation of the mean energy and magnetisation}
+    \\
+    \\
+    \noindent
+    Once the data for 500 replicas was generated we could begin checking the data for thermalisation. We looked at all the replicas and determined the thermalisation to take place at around $N_{th} = 200$. After this we implemented the given way of calculating the means and statistical errors from the lecture. By changing $N_{th}$ we could also confirm that our choice was appropriate since the calculated quantities only changed minimally and stayed in each others error bounds. This was then also confirmed by systematically changing the thermalisation as can be seen in figure \ref{thermcutoff}.\\
+
+    \noindent
+    \underline{Numerical analysis of the statistical errors}
+    \\
+    \\
+    \noindent
+    We chose to vary the number of configurations and replica by modifying one data set of 500 replicas. The statistical error is calculated  in the same manner as for the means. When looking at the the behavior of the error, see figures \ref{varyconfig} and \ref{varyreplica}, it is evident that it decreases with growing number of configurations and replicas. It is also evident that there is some kind of functional dependency which we confirmed by fitting the data to the theoretically predicted function. In theory one would expect the following proportionalities for statistical quantities $X(n)$, $\bar{X}^r$, $\bar{\bar{X}}$ and $\textit{err}(\Bar{\Bar{X}})$:
+    \begin{align*}
+       &\bar{X}^r = \frac{1}{N}\underbrace{\sum_{n=1}^N X(n)}_{\sim N} \sim N^0, R^0\\
+       &\bar{\bar{X}} = \frac{1}{R}\underbrace{\sum_{r=1}^R \bar{X}^r}_{\sim R} \sim N^0, R^0\\
+       &\textit{err}(\Bar{X}^r) = \sqrt{\frac{1}{N(N-1)} \underbrace{\sum_{n=1}^N (X(n) - \bar{X}^r)^2}_{\sim N}}  \sim \sqrt{\frac{1}{N-1}} \sim  \sqrt{\frac{1}{N}}\\
+       &\textit{err}(\Bar{\Bar{X}}) = \sqrt{\frac{1}{R(R-1)} \underbrace{\sum_{r=1}^R (\bar{X}^r - \bar{\bar{X}})^2}_{\sim R}} \sim  \sqrt{\frac{1}{R}}\\
+       &\textit{err}(\Bar{\Bar{X}}) =\frac{1}{R} \sqrt{\sum_{r=1}^R \underbrace{(\textit{err}(\Bar{X}^r))^2}_{\sim \frac{1}{N}}}  \sim  \sqrt{\frac{1}{N}}         \\
+       & \implies R, N \sim \frac{1}{(\textit{err}(\Bar{\Bar{X}}))^2}\\
+    \end{align*}
+    
+    \noindent
+    \underline{Temperature dependency of the densities}
+    \\
+    \\
+    \noindent
+    !!!worklfow of flo regarding how the data was created!!!\\
+    With the data sets for the different values of $\frac{1}{\beta}$ and $B$ we could again calculate the means and statistical errors for each set and plot the densities $\frac{<E>}{100^2}$ and $\frac{<M>}{100^2}$ in dependence on the temperature $\frac{1}{\beta}$ for different magnetic fields $B$, see figure \ref{tempdepend}.
+    
+
+    \pagebreak
+
+    \section{Results}
+    \underline{Calculation of the mean energy and magnetisation}
+    \\
+    \\
+    \noindent
+   The calculation of the the means and statistical errors leads to the following values:
+   \begin{align*}
+       &<E> = \qty{-6,2360 +- 0,0007}{}\cdot 10^3\\
+       &<M> = \qty{7,181 +- 0,003}{}\cdot 10^3\\
+   \end{align*}
+   This is in accordance with the values which we were supposed to calculate.\\
+   We also investigated the the dependence of the means and errors on the thermalization cut off as can be seen in figure \ref{thermcutoff}. There we can see that the means converge towards a value which is characteristic for the process of thermalization. From the two lower plots for the errors we can also see why it is important to choose an appropriate cut-off value for $N_{th}$ which maximizes the number of available configurations. The error grows when we cut off at a higher value of $N$ which is to be expected since a higher cut-off results in less available configurations for the calculation of the means. We further investigate the behaviour of the statistical errors in the next section.
+    \begin{figure} [H] 
+	\begin{center}	
+	\includegraphics[width=14cm]{varying_thermalisation_cutoff_plot.png}
+	\caption{Top two diagrams: Behavior of the mean energy and magnetisation depending on the thermalization cut off. Thermalization sets in after the values converge. For even larger cut off configurations the error on the means increase. For further clarity the bottom two diagrams explicitly show the error growing when we increase the cut-off configuration after thermalization.} \label{thermcutoff}
+	\end{center}
+    \end{figure}
+
+
+    \noindent
+    \underline{Numerical analysis of the statistical errors}
+    \\
+    \\
+    \noindent
+    First off we can see in both diagrams \ref{varyreplica} and \ref{varyconfig} that the statistical error decreases for increasing configuration number $N$ and number of replicas $R$. When varying $R$ we get some fluctuations in the error for low replica number. This is to be expected though since the error itself is a statistical variable which is subject to a statistical error. As described in the workflow we expect a proportionality of the form $ R, N \sim 1/(\textit{err}(\Bar{\Bar{X}}))^2$ with $\Bar{\Bar{X}} \in \{<E>, <M>\}$. In order to confirm that we plot $R, N$ in both plots against $1/(\textit{err}(\Bar{\Bar{X}}))^2$ and see a linear form. By doing a linear regression(least squares) we fit the linearised error to a function $f = mx +n$ with the following results:
+    \begin{align*}
+    \begin{tabular}{l|c|c}
+        Varied quantity &  energy error  &  magnetisation error \\
+        \hline
+        N & f = \qty{3,259 +- 0.007}{} \cdot 10^{-3}\cdot x - \qty{5 +- 3}{}\cdot 10^{-3} & f=  \qty{2,854 +- 0.005}{} \cdot 10^{-4}\cdot x - \qty{5 +- 2}{}\cdot 10^{-4} \\
+        \hline
+        R & f = \qty{4,983 +- 0.009}{} \cdot 10^{-3}\cdot x - \qty{5 +- 25}{}\cdot 10^{-4}   &  f=\qty{4,476 +- 0,007}{} \cdot 10^{-4}\cdot x - \qty{2,5688 +- 0.0002}{}\cdot 10^{-5}   \\
+    \end{tabular}
+    \end{align*}
+    The fits strongly support the thesis that $\textit{err}(\Bar{\Bar{M}})$ and $\textit{err}(\Bar{\Bar{E}})$ scale with $1/\sqrt{N}, 1/\sqrt{R}$.
+    
+    \begin{figure} [H] 
+	\begin{center}	
+	\includegraphics[width=15cm]{vary_replica_number_plot_final.png}
+	\caption{The upper two diagrams show the decreasing statistical error against the number of replicas for the mean energy(left) and magnetisation(right) error. The two diagrams below show $1/\textit{err}(<E>)^2$ and  $1/\textit{err}(<M>)^2$ against the number of replicas and the corresponding linear fits.} \label{varyreplica}
+	\end{center}
+    \end{figure}
+
+
+
+    
+    \begin{figure} [H] 
+	\begin{center}	
+	\includegraphics[width=15cm]{vary_config_number_plot_final.png}
+	\caption{The upper two diagrams show the decreasing statistical error against the number of configurations for the mean energy(left) and magnetisation(right) error. The two diagrams below show $1/\textit{err}(<E>)^2$ and  $1/\textit{err}(<M>)^2$ against the number of configurations and the corresponding linear fits. } \label{varyconfig}
+	\end{center}
+    \end{figure}
+
+
+
+    \noindent
+    \underline{Temperature dependency of the densities}
+    \\
+    \\
+    \noindent
+    !!!phase transition interpretation!!!
+     \begin{figure} [H] 
+	\begin{center}	
+	\includegraphics[width=17cm]{temperature_dependence_plot.png}
+	\caption{} \label{tempdepend}
+	\end{center}
+    \end{figure}
+
+
+
+
+	
+
+	
+	
+
+
+
+
+
+	
+\end{document}
