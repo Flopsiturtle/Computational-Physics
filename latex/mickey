@@ -99,7 +99,15 @@
     \\
     \noindent
     In order to replicate the diagrams which show the behavior of the statistical errors you need to use the files \textbf{change$\_$configuration$\_$number.py} and \textbf{change$\_$replica$\_$number.py} for the plots regarding the number of configurations and the number of replicas respectively. In this file there are two spots where paths to the files \textbf{EnergyReplica.csv} and \textbf{MagnetizationReplica.csv} need to be provided once again in the \textbf{pd.read$\_$csv()} function. \\
-    
+
+
+    \noindent
+    \underline{Probability distributions}
+    \\
+    \\
+    \noindent
+    To plot the probability distribution, you must run the file "prob$\_$distr.py". The input of the functions used for plotting the histograms can be changed regarding the input data (.csv file) and the parameters of the bootstrap-method. Finally, at the end of the file there is the code for visualizing our original replicas - however, this is not being plotted when you run the file, you would need to delete a "$\#$" at the end of the code.
+
     \noindent
     \underline{Temperature dependency of the densities}
     \\
