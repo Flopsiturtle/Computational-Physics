@@ -108,7 +108,7 @@ final_histogramm(1,data_energy,calc_mean_mean_energy,num_bars,numb_samples,size_
 
 
 
-''' --- here are the parts used which are in the appendix of the report --- '''
+''' --- here are the parts which are in the appendix of the report --- '''
 
 def orig_histo_and_Gauss(data):
     #### for checking: histogram using original replicas without bootstrap
@@ -124,9 +124,11 @@ def orig_histo_and_Gauss(data):
     plt.title('histogram of original 500 replicas and gaussian "fit"')
     plt.xlabel('value')
     plt.ylabel('counts')
-    #plt.show() # delete the # if you want to plot this 
+    plt.show() 
 
-orig_histo_and_Gauss(data_magn)
-orig_histo_and_Gauss(data_energy)
+# magnetization
+#orig_histo_and_Gauss(data_magn)    #! Delete the # if you want to plot !             
+# energy
+#orig_histo_and_Gauss(data_energy)    #! Delete the # if you want to plot !
 
 
