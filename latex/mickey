@@ -297,7 +297,7 @@ only that now, the size of the domain wall isn't reliably reduced anymore, since
 	\caption{Magnetisation history plots for all replicas with longer Markov chains for chosen values of $B, \beta$ which did not thermalize in figure \ref{magcritical}. As can be seen the chains do thermalize for longer chains.} \label{magcritical}
 	\end{center}
     \end{figure}
-
+	\noindent
     In \ref{magcritical}{} the history of the magnetization is plotted for all replicas and for some unphysical data points from \ref{tempdepend} close to the phase transition. We have increased the length of the chain in order to see that in fact thermalization did not occur around $N_{th} = 200$. The chains still thermalize but just for a significantly larger $N_{th}$ which quickly becomes unpractically large for low temperatures. As comparison we have plotted the same for the energy in figure \ref{energycritical}. For the energy this effect does not occur and the thermalization point does not significantly change.
 
      \begin{figure} [H] 
