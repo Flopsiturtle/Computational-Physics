@@ -103,29 +103,6 @@ int positionToIndex(const vector<int> &position, int D, int N) {
     return index;
 }
 
-// Helper to print Grid in 1D
-void printGrid1D(vector<char> grid, int N){
-    cout << "[";
-
-    for (int i = 0; i<N; i++){
-        cout << (getSpin(grid, i) == 1 ? " 1" : "-1");
-        }
-
-    cout << " ]" << endl;
-}
-
-// Helper to print Grid in 2D
-void printGrid2D(vector<char> grid, int N){
-    cout << "Grid:" << endl;
-    for (int j = 0; j<N; j++){
-        cout << "[";
-        for (int i = 0; i<N; i++){
-            int index = positionToIndex({i, j}, 2, N);
-            cout << (getSpin(grid, index) == 1 ? " 1" : "-1");
-        }
-        cout << " ]" << endl;
-    }
-}
 
 // appends new Column of data to csv file
 void appendColumn(const string& filename, const string& new_column){

@@ -21,7 +21,7 @@ def update(frame):
 # Create a figure and axis
 fig, ax = plt.subplots()
 grid = data.iloc[0].values.reshape(N, N)
-mat = ax.matshow(grid, cmap='gray')  # Use 'gray' for black and white color scheme
+mat = ax.matshow(grid, cmap='gray')
 
 # Add a legend
 import matplotlib.patches as mpatches
