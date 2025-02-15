@@ -226,7 +226,7 @@ void metropolisStep(vector<char> &state, const vector<vector<int>> &neighbors, i
 void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, int D, int N, double Beta, double B, int M, int S, bool append, bool evol, const string& filenameM, const string& filenameE){
     ofstream outfile("Results/MagnetizationHistory.csv");
     ofstream outfile2("Results/EnergyHistory.csv");
-    ofstream outfileState("stateEvolution.csv");
+    ofstream outfileState("Results/stateEvolution.csv");
 
     if (!outfile || !outfile2 || !outfileState) {
         cerr << "File could not be opened!" << endl;
@@ -235,6 +235,13 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
     default_random_engine generator(S);
     outfile << calculateMagnetization(state, D, N) << endl;
     outfile2 << calculateHamiltonian(state, neighbors, D, N, Beta, B) << endl;
+
+    if (evol){
+        for (int j = 0; j < pow(N, D); j++) {
+        outfileState << static_cast<int>(getSpin(state, j)) << " ";
+        }
+        outfileState << endl;
+    }
 
     for (int i = 0; i < M; i++){
         metropolisStep(state, neighbors, D, N, Beta, B, generator);
@@ -263,30 +270,46 @@ void generateHistory(vector<char> &state, const vector<vector<int>> &neighbors, 
 
 
 int main(){
-    int D, N, M;
-    double B;
+    int D, N, M, S;
+    double B, Beta;
+    bool cold;
 
-    cout << "Enter the number of dimensions (D): ";
+    cout << "Enter the number of dimensions (int D): ";
     cin >> D;
 
-    cout << "Enter the number of points per dimension (N): ";
+    cout << "Enter the number of points per dimension (int N): ";
     cin >> N;
 
-    cout << "Enter the length of the Markov-Chain (M): ";
+    cout << "Enter the length of the Markov-Chain (int M): ";
     cin >> M;
 
-    cout << "Enter the value for the magnetic field (B = b/kT): ";
+    cout << "Enter the value for the coupling strength (double Beta = J/kT): ";
+    cin >> Beta;
+
+    cout << "Enter the value for the magnetic field (double B = b/kT): ";
     cin >> B;
+
+    cout << "Enter the value of the seed for generating random nummbers(int S): ";
+    cin >> S;
+
+    cout << "Do you want to start in a cold state? (bool cold): ";
+    cin >> cold;
 
 
     vector<vector<int>> neighbors = precomputeNeighbors(D, N);
 
-    //vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.2, 1/2.6, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
-    //vector<double> betaValues = {1/2.0, 1/2.3, 1/2.4, 1/2.5, 1/2.8};
-    vector<double> betaValues = {1/2.0, 1/2.2};
-    //vector<char> state = initHot(D, N, 19);
-    //generateHistory(state, neighbors, D, N, 0.43, B, M, 19, 0, 1, "Results/MagnetizationHistory", "Results/EnergyHistory");
+    if (cold){
+        vector<char> state = initCold(D,N);
+        generateHistory(state, neighbors, D, N, Beta, B, M, S, 0, 1, "Results/MagnetizationHistory", "Results/EnergyHistory");
+    }
+    else{
+        vector<char> state = initHot(D, N, S);
+        generateHistory(state, neighbors, D, N, Beta, B, M, S, 0, 1, "Results/MagnetizationHistory", "Results/EnergyHistory");
+    }
     
+
+    /*
+    vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.0, 1/2.2, 1/2.3, 1/2.4, 1/2.5, 1/2.6, 1/2.8, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
     for (double beta : betaValues) {
         string filenameM = "Results3/MagB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
         string filenameE = "Results3/EnB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
@@ -297,7 +320,7 @@ int main(){
             generateHistory(state, neighbors, D, N, beta, B, M, i, 1, 0, filenameM, filenameE);
         }
     }
-    
+    */
 
     return 0;
 }
