@@ -275,16 +275,35 @@ in our case the length of the domain wall boundary is $L=2N=200$ and so the prob
     N^DP(s'\rightarrow s)=10^4\cdot e^{-(8\beta-2b)}\approx 4\cdot10^{-14}
 \end{align*}
 only that now, the size of the domain wall isn't reliably reduced anymore, since we go from a spin having 4 neighbors pointing in the same direction to three which we covered in the example before, and is still extremely unlikely to flip.
-    !!!phase transition interpretation!!!
      \begin{figure} [H] 
 	\begin{center}	
-	\includegraphics[width=17cm]{temperature_dependence_plot.png}
-	\caption{} \label{tempdepend}
+	\includegraphics[width=15cm]{temperature_dependence_plot.png}
+	\caption{The left plots show the temperature dependency of the energy density for varying values of $B, \beta$. The right plots show the magnetisation-density. The phase transition from unmagnetised to magnetised can be seen clearly for decreasing temperatures. The points left of the phase transition for the magnetisation-density are unphysical due to the replicas not being thermalized. This is fixed in \ref{tempdependfixed}.} \label{tempdepend}
 	\end{center}
     \end{figure}
 
 
 
+ \begin{figure} [H] 
+	\begin{center}	
+	\includegraphics[width=15cm]{temperature_dependency_fixed_plot.png}
+	\caption{Same plots as in figure \ref{tempdepend} with the unphysical points removed from the magentisation density.} \label{tempdependfixed}
+	\end{center}
+    \end{figure}
+
+     \begin{figure} [H] 
+	\begin{center}	
+	\includegraphics[width=15cm]{mag_replicas_critical_plot.png}
+	\caption{Magnetisation history plots for all replicas with longer Markov chains for chosen values of $B, \beta$ which did not thermalize in figure \ref{magcritical}. As can be seen the chains do thermalize for longer chains.} \label{magcritical}
+	\end{center}
+    \end{figure}
+
+     \begin{figure} [H] 
+	\begin{center}	
+	\includegraphics[width=15cm]{energy_replica_critical_plot.png}
+	\caption{Energy history plots for all replicas with longer Markov chains for chosen values of $B, \beta$ as comparison to figure \ref{magcritical}. All the replicas thermalize very fast in stark contrast to figure \ref{magcritical}.} \label{energycritical}
+	\end{center}
+    \end{figure}
 
 
 
