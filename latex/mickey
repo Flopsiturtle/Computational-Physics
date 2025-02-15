@@ -86,6 +86,13 @@
     
     
     \section{How the code works}
+    \underline{Generating Markov Chains and state evolution}
+    \\
+    \\
+    \noindent
+    To generate a Markov chain, one has to simply run the "variables.cpp" file. You will be asked to input the number of dimensions, the number of points in each dimension, the length of the Markov chain, as well as the values for $\beta$ and $b$. Lastly, you will have to input the value of the seed used to generate the random numbers and weather or not to start in a cold state (1 for cold state and 0 for hot state). The values of the magnetization and the energy will be stored in the "Results" folder in the files called "MagnetizationHistory.csv" and "EnergyHistory.csv", respectively. This will also automatically save the state after each step of the markov chain in the file "stateEvolution.csv". This file will be used in the file "stateEvolution.py" which will visualize the system for each step in the chain, when executed. This visualization only works in 2D and for $N=100$, but in the "Results" folder are gifs for different Markov chains.
+   
+    \noindent
     \underline{Calculation of the mean energy and magnetisation}
     \\
     \\
@@ -121,6 +128,12 @@
 
     \pagebreak
     \section{Workflow}
+    \underline{Calculation of the mean energy and magnetisation}
+    \\
+    \\
+    \noindent
+	The first thing we had to think about was how to represent the D-dimensional grid. Coming from python, where one can easily make ndarrays, we had to use a new approach, in which we save all the spins in one long 1-D array, and associate each index with a position on the grid. To translate from index to position and vice versa we wrote the "indexToPosition" and "positionToIndex" functions using periodic boundary conditions. Next we set the state vector in either the hot or cold condition. For the hot condition, we decided to use the "default\_random\_engine" class from the "<random>" module. Next we wrote the functions to calculate the energy and magnetization of the system and wrote the metropolis algorithm according to the lecture notes. In the hopes of increasing the speed of the algorithm, we then implemented a function that calculates the neighbors of each spin, so that the hamiltonian function doesn't have to do that every time it is called. This function is only called once in the beginning and stores all the indices of the neighbors on the grid. The second thing we tried, was saving each spin as a bit, instead of saving it as an integer. Since each spin can only be in one of two states, one bit is all we should need to store each of them. In order to do that, we wrote functions to "translate" between the char vector, and the value of the spins at each index. Lastly we wrote the "generateHistory" and "appendColumn" functions to make the history plots and save the data in their corresponding .csv files.
+    \noindent
     \underline{Calculation of the mean energy and magnetisation}
     \\
     \\
@@ -249,6 +262,19 @@
     \\
     \\
     \noindent
+	The expected curve clearly shows the phase transition, between ferro- and paramagnet. We expected the temperature curve to go to $m=1$ relatively quickly, but our simulation seems to show something different. The average magnetization is clearly non-zero, but it does not go to one, but somewhere in between, depending on the external magnetic field. The reason for that is the formation of domain walls, as can be seen in the gif for $\beta=5.0$. Depending on the starting configuration, it can occasionally happen, that domain walls form, that are extremely unlikely to be broken again, especially when $\beta$ is much bigger than $b$. A spin at the boundary of the domain wall has three neighbors pointing in the same direction, and one in the opposite, so we can calculate $\Delta H$ to be
+\begin{align*}
+    \Delta H = 4\beta-2b
+\end{align*}
+Therefore the probability of flipping a particular spin in each iteration in the case for $\beta = 5.0$ and $b=0.01$
+\begin{align*}
+    P(s'\rightarrow s)=e^{-\Delta H}\approx 2\cdot10^{-9}
+\end{align*}
+in our case the length of the domain wall boundary is $L=2N=200$ and so the probability for any spin to flip in one iteration is approximately $4\cdot10^{-7}$. The only redeeming factor is, that once the domain wall boundary is broken, it will inevitably become one "layer" smaller, since the spin right before it in the loop of the metropolis method, will have two neighbors pointing in the same direction and two in the opposite. Therefore $\Delta H<0\implies P(s'\rightarrow s)=1$. Still, we would have to increase the length of the markov chain to approximately $10^8$ steps to see the domain wall disappear entirely. Another case can also be seen, where the domain wall encompasses the whole crystal. In that case its not really a domain wall anymore, but every spin is pointing opposite to the magnetic field. In this case the probability to flip any one spin is given by
+\begin{align*}
+    N^DP(s'\rightarrow s)=10^4\cdot e^{-(8\beta-2b)}\approx 4\cdot10^{-14}
+\end{align*}
+only that now, the size of the domain wall isn't reliably reduced anymore, since we go from a spin having 4 neighbors pointing in the same direction to three which we covered in the example before, and is still extremely unlikely to flip.
     !!!phase transition interpretation!!!
      \begin{figure} [H] 
 	\begin{center}	
