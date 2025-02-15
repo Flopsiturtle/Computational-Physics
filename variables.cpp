@@ -288,8 +288,8 @@ int main(){
     /*
     vector<double> betaValues = { 1/0.2, 1/0.6, 1.0, 1/1.4, 1/1.8, 1/2.0, 1/2.2, 1/2.3, 1/2.4, 1/2.5, 1/2.6, 1/2.8, 1/3.0, 1/3.4, 1/3.8, 1/4.2, 1/4.6, 1/5.0, 1/5.4, 1/5.8, 1/6.2, 1/6.6, 1/7.0, 1/7.4, 1/7.8, 1/8.2, 1/8.6, 1/9.0, 1/9.4, 1/9.8};
     for (double beta : betaValues) {
-        string filenameM = "Results3/MagB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
-        string filenameE = "Results3/EnB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
+        string filenameM = "Results2/MagB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
+        string filenameE = "Results2/EnB" + to_string(B) + "Beta" + to_string(beta) + ".csv";
 
         for (int i = 0; i < 500; i++) {
             cout << "Beta: " << beta << ", Seed: " << i << endl;
