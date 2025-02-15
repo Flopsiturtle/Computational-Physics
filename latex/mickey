@@ -90,7 +90,7 @@
     \\
     \\
     \noindent
-    To generate a Markov chain, one has to simply run the "variables.cpp" file. You will be asked to input the number of dimensions, the number of points in each dimension, the length of the Markov chain, as well as the values for $\beta$ and $b$. Lastly, you will have to input the value of the seed used to generate the random numbers and weather or not to start in a cold state (1 for cold state and 0 for hot state). The values of the magnetization and the energy will be stored in the "Results" folder in the files called "MagnetizationHistory.csv" and "EnergyHistory.csv", respectively. This will also automatically save the state after each step of the markov chain in the file "stateEvolution.csv". This file will be used in the file "stateEvolution.py" which will visualize the system for each step in the chain, when executed. This visualization only works in 2D and for $N=100$, but in the "Results" folder are gifs for different Markov chains.
+    To generate a Markov chain, one has to simply run the "variables.cpp" file. You will be asked to input the number of dimensions, the number of points in each dimension, the length of the Markov chain, as well as the values for $\beta$ and $b$. Lastly, you will have to input the value of the seed used to generate the random numbers and weather or not to start in a cold state (1 for cold state and 0 for hot state). The values of the magnetization and the energy will be stored in the "Results" folder in the files called "MagnetizationHistory.csv" and "EnergyHistory.csv", respectively. These files can be plotted by running the "plots.py" file. This will also automatically save the state after each step of the markov chain in the file "stateEvolution.csv". This file will be used in the file "stateEvolution.py" which will visualize the system for each step in the chain, when executed. This visualization only works in 2D and for $N=100$, but in the "Results" folder are gifs for different Markov chains.
    
     \noindent
     \underline{Calculation of the mean energy and magnetisation}
@@ -120,7 +120,7 @@
     \\
     \\
     \noindent
-    !!!part of flo about how the the data in Results2 can be replicated!!!\\
+    In the "main" function of the "variables.cpp" file is a part that generates all the data for one temperature curve. Since that takes quite a long time, it is currently commented out. To generate all the data necessary for one value of $b$, you have to uncomment that part, and comment out the if-else statement right before it.\\
     The file \textbf{temperature$\_$dependency.py} generates the plots, figure \ref{tempdepend}, for the temperature dependencies. Just as before there are two spots where the paths need to be provided. In order for the code to work properly all the required files should be stored in one folder which we sent you as \textbf{Results2}. If you keep the data in a folder named \textbf{Results2} you only need to change the part of the path before that.\\
     Figure \ref{tempdependfixed} with some datapoints removed may be generated using  \textbf{temperature$\_$dependency$\_$fixed.py} with the folders \textbf{Results2} for the energy and \textbf{Results4} for the magnetisation.\\
     The last two figures \ref{energycritical} and \ref{magcritical} are created with \textbf{energy$\_$replica$\_$critical.py} and \textbf{mag$\_$replica$\_$critical.py} using the data from the folder \textbf{Results3}.
